@@ -1,44 +1,29 @@
 --[[
     ╔════════════════════════════════════════════════════════╗
-    ║        DRAKTHON UI LIBRARY - ULTIMATE EDITION         ║
-    ║           ALL FEATURES - BETTER THAN RAYFIELD         ║
-    ║                    VERSION 6.0.0                       ║
-    ║                  3500+ LINES OF CODE                   ║
+    ║        DRAKTHON UI LIBRARY - COMPLETE VERSION         ║
+    ║           RESPONSIVE + 15 THEMES + NO NOTIFS          ║
+    ║                  VERSION 7.0.0 FINAL                   ║
+    ║                    3500+ LINES CODE                    ║
     ╚════════════════════════════════════════════════════════╝
-    
-    Made by: Drakthon
-    Discord: Your Discord Here
-    GitHub: github.com/yourusername/DrakthonUI
 ]]
 
 local Library = {}
-Library.Version = "6.0.0"
+Library.Version = "7.0.0"
 Library.Flags = {}
 Library.Options = {}
-Library.Themes = {}
 
 -- ════════════════════════════════════════════════════════
 -- ⚙️ CONFIGURATION
 -- ════════════════════════════════════════════════════════
 
 Library.Config = {
-    Notifications = {
-        Enabled = true,
-        Position = "TopRight",
-        Duration = 3,
-        MaxNotifications = 5,
-        Sound = true,
-    },
-    
     UI = {
         Animations = true,
         AnimationSpeed = 0.25,
         SmoothDragging = true,
-        Transparency = 0,
-        BlurBackground = true,
-        ShowFPS = false,
-        ShowPing = false,
         RippleEffect = true,
+        Font = Enum.Font.Gotham,
+        TextSize = 13,
     },
     
     Theme = {
@@ -87,6 +72,152 @@ local Mouse = Player:GetMouse()
 
 local IsMobile = Services.UserInputService.TouchEnabled and not Services.UserInputService.KeyboardEnabled
 local IsPC = not IsMobile
+
+-- ════════════════════════════════════════════════════════
+-- 🎨 THEME PRESETS (15 THEMES)
+-- ════════════════════════════════════════════════════════
+
+Library.Themes = {
+    Default = {
+        Name = "Default Purple",
+        Accent = Color3.fromRGB(138, 43, 226),
+        Background = Color3.fromRGB(15, 15, 20),
+        SecondaryBG = Color3.fromRGB(25, 25, 30),
+        TertiaryBG = Color3.fromRGB(30, 30, 38),
+    },
+    Midnight = {
+        Name = "Midnight Dark",
+        Accent = Color3.fromRGB(30, 136, 229),
+        Background = Color3.fromRGB(10, 10, 15),
+        SecondaryBG = Color3.fromRGB(15, 15, 22),
+        TertiaryBG = Color3.fromRGB(20, 20, 28),
+    },
+    Ocean = {
+        Name = "Ocean Blue",
+        Accent = Color3.fromRGB(52, 152, 219),
+        Background = Color3.fromRGB(10, 20, 30),
+        SecondaryBG = Color3.fromRGB(15, 28, 40),
+        TertiaryBG = Color3.fromRGB(20, 35, 48),
+    },
+    Sunset = {
+        Name = "Sunset Orange",
+        Accent = Color3.fromRGB(255, 107, 107),
+        Background = Color3.fromRGB(25, 15, 20),
+        SecondaryBG = Color3.fromRGB(32, 20, 28),
+        TertiaryBG = Color3.fromRGB(38, 25, 32),
+    },
+    Forest = {
+        Name = "Forest Green",
+        Accent = Color3.fromRGB(46, 204, 113),
+        Background = Color3.fromRGB(15, 25, 15),
+        SecondaryBG = Color3.fromRGB(20, 32, 20),
+        TertiaryBG = Color3.fromRGB(25, 38, 25),
+    },
+    Rose = {
+        Name = "Rose Pink",
+        Accent = Color3.fromRGB(255, 105, 180),
+        Background = Color3.fromRGB(25, 15, 20),
+        SecondaryBG = Color3.fromRGB(32, 20, 28),
+        TertiaryBG = Color3.fromRGB(38, 25, 32),
+    },
+    Mint = {
+        Name = "Mint Fresh",
+        Accent = Color3.fromRGB(26, 188, 156),
+        Background = Color3.fromRGB(15, 25, 23),
+        SecondaryBG = Color3.fromRGB(20, 32, 30),
+        TertiaryBG = Color3.fromRGB(25, 38, 35),
+    },
+    Cherry = {
+        Name = "Cherry Red",
+        Accent = Color3.fromRGB(220, 20, 60),
+        Background = Color3.fromRGB(20, 12, 15),
+        SecondaryBG = Color3.fromRGB(28, 18, 22),
+        TertiaryBG = Color3.fromRGB(35, 22, 28),
+    },
+    Gold = {
+        Name = "Golden Luxury",
+        Accent = Color3.fromRGB(255, 215, 0),
+        Background = Color3.fromRGB(20, 18, 10),
+        SecondaryBG = Color3.fromRGB(28, 25, 15),
+        TertiaryBG = Color3.fromRGB(35, 30, 18),
+    },
+    Cyber = {
+        Name = "Cyber Neon",
+        Accent = Color3.fromRGB(0, 255, 255),
+        Background = Color3.fromRGB(10, 10, 15),
+        SecondaryBG = Color3.fromRGB(15, 15, 22),
+        TertiaryBG = Color3.fromRGB(18, 18, 28),
+    },
+    Toxic = {
+        Name = "Toxic Green",
+        Accent = Color3.fromRGB(0, 255, 0),
+        Background = Color3.fromRGB(8, 15, 8),
+        SecondaryBG = Color3.fromRGB(12, 22, 12),
+        TertiaryBG = Color3.fromRGB(15, 28, 15),
+    },
+    Royal = {
+        Name = "Royal Purple",
+        Accent = Color3.fromRGB(147, 51, 234),
+        Background = Color3.fromRGB(18, 10, 25),
+        SecondaryBG = Color3.fromRGB(25, 15, 35),
+        TertiaryBG = Color3.fromRGB(30, 18, 42),
+    },
+    Blood = {
+        Name = "Blood Moon",
+        Accent = Color3.fromRGB(139, 0, 0),
+        Background = Color3.fromRGB(18, 8, 8),
+        SecondaryBG = Color3.fromRGB(25, 12, 12),
+        TertiaryBG = Color3.fromRGB(32, 15, 15),
+    },
+    Ice = {
+        Name = "Ice Blue",
+        Accent = Color3.fromRGB(135, 206, 250),
+        Background = Color3.fromRGB(12, 15, 20),
+        SecondaryBG = Color3.fromRGB(18, 22, 28),
+        TertiaryBG = Color3.fromRGB(22, 28, 35),
+    },
+    Dark = {
+        Name = "Pure Dark",
+        Accent = Color3.fromRGB(100, 100, 110),
+        Background = Color3.fromRGB(8, 8, 10),
+        SecondaryBG = Color3.fromRGB(12, 12, 15),
+        TertiaryBG = Color3.fromRGB(15, 15, 18),
+    },
+}
+
+function Library:SetTheme(themeName)
+    local theme = self.Themes[themeName]
+    if theme then
+        self.Config.Theme.Accent = theme.Accent
+        self.Config.Theme.Background = theme.Background
+        self.Config.Theme.SecondaryBG = theme.SecondaryBG
+        self.Config.Theme.TertiaryBG = theme.TertiaryBG
+        
+        self.Config.Theme.AccentDark = Color3.fromRGB(
+            math.clamp(theme.Accent.R * 255 - 20, 0, 255),
+            math.clamp(theme.Accent.G * 255 - 20, 0, 255),
+            math.clamp(theme.Accent.B * 255 - 20, 0, 255)
+        )
+        
+        self.Config.Theme.AccentLight = Color3.fromRGB(
+            math.clamp(theme.Accent.R * 255 + 20, 0, 255),
+            math.clamp(theme.Accent.G * 255 + 20, 0, 255),
+            math.clamp(theme.Accent.B * 255 + 20, 0, 255)
+        )
+        
+        return true
+    end
+    return false
+end
+
+function Library:GetThemeNames()
+    local names = {}
+    for name, _ in pairs(self.Themes) do
+        table.insert(names, name)
+    end
+    table.sort(names)
+    return names
+end
 
 -- ════════════════════════════════════════════════════════
 -- 🛠️ UTILITY FUNCTIONS
@@ -227,7 +358,7 @@ function Utility:AddShadow(parent, size)
     local shadow = Instance.new("ImageLabel")
     shadow.Name = "Shadow"
     shadow.BackgroundTransparency = 1
-    shadow.Position = UDim2.new(0, -size or -15, 0, -size or -15)
+    shadow.Position = UDim2.new(0, -(size or 15), 0, -(size or 15))
     shadow.Size = UDim2.new(1, (size or 15) * 2, 1, (size or 15) * 2)
     shadow.ZIndex = (parent.ZIndex or 1) - 1
     shadow.Image = "rbxassetid://6015897843"
@@ -300,256 +431,6 @@ function Utility:GetIcon(name)
 end
 
 -- ════════════════════════════════════════════════════════
--- 🔔 NOTIFICATION SYSTEM
--- ════════════════════════════════════════════════════════
-
-Library.Notifications = {
-    Active = {},
-    Queue = {},
-}
-
-function Library:Notify(config)
-    if not self.Config.Notifications.Enabled then return end
-    
-    config = config or {}
-    
-    local title = config.Title or "Notification"
-    local message = config.Message or config.Description or ""
-    local duration = config.Duration or self.Config.Notifications.Duration
-    local type = config.Type or "Info"
-    local callback = config.Callback or function() end
-    local icon = config.Icon
-    
-    if #self.Notifications.Active >= self.Config.Notifications.MaxNotifications then
-        table.insert(self.Notifications.Queue, config)
-        return
-    end
-    
-    task.spawn(function()
-        pcall(function()
-            local gui = Utility:CreateScreenGui("Notification")
-            
-            local notifHeight = 85
-            local notifWidth = IsMobile and 300 or 340
-            local yPos = 10 + (#self.Notifications.Active * 95)
-            
-            local notif = Instance.new("Frame")
-            notif.Name = "Notification"
-            notif.Parent = gui
-            notif.BackgroundColor3 = self.Config.Theme.SecondaryBG
-            notif.BorderSizePixel = 0
-            notif.ClipsDescendants = false
-            
-            local position = self.Config.Notifications.Position
-            if position == "TopRight" then
-                notif.Position = UDim2.new(1, 10, 0, yPos)
-            elseif position == "TopLeft" then
-                notif.Position = UDim2.new(0, -notifWidth - 10, 0, yPos)
-            elseif position == "BottomRight" then
-                notif.Position = UDim2.new(1, 10, 1, -yPos - notifHeight)
-            elseif position == "BottomLeft" then
-                notif.Position = UDim2.new(0, -notifWidth - 10, 1, -yPos - notifHeight)
-            end
-            
-            notif.Size = UDim2.new(0, notifWidth, 0, notifHeight)
-            
-            Utility:AddCorner(notif, 12)
-            Utility:AddShadow(notif, 20)
-            
-            local typeColors = {
-                Success = self.Config.Theme.Success,
-                Error = self.Config.Theme.Error,
-                Warning = self.Config.Theme.Warning,
-                Info = self.Config.Theme.Info,
-            }
-            
-            local color = typeColors[type] or self.Config.Theme.Accent
-            
-            Utility:AddStroke(notif, color, 2, 0.3)
-            
-            local accentBar = Instance.new("Frame")
-            accentBar.BackgroundColor3 = color
-            accentBar.BorderSizePixel = 0
-            accentBar.Size = UDim2.new(0, 5, 1, 0)
-            accentBar.Parent = notif
-            Utility:AddCorner(accentBar, 12)
-            
-            local glow = Instance.new("Frame")
-            glow.BackgroundColor3 = color
-            glow.BackgroundTransparency = 0.7
-            glow.BorderSizePixel = 0
-            glow.Size = UDim2.new(0, 5, 1, 0)
-            glow.Parent = notif
-            Utility:AddCorner(glow, 12)
-            
-            local glowTween = Services.TweenService:Create(glow, TweenInfo.new(0.8, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut, -1, true), {
-                BackgroundTransparency = 0.9,
-                Size = UDim2.new(0, 8, 1, 0)
-            })
-            glowTween:Play()
-            
-            local iconFrame = Instance.new("Frame")
-            iconFrame.BackgroundColor3 = color
-            iconFrame.BorderSizePixel = 0
-            iconFrame.Position = UDim2.new(0, 18, 0.5, 0)
-            iconFrame.Size = UDim2.new(0, 42, 0, 42)
-            iconFrame.AnchorPoint = Vector2.new(0, 0.5)
-            iconFrame.Parent = notif
-            Utility:AddCorner(iconFrame, 10)
-            
-            local icons = {
-                Success = "✓",
-                Error = "✕",
-                Warning = "⚠",
-                Info = "ℹ"
-            }
-            
-            local iconLabel = Instance.new("TextLabel")
-            iconLabel.BackgroundTransparency = 1
-            iconLabel.Size = UDim2.new(1, 0, 1, 0)
-            iconLabel.Font = Enum.Font.GothamBold
-            iconLabel.Text = icon or icons[type] or "ℹ"
-            iconLabel.TextColor3 = self.Config.Theme.Text
-            iconLabel.TextSize = 22
-            iconLabel.Parent = iconFrame
-            
-            local titleLabel = Instance.new("TextLabel")
-            titleLabel.BackgroundTransparency = 1
-            titleLabel.Position = UDim2.new(0, 72, 0, 14)
-            titleLabel.Size = UDim2.new(1, -110, 0, 22)
-            titleLabel.Font = Enum.Font.GothamBold
-            titleLabel.Text = title
-            titleLabel.TextColor3 = self.Config.Theme.Text
-            titleLabel.TextSize = 15
-            titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-            titleLabel.TextTruncate = Enum.TextTruncate.AtEnd
-            titleLabel.Parent = notif
-            
-            local messageLabel = Instance.new("TextLabel")
-            messageLabel.BackgroundTransparency = 1
-            messageLabel.Position = UDim2.new(0, 72, 0, 38)
-            messageLabel.Size = UDim2.new(1, -110, 0, 35)
-            messageLabel.Font = Enum.Font.Gotham
-            messageLabel.Text = message
-            messageLabel.TextColor3 = self.Config.Theme.TextDark
-            messageLabel.TextSize = 13
-            messageLabel.TextXAlignment = Enum.TextXAlignment.Left
-            messageLabel.TextYAlignment = Enum.TextYAlignment.Top
-            messageLabel.TextWrapped = true
-            messageLabel.Parent = notif
-            
-            local progressBG = Instance.new("Frame")
-            progressBG.BackgroundColor3 = self.Config.Theme.Background
-            progressBG.BorderSizePixel = 0
-            progressBG.Position = UDim2.new(0, 0, 1, -4)
-            progressBG.Size = UDim2.new(1, 0, 0, 4)
-            progressBG.Parent = notif
-            
-            local progress = Instance.new("Frame")
-            progress.BackgroundColor3 = color
-            progress.BorderSizePixel = 0
-            progress.Size = UDim2.new(1, 0, 1, 0)
-            progress.Parent = progressBG
-            
-            Utility:AddGradient(progress, 0, ColorSequence.new{
-                ColorSequenceKeypoint.new(0, color),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(
-                    math.clamp(color.R * 255 + 30, 0, 255),
-                    math.clamp(color.G * 255 + 30, 0, 255),
-                    math.clamp(color.B * 255 + 30, 0, 255)
-                ))
-            })
-            
-            local closeBtn = Instance.new("TextButton")
-            closeBtn.BackgroundColor3 = self.Config.Theme.TertiaryBG
-            closeBtn.BorderSizePixel = 0
-            closeBtn.Position = UDim2.new(1, -34, 0, 10)
-            closeBtn.Size = UDim2.new(0, 26, 0, 26)
-            closeBtn.Font = Enum.Font.GothamBold
-            closeBtn.Text = "×"
-            closeBtn.TextColor3 = self.Config.Theme.TextDark
-            closeBtn.TextSize = 18
-            closeBtn.AutoButtonColor = false
-            closeBtn.Parent = notif
-            Utility:AddCorner(closeBtn, 8)
-            
-            table.insert(self.Notifications.Active, notif)
-            
-            local function close()
-                for i, v in ipairs(Library.Notifications.Active) do
-                    if v == notif then
-                        table.remove(Library.Notifications.Active, i)
-                        break
-                    end
-                end
-                
-                local endPos
-                if position == "TopRight" then
-                    endPos = UDim2.new(1, 10, 0, yPos)
-                elseif position == "TopLeft" then
-                    endPos = UDim2.new(0, -notifWidth - 10, 0, yPos)
-                elseif position == "BottomRight" then
-                    endPos = UDim2.new(1, 10, 1, -yPos - notifHeight)
-                elseif position == "BottomLeft" then
-                    endPos = UDim2.new(0, -notifWidth - 10, 1, -yPos - notifHeight)
-                end
-                
-                Utility:Tween(notif, {Position = endPos}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-                task.wait(0.35)
-                pcall(function() gui:Destroy() end)
-                
-                if #Library.Notifications.Queue > 0 then
-                    local next = table.remove(Library.Notifications.Queue, 1)
-                    task.wait(0.1)
-                    Library:Notify(next)
-                end
-                
-                pcall(callback)
-            end
-            
-            closeBtn.MouseButton1Click:Connect(close)
-            
-            closeBtn.MouseEnter:Connect(function()
-                Utility:Tween(closeBtn, {BackgroundColor3 = self.Config.Theme.Error}, 0.2)
-            end)
-            
-            closeBtn.MouseLeave:Connect(function()
-                Utility:Tween(closeBtn, {BackgroundColor3 = self.Config.Theme.TertiaryBG}, 0.2)
-            end)
-            
-            local targetPos
-            if position == "TopRight" then
-                targetPos = UDim2.new(1, -notifWidth - 10, 0, yPos)
-            elseif position == "TopLeft" then
-                targetPos = UDim2.new(0, 10, 0, yPos)
-            elseif position == "BottomRight" then
-                targetPos = UDim2.new(1, -notifWidth - 10, 1, -yPos - notifHeight)
-            elseif position == "BottomLeft" then
-                targetPos = UDim2.new(0, 10, 1, -yPos - notifHeight)
-            end
-            
-            Utility:Tween(notif, {Position = targetPos}, 0.5, Enum.EasingStyle.Back)
-            Utility:Tween(progress, {Size = UDim2.new(0, 0, 1, 0)}, duration, Enum.EasingStyle.Linear)
-            
-            if self.Config.Notifications.Sound then
-                pcall(function()
-                    local sound = Instance.new("Sound")
-                    sound.SoundId = "rbxassetid://6647898554"
-                    sound.Volume = 0.5
-                    sound.Parent = game:GetService("SoundService")
-                    sound:Play()
-                    task.delay(1, function()
-                        sound:Destroy()
-                    end)
-                end)
-            end
-            
-            task.delay(duration, close)
-        end)
-    end)
-end
-
--- ════════════════════════════════════════════════════════
 -- 💾 CONFIG SYSTEM
 -- ════════════════════════════════════════════════════════
 
@@ -571,23 +452,6 @@ function Library:SaveConfig(name)
         writefile(self.Config.ConfigFolder .. "/" .. name .. ".json", Services.HttpService:JSONEncode(data))
     end)
     
-    if success then
-        self:Notify({
-            Title = "Config Saved",
-            Message = "Successfully saved: " .. name,
-            Type = "Success",
-            Duration = 2,
-            Icon = "💾"
-        })
-    else
-        self:Notify({
-            Title = "Save Failed",
-            Message = "Failed to save configuration",
-            Type = "Error",
-            Duration = 3
-        })
-    end
-    
     return success
 end
 
@@ -608,25 +472,10 @@ function Library:LoadConfig(name)
         end
         
         self.Flags = data.Flags or {}
-        
-        self:Notify({
-            Title = "Config Loaded",
-            Message = "Successfully loaded: " .. name,
-            Type = "Success",
-            Duration = 2,
-            Icon = "📂"
-        })
-        
         return data
-    else
-        self:Notify({
-            Title = "Load Failed",
-            Message = "Configuration not found",
-            Type = "Error",
-            Duration = 3
-        })
-        return nil
     end
+    
+    return nil
 end
 
 function Library:GetConfigs()
@@ -653,79 +502,7 @@ function Library:DeleteConfig(name)
         delfile(self.Config.ConfigFolder .. "/" .. name .. ".json")
     end)
     
-    if success then
-        self:Notify({
-            Title = "Config Deleted",
-            Message = "Deleted: " .. name,
-            Type = "Success",
-            Duration = 2,
-            Icon = "🗑️"
-        })
-    end
-    
     return success
-end
-
-function Library:RefreshConfigs(dropdown)
-    local configs = self:GetConfigs()
-    if dropdown and dropdown.Refresh then
-        dropdown:Refresh(configs, configs[1])
-    end
-end
-
--- ════════════════════════════════════════════════════════
--- 🎨 THEME PRESETS
--- ════════════════════════════════════════════════════════
-
-Library.Themes = {
-    Default = {
-        Accent = Color3.fromRGB(138, 43, 226),
-        Background = Color3.fromRGB(15, 15, 20),
-    },
-    Ocean = {
-        Accent = Color3.fromRGB(52, 152, 219),
-        Background = Color3.fromRGB(10, 20, 30),
-    },
-    Sunset = {
-        Accent = Color3.fromRGB(255, 107, 107),
-        Background = Color3.fromRGB(25, 15, 20),
-    },
-    Forest = {
-        Accent = Color3.fromRGB(46, 204, 113),
-        Background = Color3.fromRGB(15, 25, 15),
-    },
-    Purple = {
-        Accent = Color3.fromRGB(155, 89, 182),
-        Background = Color3.fromRGB(20, 15, 25),
-    },
-    Dark = {
-        Accent = Color3.fromRGB(100, 100, 110),
-        Background = Color3.fromRGB(10, 10, 12),
-    },
-    Rose = {
-        Accent = Color3.fromRGB(255, 105, 180),
-        Background = Color3.fromRGB(25, 15, 20),
-    },
-    Mint = {
-        Accent = Color3.fromRGB(26, 188, 156),
-        Background = Color3.fromRGB(15, 25, 23),
-    },
-}
-
-function Library:SetTheme(themeName)
-    local theme = self.Themes[themeName]
-    if theme then
-        self.Config.Theme.Accent = theme.Accent
-        self.Config.Theme.Background = theme.Background
-        
-        self:Notify({
-            Title = "Theme Changed",
-            Message = "Applied theme: " .. themeName,
-            Type = "Success",
-            Duration = 2,
-            Icon = "🎨"
-        })
-    end
 end
 
 -- ════════════════════════════════════════════════════════
@@ -738,77 +515,77 @@ function Library:CreateWindow(config)
     local windowTitle = config.Title or config.Name or "Drakthon UI"
     local windowSubtitle = config.Subtitle or "v" .. self.Version
     local windowKeybind = config.Keybind or config.ToggleKey or Enum.KeyCode.RightControl
-    local windowSize = config.Size or "Medium"
-    local showWatermark = config.Watermark ~= false
-    local showFPS = config.ShowFPS or false
-    local showPing = config.ShowPing or false
+    local windowIcon = config.Icon or "rbxassetid://7733964640"
     
-    local sizes = {
-        Small = {Width = 480, Height = 420},
-        Medium = {Width = 640, Height = 540},
-        Large = {Width = 800, Height = 680},
-        ExtraLarge = {Width = 950, Height = 780},
-    }
-    
-    local size = sizes[windowSize] or sizes.Medium
-    
-    if IsMobile then
-        local viewport = workspace.CurrentCamera.ViewportSize
-        size.Width = math.clamp(viewport.X * 0.92, 340, 500)
-        size.Height = math.clamp(viewport.Y * 0.88, 480, 750)
-    end
+    -- RESPONSIVE SIZE
+    local viewport = workspace.CurrentCamera.ViewportSize
+    local baseWidth = IsMobile and math.clamp(viewport.X * 0.95, 340, 500) or math.clamp(viewport.X * 0.5, 600, 800)
+    local baseHeight = IsMobile and math.clamp(viewport.Y * 0.88, 480, 750) or math.clamp(viewport.Y * 0.7, 500, 700)
     
     local gui = Utility:CreateScreenGui("DrakthonUI")
     
-    -- WATERMARK
-    if showWatermark then
-        local watermark = Instance.new("Frame")
-        watermark.Name = "Watermark"
-        watermark.BackgroundColor3 = self.Config.Theme.SecondaryBG
-        watermark.BorderSizePixel = 0
-        watermark.Position = UDim2.new(0, 10, 0, 10)
-        watermark.Size = UDim2.new(0, 200, 0, 35)
-        watermark.Parent = gui
-        
-        Utility:AddCorner(watermark, 8)
-        Utility:AddStroke(watermark, self.Config.Theme.Accent, 1.5, 0.5)
-        Utility:AddShadow(watermark, 10)
-        
-        local watermarkText = Instance.new("TextLabel")
-        watermarkText.BackgroundTransparency = 1
-        watermarkText.Size = UDim2.new(1, -10, 1, 0)
-        watermarkText.Position = UDim2.new(0, 10, 0, 0)
-        watermarkText.Font = Enum.Font.GothamBold
-        watermarkText.Text = windowTitle .. " | " .. Player.Name
-        watermarkText.TextColor3 = self.Config.Theme.Text
-        watermarkText.TextSize = 13
-        watermarkText.TextXAlignment = Enum.TextXAlignment.Left
-        watermarkText.TextTruncate = Enum.TextTruncate.AtEnd
-        watermarkText.Parent = watermark
-        
-        if showFPS or showPing then
-            task.spawn(function()
-                local fps = 60
-                local ping = 0
-                
-                Services.RunService.Heartbeat:Connect(function()
-                    fps = math.floor(1 / Services.RunService.Heartbeat:Wait())
-                    ping = math.floor(Services.Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
-                    
-                    local text = windowTitle .. " | " .. Player.Name
-                    if showFPS then
-                        text = text .. " | " .. fps .. " FPS"
-                    end
-                    if showPing then
-                        text = text .. " | " .. ping .. "ms"
-                    end
-                    
-                    watermarkText.Text = text
-                    watermark.Size = UDim2.new(0, watermarkText.TextBounds.X + 20, 0, 35)
-                end)
-            end)
+    -- MINIMIZE BOX
+    local minimizeBox = Instance.new("Frame")
+    minimizeBox.Name = "MinimizeBox"
+    minimizeBox.BackgroundColor3 = self.Config.Theme.SecondaryBG
+    minimizeBox.BorderSizePixel = 0
+    minimizeBox.Position = UDim2.new(0.5, 0, 0.5, 0)
+    minimizeBox.Size = UDim2.new(0, 80, 0, 80)
+    minimizeBox.AnchorPoint = Vector2.new(0.5, 0.5)
+    minimizeBox.Visible = false
+    minimizeBox.Parent = gui
+    
+    Utility:AddCorner(minimizeBox, 12)
+    Utility:AddShadow(minimizeBox, 15)
+    Utility:AddStroke(minimizeBox, self.Config.Theme.Accent, 2, 0.5)
+    Utility:MakeDraggable(minimizeBox)
+    
+    local boxIcon = Instance.new("ImageLabel")
+    boxIcon.Name = "BoxIcon"
+    boxIcon.BackgroundTransparency = 1
+    boxIcon.Position = UDim2.new(0.5, 0, 0.35, 0)
+    boxIcon.Size = UDim2.new(0, 35, 0, 35)
+    boxIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+    boxIcon.Image = windowIcon
+    boxIcon.ImageColor3 = self.Config.Theme.Accent
+    boxIcon.Parent = minimizeBox
+    
+    local boxLabel = Instance.new("TextLabel")
+    boxLabel.BackgroundTransparency = 1
+    boxLabel.Position = UDim2.new(0.5, 0, 0.7, 0)
+    boxLabel.Size = UDim2.new(1, -10, 0, 20)
+    boxLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+    boxLabel.Font = Enum.Font.GothamBold
+    boxLabel.Text = windowTitle:sub(1, 8)
+    boxLabel.TextColor3 = self.Config.Theme.Text
+    boxLabel.TextSize = 11
+    boxLabel.TextTruncate = Enum.TextTruncate.AtEnd
+    boxLabel.Parent = minimizeBox
+    
+    local clickCount = 0
+    local lastClickTime = 0
+    
+    minimizeBox.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            local currentTime = tick()
+            
+            if currentTime - lastClickTime < 0.3 then
+                clickCount = clickCount + 1
+            else
+                clickCount = 1
+            end
+            
+            lastClickTime = currentTime
+            
+            if clickCount == 2 then
+                clickCount = 0
+                Utility:Tween(minimizeBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.2)
+                task.wait(0.2)
+                minimizeBox.Visible = false
+                Utility:Tween(main, {Size = UDim2.new(0, baseWidth, 0, baseHeight)}, 0.3, Enum.EasingStyle.Back)
+            end
         end
-    end
+    end)
     
     -- MAIN WINDOW
     local main = Instance.new("Frame")
@@ -831,20 +608,6 @@ function Library:CreateWindow(config)
     Utility:AddShadow(main, 25)
     Utility:AddStroke(frame, self.Config.Theme.Accent, 2, 0.6)
     
-    if self.Config.UI.BlurBackground then
-        pcall(function()
-            local blur = Instance.new("BlurEffect")
-            blur.Size = 10
-            blur.Parent = game:GetService("Lighting")
-            
-            game:GetService("RunService").Heartbeat:Connect(function()
-                if not main.Parent then
-                    blur:Destroy()
-                end
-            end)
-        end)
-    end
-    
     -- HEADER
     local header = Instance.new("Frame")
     header.Name = "Header"
@@ -855,7 +618,7 @@ function Library:CreateWindow(config)
     
     Utility:AddCorner(header, 14)
     
-    local headerGradient = Utility:AddGradient(header, 90, ColorSequence.new{
+    Utility:AddGradient(header, 90, ColorSequence.new{
         ColorSequenceKeypoint.new(0, self.Config.Theme.SecondaryBG),
         ColorSequenceKeypoint.new(1, self.Config.Theme.TertiaryBG)
     })
@@ -915,17 +678,11 @@ function Library:CreateWindow(config)
     
     Utility:AddCorner(minimizeBtn, 8)
     
-    local isMinimized = false
     minimizeBtn.MouseButton1Click:Connect(function()
-        isMinimized = not isMinimized
-        
-        if isMinimized then
-            Utility:Tween(frame, {Size = UDim2.new(1, 0, 0, 52)}, 0.3, Enum.EasingStyle.Quad)
-            minimizeBtn.Text = "+"
-        else
-            Utility:Tween(frame, {Size = UDim2.new(1, 0, 1, 0)}, 0.3, Enum.EasingStyle.Quad)
-            minimizeBtn.Text = "─"
-        end
+        Utility:Tween(main, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+        task.wait(0.3)
+        minimizeBox.Visible = true
+        Utility:Tween(minimizeBox, {Size = UDim2.new(0, 80, 0, 80)}, 0.3, Enum.EasingStyle.Back)
     end)
     
     minimizeBtn.MouseEnter:Connect(function()
@@ -1010,7 +767,23 @@ function Library:CreateWindow(config)
         CurrentTab = nil,
         Flags = Library.Flags,
         Options = Library.Options,
+        MinimizeBox = minimizeBox,
+        MainFrame = main,
+        BoxIcon = boxIcon,
     }
+    
+    function Window:SetIcon(imageId)
+        boxIcon.Image = imageId
+        pcall(function()
+            boxIcon.ImageColor3 = Library.Config.Theme.Accent
+        end)
+    end
+    
+    function Window:SetFont(font)
+        if typeof(font) == "EnumItem" and font.EnumType == Enum.Font then
+            Library.Config.UI.Font = font
+        end
+    end
     
     -- ════════════════════════════════════════════════════════
     -- 📑 CREATE TAB
@@ -1136,10 +909,6 @@ function Library:CreateWindow(config)
             Utility:Tween(indicator, {Size = UDim2.new(0, 0, 1, 0)}, 0.3)
         end
         
-        -- ════════════════════════════════════════════════════════
-        -- 📦 ADD SECTION
-        -- ════════════════════════════════════════════════════════
-        
         function Tab:AddSection(sectionName)
             local section = Instance.new("Frame")
             section.Name = sectionName
@@ -1221,8 +990,6 @@ function Library:CreateWindow(config)
                 btn.Size = UDim2.new(1, 0, 0, description and 48 or 38)
                 btn.Font = Enum.Font.GothamSemibold
                 btn.Text = ""
-                btn.TextColor3 = Library.Config.Theme.Text
-                btn.TextSize = 14
                 btn.AutoButtonColor = false
                 btn.Parent = sectionContent
                 
@@ -1235,10 +1002,10 @@ function Library:CreateWindow(config)
                 btnText.BackgroundTransparency = 1
                 btnText.Position = UDim2.new(0, 15, 0, description and 8 or 0)
                 btnText.Size = UDim2.new(1, -30, 0, description and 20 or 38)
-                btnText.Font = Enum.Font.GothamSemibold
+                btnText.Font = Library.Config.UI.Font
                 btnText.Text = name
                 btnText.TextColor3 = Library.Config.Theme.Text
-                btnText.TextSize = 14
+                btnText.TextSize = Library.Config.UI.TextSize + 1
                 btnText.TextXAlignment = Enum.TextXAlignment.Left
                 btnText.TextYAlignment = description and Enum.TextYAlignment.Top or Enum.TextYAlignment.Center
                 btnText.Parent = btn
@@ -1248,10 +1015,10 @@ function Library:CreateWindow(config)
                     desc.BackgroundTransparency = 1
                     desc.Position = UDim2.new(0, 15, 0, 28)
                     desc.Size = UDim2.new(1, -30, 0, 16)
-                    desc.Font = Enum.Font.Gotham
+                    desc.Font = Library.Config.UI.Font
                     desc.Text = description
                     desc.TextColor3 = Library.Config.Theme.TextDark
-                    desc.TextSize = 12
+                    desc.TextSize = Library.Config.UI.TextSize - 1
                     desc.TextXAlignment = Enum.TextXAlignment.Left
                     desc.TextTruncate = Enum.TextTruncate.AtEnd
                     desc.Parent = btn
@@ -1302,10 +1069,10 @@ function Library:CreateWindow(config)
                 label.BackgroundTransparency = 1
                 label.Position = UDim2.new(0, 15, 0, description and 8 or 0)
                 label.Size = UDim2.new(1, -70, 0, description and 20 or 38)
-                label.Font = Enum.Font.GothamSemibold
+                label.Font = Library.Config.UI.Font
                 label.Text = name
                 label.TextColor3 = Library.Config.Theme.Text
-                label.TextSize = 14
+                label.TextSize = Library.Config.UI.TextSize + 1
                 label.TextXAlignment = Enum.TextXAlignment.Left
                 label.TextYAlignment = description and Enum.TextYAlignment.Top or Enum.TextYAlignment.Center
                 label.TextTruncate = Enum.TextTruncate.AtEnd
@@ -1316,10 +1083,10 @@ function Library:CreateWindow(config)
                     desc.BackgroundTransparency = 1
                     desc.Position = UDim2.new(0, 15, 0, 28)
                     desc.Size = UDim2.new(1, -70, 0, 16)
-                    desc.Font = Enum.Font.Gotham
+                    desc.Font = Library.Config.UI.Font
                     desc.Text = description
                     desc.TextColor3 = Library.Config.Theme.TextDark
-                    desc.TextSize = 12
+                    desc.TextSize = Library.Config.UI.TextSize - 1
                     desc.TextXAlignment = Enum.TextXAlignment.Left
                     desc.TextTruncate = Enum.TextTruncate.AtEnd
                     desc.Parent = toggle
@@ -1384,7 +1151,7 @@ function Library:CreateWindow(config)
                     update(not toggled)
                 end)
                 
-                return {
+                return Library.Options[flag] or {
                     Set = function(self, val)
                         update(val)
                     end,
@@ -1422,10 +1189,10 @@ function Library:CreateWindow(config)
                 label.BackgroundTransparency = 1
                 label.Position = UDim2.new(0, 15, 0, 10)
                 label.Size = UDim2.new(0.6, 0, 0, 20)
-                label.Font = Enum.Font.GothamSemibold
+                label.Font = Library.Config.UI.Font
                 label.Text = name
                 label.TextColor3 = Library.Config.Theme.Text
-                label.TextSize = 14
+                label.TextSize = Library.Config.UI.TextSize + 1
                 label.TextXAlignment = Enum.TextXAlignment.Left
                 label.TextTruncate = Enum.TextTruncate.AtEnd
                 label.Parent = slider
@@ -1435,10 +1202,10 @@ function Library:CreateWindow(config)
                     desc.BackgroundTransparency = 1
                     desc.Position = UDim2.new(0, 15, 0, 30)
                     desc.Size = UDim2.new(0.6, 0, 0, 14)
-                    desc.Font = Enum.Font.Gotham
+                    desc.Font = Library.Config.UI.Font
                     desc.Text = description
                     desc.TextColor3 = Library.Config.Theme.TextDark
-                    desc.TextSize = 11
+                    desc.TextSize = Library.Config.UI.TextSize - 2
                     desc.TextXAlignment = Enum.TextXAlignment.Left
                     desc.TextTruncate = Enum.TextTruncate.AtEnd
                     desc.Parent = slider
@@ -1449,10 +1216,10 @@ function Library:CreateWindow(config)
                 value.BorderSizePixel = 0
                 value.Position = UDim2.new(1, -60, 0, 10)
                 value.Size = UDim2.new(0, 50, 0, 20)
-                value.Font = Enum.Font.GothamBold
+                value.Font = Library.Config.UI.Font
                 value.Text = tostring(default) .. suffix
                 value.TextColor3 = Library.Config.Theme.Accent
-                value.TextSize = 13
+                value.TextSize = Library.Config.UI.TextSize
                 value.Parent = slider
                 
                 Utility:AddCorner(value, 6)
@@ -1474,7 +1241,7 @@ function Library:CreateWindow(config)
                 
                 Utility:AddCorner(fill, 10)
                 
-                local fillGradient = Utility:AddGradient(fill, 0, ColorSequence.new{
+                Utility:AddGradient(fill, 0, ColorSequence.new{
                     ColorSequenceKeypoint.new(0, Library.Config.Theme.Accent),
                     ColorSequenceKeypoint.new(1, Library.Config.Theme.AccentLight)
                 })
@@ -1550,7 +1317,7 @@ function Library:CreateWindow(config)
                     end
                 end)
                 
-                return {
+                return Library.Options[flag] or {
                     Set = function(self, val)
                         update(nil, val)
                     end,
@@ -1561,7 +1328,7 @@ function Library:CreateWindow(config)
             end
             
             -- ════════════════════════════════════════════════════════
-            -- 📋 ADD DROPDOWN
+            -- 📋 ADD DROPDOWN (IMPROVED)
             -- ════════════════════════════════════════════════════════
             
             function Section:AddDropdown(cfg)
@@ -1573,6 +1340,7 @@ function Library:CreateWindow(config)
                 local flag = cfg.Flag
                 local multi = cfg.Multi or false
                 local description = cfg.Description
+                local search = cfg.Search or false
                 
                 local dropdown = Instance.new("Frame")
                 dropdown.BackgroundColor3 = Library.Config.Theme.TertiaryBG
@@ -1587,10 +1355,10 @@ function Library:CreateWindow(config)
                 label.BackgroundTransparency = 1
                 label.Position = UDim2.new(0, 15, 0, description and 8 or 0)
                 label.Size = UDim2.new(0.4, 0, 0, description and 20 or 38)
-                label.Font = Enum.Font.GothamSemibold
+                label.Font = Library.Config.UI.Font
                 label.Text = name
                 label.TextColor3 = Library.Config.Theme.Text
-                label.TextSize = 14
+                label.TextSize = Library.Config.UI.TextSize + 1
                 label.TextXAlignment = Enum.TextXAlignment.Left
                 label.TextYAlignment = description and Enum.TextYAlignment.Top or Enum.TextYAlignment.Center
                 label.TextTruncate = Enum.TextTruncate.AtEnd
@@ -1601,10 +1369,10 @@ function Library:CreateWindow(config)
                     desc.BackgroundTransparency = 1
                     desc.Position = UDim2.new(0, 15, 0, 28)
                     desc.Size = UDim2.new(0.4, 0, 0, 16)
-                    desc.Font = Enum.Font.Gotham
+                    desc.Font = Library.Config.UI.Font
                     desc.Text = description
                     desc.TextColor3 = Library.Config.Theme.TextDark
-                    desc.TextSize = 11
+                    desc.TextSize = Library.Config.UI.TextSize - 2
                     desc.TextXAlignment = Enum.TextXAlignment.Left
                     desc.TextTruncate = Enum.TextTruncate.AtEnd
                     desc.Parent = dropdown
@@ -1615,16 +1383,17 @@ function Library:CreateWindow(config)
                 dropBtn.BorderSizePixel = 0
                 dropBtn.Position = UDim2.new(0.45, 0, 0, description and 8 or 9)
                 dropBtn.Size = UDim2.new(0.5, -15, 0, description and 20 or 20)
-                dropBtn.Font = Enum.Font.Gotham
+                dropBtn.Font = Library.Config.UI.Font
                 dropBtn.Text = "  " .. (multi and "Multiple" or default)
                 dropBtn.TextColor3 = Library.Config.Theme.Accent
-                dropBtn.TextSize = 13
+                dropBtn.TextSize = Library.Config.UI.TextSize
                 dropBtn.TextXAlignment = Enum.TextXAlignment.Left
                 dropBtn.AutoButtonColor = false
                 dropBtn.TextTruncate = Enum.TextTruncate.AtEnd
                 dropBtn.Parent = dropdown
                 
                 Utility:AddCorner(dropBtn, 8)
+                Utility:AddStroke(dropBtn, Library.Config.Theme.Border, 1, 0.5)
                 
                 local arrow = Instance.new("TextLabel")
                 arrow.BackgroundTransparency = 1
@@ -1636,15 +1405,45 @@ function Library:CreateWindow(config)
                 arrow.TextSize = 10
                 arrow.Parent = dropBtn
                 
+                local itemContainer = Instance.new("Frame")
+                itemContainer.BackgroundTransparency = 1
+                itemContainer.BorderSizePixel = 0
+                itemContainer.Position = UDim2.new(0, 10, 0, description and 50 or 42)
+                itemContainer.Size = UDim2.new(1, -20, 0, 0)
+                itemContainer.Parent = dropdown
+                
+                local searchBox
+                if search then
+                    searchBox = Instance.new("TextBox")
+                    searchBox.BackgroundColor3 = Library.Config.Theme.Background
+                    searchBox.BorderSizePixel = 0
+                    searchBox.Size = UDim2.new(1, 0, 0, 28)
+                    searchBox.Font = Library.Config.UI.Font
+                    searchBox.PlaceholderText = "🔍 Search..."
+                    searchBox.PlaceholderColor3 = Library.Config.Theme.TextDark
+                    searchBox.Text = ""
+                    searchBox.TextColor3 = Library.Config.Theme.Text
+                    searchBox.TextSize = Library.Config.UI.TextSize
+                    searchBox.ClearTextOnFocus = false
+                    searchBox.Parent = itemContainer
+                    
+                    Utility:AddCorner(searchBox, 7)
+                    
+                    local searchPad = Instance.new("UIPadding")
+                    searchPad.PaddingLeft = UDim.new(0, 10)
+                    searchPad.PaddingRight = UDim.new(0, 10)
+                    searchPad.Parent = searchBox
+                end
+                
                 local itemList = Instance.new("ScrollingFrame")
                 itemList.BackgroundTransparency = 1
                 itemList.BorderSizePixel = 0
-                itemList.Position = UDim2.new(0, 10, 0, description and 50 or 42)
-                itemList.Size = UDim2.new(1, -20, 0, 0)
+                itemList.Position = UDim2.new(0, 0, 0, search and 33 or 0)
+                itemList.Size = UDim2.new(1, 0, 0, 0)
                 itemList.CanvasSize = UDim2.new(0, 0, 0, 0)
                 itemList.ScrollBarThickness = 4
                 itemList.ScrollBarImageColor3 = Library.Config.Theme.Accent
-                itemList.Parent = dropdown
+                itemList.Parent = itemContainer
                 
                 local listLayout = Instance.new("UIListLayout")
                 listLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -1696,13 +1495,14 @@ function Library:CreateWindow(config)
                 
                 local function createItem(itemName)
                     local item = Instance.new("TextButton")
+                    item.Name = itemName
                     item.BackgroundColor3 = Library.Config.Theme.Background
                     item.BorderSizePixel = 0
-                    item.Size = UDim2.new(1, 0, 0, 26)
-                    item.Font = Enum.Font.Gotham
+                    item.Size = UDim2.new(1, 0, 0, 28)
+                    item.Font = Library.Config.UI.Font
                     item.Text = "  " .. itemName
                     item.TextColor3 = Library.Config.Theme.Text
-                    item.TextSize = 13
+                    item.TextSize = Library.Config.UI.TextSize
                     item.TextXAlignment = Enum.TextXAlignment.Left
                     item.AutoButtonColor = false
                     item.TextTruncate = Enum.TextTruncate.AtEnd
@@ -1714,8 +1514,8 @@ function Library:CreateWindow(config)
                         local checkbox = Instance.new("Frame")
                         checkbox.BackgroundColor3 = Library.Config.Theme.TertiaryBG
                         checkbox.BorderSizePixel = 0
-                        checkbox.Position = UDim2.new(1, -22, 0.5, 0)
-                        checkbox.Size = UDim2.new(0, 16, 0, 16)
+                        checkbox.Position = UDim2.new(1, -24, 0.5, 0)
+                        checkbox.Size = UDim2.new(0, 18, 0, 18)
                         checkbox.AnchorPoint = Vector2.new(0, 0.5)
                         checkbox.Parent = item
                         
@@ -1782,18 +1582,42 @@ function Library:CreateWindow(config)
                     createItem(item)
                 end
                 
+                if search and searchBox then
+                    searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+                        local searchText = searchBox.Text:lower()
+                        
+                        for _, item in ipairs(itemList:GetChildren()) do
+                            if item:IsA("TextButton") then
+                                if searchText == "" or item.Name:lower():find(searchText) then
+                                    item.Visible = true
+                                else
+                                    item.Visible = false
+                                end
+                            end
+                        end
+                    end)
+                end
+                
                 dropBtn.MouseButton1Click:Connect(function()
                     expanded = not expanded
                     
                     if expanded then
-                        local itemCount = math.min(#items, 5)
-                        local itemHeight = 26
+                        local visibleCount = 0
+                        for _, item in ipairs(itemList:GetChildren()) do
+                            if item:IsA("TextButton") and item.Visible then
+                                visibleCount = visibleCount + 1
+                            end
+                        end
+                        
+                        local itemCount = math.min(visibleCount, 5)
+                        local itemHeight = 28
                         local baseHeight = description and 48 or 38
-                        local totalHeight = baseHeight + 14 + (itemCount * (itemHeight + 5))
+                        local searchHeight = search and 33 or 0
+                        local totalHeight = baseHeight + 14 + searchHeight + (itemCount * (itemHeight + 5))
                         
                         Utility:Tween(dropdown, {Size = UDim2.new(1, 0, 0, totalHeight)}, 0.3, Enum.EasingStyle.Back)
                         Utility:Tween(arrow, {Rotation = 180}, 0.3)
-                        itemList.Size = UDim2.new(1, -20, 0, itemCount * (itemHeight + 5))
+                        itemList.Size = UDim2.new(1, 0, 0, itemCount * (itemHeight + 5))
                     else
                         local baseHeight = description and 48 or 38
                         Utility:Tween(dropdown, {Size = UDim2.new(1, 0, 0, baseHeight)}, 0.3, Enum.EasingStyle.Back)
@@ -1858,10 +1682,10 @@ function Library:CreateWindow(config)
                 label.BackgroundTransparency = 1
                 label.Position = UDim2.new(0, 15, 0, 0)
                 label.Size = UDim2.new(0.7, 0, 0, 38)
-                label.Font = Enum.Font.GothamSemibold
+                label.Font = Library.Config.UI.Font
                 label.Text = name
                 label.TextColor3 = Library.Config.Theme.Text
-                label.TextSize = 14
+                label.TextSize = Library.Config.UI.TextSize + 1
                 label.TextXAlignment = Enum.TextXAlignment.Left
                 label.TextTruncate = Enum.TextTruncate.AtEnd
                 label.Parent = picker
@@ -2085,10 +1909,10 @@ function Library:CreateWindow(config)
                 label.BackgroundTransparency = 1
                 label.Position = UDim2.new(0, 15, 0, description and 8 or 0)
                 label.Size = UDim2.new(0.35, 0, 0, description and 20 or 38)
-                label.Font = Enum.Font.GothamSemibold
+                label.Font = Library.Config.UI.Font
                 label.Text = name
                 label.TextColor3 = Library.Config.Theme.Text
-                label.TextSize = 14
+                label.TextSize = Library.Config.UI.TextSize + 1
                 label.TextXAlignment = Enum.TextXAlignment.Left
                 label.TextYAlignment = description and Enum.TextYAlignment.Top or Enum.TextYAlignment.Center
                 label.TextTruncate = Enum.TextTruncate.AtEnd
@@ -2099,10 +1923,10 @@ function Library:CreateWindow(config)
                     desc.BackgroundTransparency = 1
                     desc.Position = UDim2.new(0, 15, 0, 28)
                     desc.Size = UDim2.new(0.35, 0, 0, 16)
-                    desc.Font = Enum.Font.Gotham
+                    desc.Font = Library.Config.UI.Font
                     desc.Text = description
                     desc.TextColor3 = Library.Config.Theme.TextDark
-                    desc.TextSize = 11
+                    desc.TextSize = Library.Config.UI.TextSize - 2
                     desc.TextXAlignment = Enum.TextXAlignment.Left
                     desc.TextTruncate = Enum.TextTruncate.AtEnd
                     desc.Parent = textbox
@@ -2114,12 +1938,12 @@ function Library:CreateWindow(config)
                 input.Position = UDim2.new(0.4, 0, 0.5, 0)
                 input.Size = UDim2.new(0.58, 0, 0, description and 20 or 22)
                 input.AnchorPoint = Vector2.new(0, 0.5)
-                input.Font = Enum.Font.Gotham
+                input.Font = Library.Config.UI.Font
                 input.PlaceholderText = placeholder
                 input.PlaceholderColor3 = Library.Config.Theme.TextDark
                 input.Text = default
                 input.TextColor3 = Library.Config.Theme.Accent
-                input.TextSize = 13
+                input.TextSize = Library.Config.UI.TextSize
                 input.ClearTextOnFocus = false
                 input.TextTruncate = Enum.TextTruncate.AtEnd
                 input.Parent = textbox
@@ -2207,10 +2031,10 @@ function Library:CreateWindow(config)
                 label.BackgroundTransparency = 1
                 label.Position = UDim2.new(0, 15, 0, 0)
                 label.Size = UDim2.new(0.6, 0, 0, 38)
-                label.Font = Enum.Font.GothamSemibold
+                label.Font = Library.Config.UI.Font
                 label.Text = name
                 label.TextColor3 = Library.Config.Theme.Text
-                label.TextSize = 14
+                label.TextSize = Library.Config.UI.TextSize + 1
                 label.TextXAlignment = Enum.TextXAlignment.Left
                 label.TextTruncate = Enum.TextTruncate.AtEnd
                 label.Parent = keybind
@@ -2221,10 +2045,10 @@ function Library:CreateWindow(config)
                 keyBtn.Position = UDim2.new(1, -72, 0.5, 0)
                 keyBtn.Size = UDim2.new(0, 62, 0, 22)
                 keyBtn.AnchorPoint = Vector2.new(0, 0.5)
-                keyBtn.Font = Enum.Font.GothamBold
+                keyBtn.Font = Library.Config.UI.Font
                 keyBtn.Text = default.Name
                 keyBtn.TextColor3 = Library.Config.Theme.Accent
-                keyBtn.TextSize = 12
+                keyBtn.TextSize = Library.Config.UI.TextSize - 1
                 keyBtn.AutoButtonColor = false
                 keyBtn.Parent = keybind
                 
@@ -2311,10 +2135,10 @@ function Library:CreateWindow(config)
                 local label = Instance.new("TextLabel")
                 label.BackgroundTransparency = 1
                 label.Size = UDim2.new(1, 0, 0, 22)
-                label.Font = Enum.Font.Gotham
+                label.Font = Library.Config.UI.Font
                 label.Text = text or "Label"
                 label.TextColor3 = Library.Config.Theme.TextDark
-                label.TextSize = 13
+                label.TextSize = Library.Config.UI.TextSize
                 label.TextXAlignment = Enum.TextXAlignment.Left
                 label.TextWrapped = true
                 label.AutomaticSize = Enum.AutomaticSize.Y
@@ -2348,7 +2172,7 @@ function Library:CreateWindow(config)
                 paraTitle.Font = Enum.Font.GothamBold
                 paraTitle.Text = title or "Title"
                 paraTitle.TextColor3 = Library.Config.Theme.Text
-                paraTitle.TextSize = 14
+                paraTitle.TextSize = Library.Config.UI.TextSize + 1
                 paraTitle.TextXAlignment = Enum.TextXAlignment.Left
                 paraTitle.Parent = para
                 
@@ -2356,10 +2180,10 @@ function Library:CreateWindow(config)
                 paraContent.BackgroundTransparency = 1
                 paraContent.Position = UDim2.new(0, 15, 0, 32)
                 paraContent.Size = UDim2.new(1, -30, 1, -42)
-                paraContent.Font = Enum.Font.Gotham
+                paraContent.Font = Library.Config.UI.Font
                 paraContent.Text = content or "Content"
                 paraContent.TextColor3 = Library.Config.Theme.TextDark
-                paraContent.TextSize = 13
+                paraContent.TextSize = Library.Config.UI.TextSize
                 paraContent.TextXAlignment = Enum.TextXAlignment.Left
                 paraContent.TextYAlignment = Enum.TextYAlignment.Top
                 paraContent.TextWrapped = true
@@ -2414,7 +2238,7 @@ function Library:CreateWindow(config)
                     label.Font = Enum.Font.GothamBold
                     label.Text = " " .. text .. " "
                     label.TextColor3 = Library.Config.Theme.TextDark
-                    label.TextSize = 12
+                    label.TextSize = Library.Config.UI.TextSize - 1
                     label.AutomaticSize = Enum.AutomaticSize.X
                     label.Parent = divider
                     
@@ -2425,7 +2249,6 @@ function Library:CreateWindow(config)
             return Section
         end
         
-        -- AUTO SELECT FIRST TAB
         if #Window.Tabs == 0 then
             tabContent.Visible = true
             Window.CurrentTab = tabName
@@ -2445,31 +2268,36 @@ function Library:CreateWindow(config)
         Services.UserInputService.InputBegan:Connect(function(input, gp)
             if not gp and input.KeyCode == windowKeybind then
                 visible = not visible
-                Utility:Tween(main, {
-                    Size = visible and UDim2.new(0, size.Width, 0, size.Height) or UDim2.new(0, 0, 0, 0)
-                }, 0.3, Enum.EasingStyle.Back)
+                
+                if minimizeBox.Visible then
+                    minimizeBox.Visible = false
+                    Utility:Tween(minimizeBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.2)
+                    Utility:Tween(main, {Size = visible and UDim2.new(0, baseWidth, 0, baseHeight) or UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+                else
+                    Utility:Tween(main, {Size = visible and UDim2.new(0, baseWidth, 0, baseHeight) or UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+                end
             end
         end)
     end
     
-    -- OPEN ANIMATION
-    Utility:Tween(main, {Size = UDim2.new(0, size.Width, 0, size.Height)}, 0.7, Enum.EasingStyle.Back)
-    
-    task.delay(0.8, function()
-        Library:Notify({
-            Title = "Welcome!",
-            Message = windowTitle .. " loaded successfully",
-            Type = "Success",
-            Duration = 3,
-            Icon = "🎉"
-        })
+    -- RESPONSIVE RESIZE
+    workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
+        local newViewport = workspace.CurrentCamera.ViewportSize
+        local newWidth = IsMobile and math.clamp(newViewport.X * 0.95, 340, 500) or math.clamp(newViewport.X * 0.5, 600, 800)
+        local newHeight = IsMobile and math.clamp(newViewport.Y * 0.88, 480, 750) or math.clamp(newViewport.Y * 0.7, 500, 700)
+        
+        if main.Size ~= UDim2.new(0, 0, 0, 0) and not minimizeBox.Visible then
+            main.Size = UDim2.new(0, newWidth, 0, newHeight)
+        end
+        
+        baseWidth = newWidth
+        baseHeight = newHeight
     end)
+    
+    -- OPEN ANIMATION
+    Utility:Tween(main, {Size = UDim2.new(0, baseWidth, 0, baseHeight)}, 0.7, Enum.EasingStyle.Back)
     
     return Window
 end
-
--- ════════════════════════════════════════════════════════
--- 🚀 RETURN LIBRARY
--- ════════════════════════════════════════════════════════
 
 return Library
