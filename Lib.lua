@@ -1,36 +1,36 @@
 --[[
     ════════════════════════════════════════════════════════
-                    UI LIBRARY - COMPLETE
-                      Version 9.0.0
+           UI LIBRARY - ULTIMATE COMPLETE VERSION
+                     Version 11.0.0
     ════════════════════════════════════════════════════════
     
-    Features:
-    ✓ 15 Themes
-    ✓ Responsive Design
-    ✓ All UI Elements
-    ✓ Config System
-    ✓ Mobile & PC Support
+    ✓ Fully Responsive (PC, Mobile, Tablet)
+    ✓ All UI Elements Complete
+    ✓ Smooth Animations
+    ✓ Beautiful Design
     ✓ Easy to Use
+    ✓ 15 Themes
+    ✓ Config System
     
     ════════════════════════════════════════════════════════
 ]]
 
 local Library = {}
-Library.Version = "9.0.0"
+Library.Version = "11.0.0"
 Library.Flags = {}
 Library.Options = {}
 Library.ThemeObjects = {}
 
 -- ════════════════════════════════════════════════════════
--- CONFIG
+-- CONFIGURATION
 -- ════════════════════════════════════════════════════════
 
 Library.Config = {
     UI = {
         Animations = true,
-        AnimationSpeed = 0.2,
+        AnimationSpeed = 0.25,
         Font = Enum.Font.Gotham,
-        TextSize = 13,
+        TextSize = 14,
     },
     
     Theme = {
@@ -41,7 +41,10 @@ Library.Config = {
         Text = Color3.fromRGB(255, 255, 255),
         TextDark = Color3.fromRGB(180, 180, 190),
         Border = Color3.fromRGB(45, 45, 55),
-        Shadow = Color3.fromRGB(0, 0, 0),
+        Success = Color3.fromRGB(46, 204, 113),
+        Warning = Color3.fromRGB(241, 196, 15),
+        Error = Color3.fromRGB(231, 76, 60),
+        Info = Color3.fromRGB(52, 152, 219),
     },
     
     ConfigFolder = "UIConfigs",
@@ -60,107 +63,31 @@ local Services = setmetatable({}, {
 })
 
 local Player = Services.Players.LocalPlayer
-local IsMobile = Services.UserInputService.TouchEnabled and not Services.UserInputService.KeyboardEnabled
 
 -- ════════════════════════════════════════════════════════
 -- THEMES (15 THEMES)
 -- ════════════════════════════════════════════════════════
 
 Library.Themes = {
-    Default = {
-        Accent = Color3.fromRGB(138, 43, 226),
-        Background = Color3.fromRGB(15, 15, 20),
-        SecondaryBG = Color3.fromRGB(25, 25, 30),
-        TertiaryBG = Color3.fromRGB(30, 30, 38),
-    },
-    Midnight = {
-        Accent = Color3.fromRGB(30, 136, 229),
-        Background = Color3.fromRGB(10, 10, 15),
-        SecondaryBG = Color3.fromRGB(15, 15, 22),
-        TertiaryBG = Color3.fromRGB(20, 20, 28),
-    },
-    Ocean = {
-        Accent = Color3.fromRGB(52, 152, 219),
-        Background = Color3.fromRGB(10, 20, 30),
-        SecondaryBG = Color3.fromRGB(15, 28, 40),
-        TertiaryBG = Color3.fromRGB(20, 35, 48),
-    },
-    Sunset = {
-        Accent = Color3.fromRGB(255, 107, 107),
-        Background = Color3.fromRGB(25, 15, 20),
-        SecondaryBG = Color3.fromRGB(32, 20, 28),
-        TertiaryBG = Color3.fromRGB(38, 25, 32),
-    },
-    Forest = {
-        Accent = Color3.fromRGB(46, 204, 113),
-        Background = Color3.fromRGB(15, 25, 15),
-        SecondaryBG = Color3.fromRGB(20, 32, 20),
-        TertiaryBG = Color3.fromRGB(25, 38, 25),
-    },
-    Rose = {
-        Accent = Color3.fromRGB(255, 105, 180),
-        Background = Color3.fromRGB(25, 15, 20),
-        SecondaryBG = Color3.fromRGB(32, 20, 28),
-        TertiaryBG = Color3.fromRGB(38, 25, 32),
-    },
-    Mint = {
-        Accent = Color3.fromRGB(26, 188, 156),
-        Background = Color3.fromRGB(15, 25, 23),
-        SecondaryBG = Color3.fromRGB(20, 32, 30),
-        TertiaryBG = Color3.fromRGB(25, 38, 35),
-    },
-    Cherry = {
-        Accent = Color3.fromRGB(220, 20, 60),
-        Background = Color3.fromRGB(20, 12, 15),
-        SecondaryBG = Color3.fromRGB(28, 18, 22),
-        TertiaryBG = Color3.fromRGB(35, 22, 28),
-    },
-    Gold = {
-        Accent = Color3.fromRGB(255, 215, 0),
-        Background = Color3.fromRGB(20, 18, 10),
-        SecondaryBG = Color3.fromRGB(28, 25, 15),
-        TertiaryBG = Color3.fromRGB(35, 30, 18),
-    },
-    Cyber = {
-        Accent = Color3.fromRGB(0, 255, 255),
-        Background = Color3.fromRGB(10, 10, 15),
-        SecondaryBG = Color3.fromRGB(15, 15, 22),
-        TertiaryBG = Color3.fromRGB(18, 18, 28),
-    },
-    Toxic = {
-        Accent = Color3.fromRGB(0, 255, 0),
-        Background = Color3.fromRGB(8, 15, 8),
-        SecondaryBG = Color3.fromRGB(12, 22, 12),
-        TertiaryBG = Color3.fromRGB(15, 28, 15),
-    },
-    Royal = {
-        Accent = Color3.fromRGB(147, 51, 234),
-        Background = Color3.fromRGB(18, 10, 25),
-        SecondaryBG = Color3.fromRGB(25, 15, 35),
-        TertiaryBG = Color3.fromRGB(30, 18, 42),
-    },
-    Blood = {
-        Accent = Color3.fromRGB(139, 0, 0),
-        Background = Color3.fromRGB(18, 8, 8),
-        SecondaryBG = Color3.fromRGB(25, 12, 12),
-        TertiaryBG = Color3.fromRGB(32, 15, 15),
-    },
-    Ice = {
-        Accent = Color3.fromRGB(135, 206, 250),
-        Background = Color3.fromRGB(12, 15, 20),
-        SecondaryBG = Color3.fromRGB(18, 22, 28),
-        TertiaryBG = Color3.fromRGB(22, 28, 35),
-    },
-    Dark = {
-        Accent = Color3.fromRGB(100, 100, 110),
-        Background = Color3.fromRGB(8, 8, 10),
-        SecondaryBG = Color3.fromRGB(12, 12, 15),
-        TertiaryBG = Color3.fromRGB(15, 15, 18),
-    },
+    Default = {Accent = Color3.fromRGB(138, 43, 226), Background = Color3.fromRGB(15, 15, 20), SecondaryBG = Color3.fromRGB(25, 25, 30), TertiaryBG = Color3.fromRGB(30, 30, 38)},
+    Midnight = {Accent = Color3.fromRGB(30, 136, 229), Background = Color3.fromRGB(10, 10, 15), SecondaryBG = Color3.fromRGB(15, 15, 22), TertiaryBG = Color3.fromRGB(20, 20, 28)},
+    Ocean = {Accent = Color3.fromRGB(52, 152, 219), Background = Color3.fromRGB(10, 20, 30), SecondaryBG = Color3.fromRGB(15, 28, 40), TertiaryBG = Color3.fromRGB(20, 35, 48)},
+    Sunset = {Accent = Color3.fromRGB(255, 107, 107), Background = Color3.fromRGB(25, 15, 20), SecondaryBG = Color3.fromRGB(32, 20, 28), TertiaryBG = Color3.fromRGB(38, 25, 32)},
+    Forest = {Accent = Color3.fromRGB(46, 204, 113), Background = Color3.fromRGB(15, 25, 15), SecondaryBG = Color3.fromRGB(20, 32, 20), TertiaryBG = Color3.fromRGB(25, 38, 25)},
+    Rose = {Accent = Color3.fromRGB(255, 105, 180), Background = Color3.fromRGB(25, 15, 20), SecondaryBG = Color3.fromRGB(32, 20, 28), TertiaryBG = Color3.fromRGB(38, 25, 32)},
+    Mint = {Accent = Color3.fromRGB(26, 188, 156), Background = Color3.fromRGB(15, 25, 23), SecondaryBG = Color3.fromRGB(20, 32, 30), TertiaryBG = Color3.fromRGB(25, 38, 35)},
+    Cherry = {Accent = Color3.fromRGB(220, 20, 60), Background = Color3.fromRGB(20, 12, 15), SecondaryBG = Color3.fromRGB(28, 18, 22), TertiaryBG = Color3.fromRGB(35, 22, 28)},
+    Gold = {Accent = Color3.fromRGB(255, 215, 0), Background = Color3.fromRGB(20, 18, 10), SecondaryBG = Color3.fromRGB(28, 25, 15), TertiaryBG = Color3.fromRGB(35, 30, 18)},
+    Cyber = {Accent = Color3.fromRGB(0, 255, 255), Background = Color3.fromRGB(10, 10, 15), SecondaryBG = Color3.fromRGB(15, 15, 22), TertiaryBG = Color3.fromRGB(18, 18, 28)},
+    Toxic = {Accent = Color3.fromRGB(0, 255, 0), Background = Color3.fromRGB(8, 15, 8), SecondaryBG = Color3.fromRGB(12, 22, 12), TertiaryBG = Color3.fromRGB(15, 28, 15)},
+    Royal = {Accent = Color3.fromRGB(147, 51, 234), Background = Color3.fromRGB(18, 10, 25), SecondaryBG = Color3.fromRGB(25, 15, 35), TertiaryBG = Color3.fromRGB(30, 18, 42)},
+    Blood = {Accent = Color3.fromRGB(139, 0, 0), Background = Color3.fromRGB(18, 8, 8), SecondaryBG = Color3.fromRGB(25, 12, 12), TertiaryBG = Color3.fromRGB(32, 15, 15)},
+    Ice = {Accent = Color3.fromRGB(135, 206, 250), Background = Color3.fromRGB(12, 15, 20), SecondaryBG = Color3.fromRGB(18, 22, 28), TertiaryBG = Color3.fromRGB(22, 28, 35)},
+    Dark = {Accent = Color3.fromRGB(100, 100, 110), Background = Color3.fromRGB(8, 8, 10), SecondaryBG = Color3.fromRGB(12, 12, 15), TertiaryBG = Color3.fromRGB(15, 15, 18)},
 }
 
-function Library:SetTheme(themeName)
-    local theme = self.Themes[themeName]
+function Library:SetTheme(name)
+    local theme = self.Themes[name]
     if not theme then return false end
     
     self.Config.Theme.Accent = theme.Accent
@@ -170,153 +97,129 @@ function Library:SetTheme(themeName)
     
     for _, obj in pairs(self.ThemeObjects) do
         if obj and obj.Parent then
-            local t = obj:GetAttribute("ThemeType")
-            if t == "Accent" then obj.BackgroundColor3 = theme.Accent
-            elseif t == "Background" then obj.BackgroundColor3 = theme.Background
-            elseif t == "SecondaryBG" then obj.BackgroundColor3 = theme.SecondaryBG
-            elseif t == "TertiaryBG" then obj.BackgroundColor3 = theme.TertiaryBG
-            elseif t == "AccentText" then obj.TextColor3 = theme.Accent
-            elseif t == "AccentImage" then obj.ImageColor3 = theme.Accent
-            elseif t == "AccentStroke" then obj.Color = theme.Accent
+            local t = obj:GetAttribute("T")
+            if t == "A" then obj.BackgroundColor3 = theme.Accent
+            elseif t == "B" then obj.BackgroundColor3 = theme.Background
+            elseif t == "S" then obj.BackgroundColor3 = theme.SecondaryBG
+            elseif t == "T" then obj.BackgroundColor3 = theme.TertiaryBG
+            elseif t == "AT" then obj.TextColor3 = theme.Accent
+            elseif t == "AI" then obj.ImageColor3 = theme.Accent
+            elseif t == "AS" then obj.Color = theme.Accent
             end
         end
     end
-    
     return true
 end
 
-function Library:RegisterTheme(obj, type)
-    obj:SetAttribute("ThemeType", type)
+function Library:Reg(obj, type)
+    obj:SetAttribute("T", type)
     table.insert(self.ThemeObjects, obj)
 end
 
 function Library:GetThemeNames()
-    local names = {}
-    for name in pairs(self.Themes) do
-        table.insert(names, name)
-    end
-    table.sort(names)
-    return names
+    local n = {}
+    for name in pairs(self.Themes) do table.insert(n, name) end
+    table.sort(n)
+    return n
 end
 
 -- ════════════════════════════════════════════════════════
 -- UTILITIES
 -- ════════════════════════════════════════════════════════
 
-local Utility = {}
+local U = {}
 
-function Utility:Tween(obj, props, time, style, dir)
+function U:Tween(obj, props, time, style, dir)
     if not obj or not obj.Parent then return end
-    
     if not Library.Config.UI.Animations then
         for k, v in pairs(props) do obj[k] = v end
         return
     end
     
-    local tween = Services.TweenService:Create(
-        obj,
-        TweenInfo.new(time or 0.2, style or Enum.EasingStyle.Quart, dir or Enum.EasingDirection.Out),
-        props
-    )
+    local tween = Services.TweenService:Create(obj, TweenInfo.new(time or 0.25, style or Enum.EasingStyle.Quart, dir or Enum.EasingDirection.Out), props)
     tween:Play()
     return tween
 end
 
-function Utility:MakeDraggable(gui, handle)
+function U:Drag(gui, handle)
     handle = handle or gui
-    local dragging, dragInput, dragStart, startPos
+    local drag, input, start, pos
     
-    handle.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = gui.Position
-            
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                end
+    handle.InputBegan:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
+            drag = true
+            start = inp.Position
+            pos = gui.Position
+            inp.Changed:Connect(function()
+                if inp.UserInputState == Enum.UserInputState.End then drag = false end
             end)
         end
     end)
     
-    handle.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
+    handle.InputChanged:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseMovement or inp.UserInputType == Enum.UserInputType.Touch then
+            input = inp
         end
     end)
     
-    Services.UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            local delta = input.Position - dragStart
-            gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    Services.UserInputService.InputChanged:Connect(function(inp)
+        if inp == input and drag then
+            local delta = inp.Position - start
+            gui.Position = UDim2.new(pos.X.Scale, pos.X.Offset + delta.X, pos.Y.Scale, pos.Y.Offset + delta.Y)
         end
     end)
 end
 
-function Utility:Create(class, props)
+function U:New(class, props)
     local obj = Instance.new(class)
     for k, v in pairs(props) do
-        if k ~= "Parent" then
-            obj[k] = v
-        end
+        if k ~= "Parent" then obj[k] = v end
     end
     obj.Parent = props.Parent
     return obj
 end
 
-function Utility:Corner(parent, radius)
-    return Utility:Create("UICorner", {CornerRadius = UDim.new(0, radius or 8), Parent = parent})
-end
+function U:Corner(p, r) return U:New("UICorner", {CornerRadius = UDim.new(0, r or 8), Parent = p}) end
+function U:Stroke(p, c, t, tr) return U:New("UIStroke", {Color = c or Library.Config.Theme.Border, Thickness = t or 1, Transparency = tr or 0.5, ApplyStrokeMode = Enum.ApplyStrokeMode.Border, Parent = p}) end
 
-function Utility:Stroke(parent, color, thickness, transparency)
-    return Utility:Create("UIStroke", {
-        Color = color or Library.Config.Theme.Border,
-        Thickness = thickness or 1,
-        Transparency = transparency or 0.5,
-        ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-        Parent = parent
-    })
-end
-
-function Utility:Shadow(parent, size)
-    return Utility:Create("ImageLabel", {
+function U:Shadow(p, s)
+    return U:New("ImageLabel", {
         Name = "Shadow",
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, -(size or 15), 0, -(size or 15)),
-        Size = UDim2.new(1, (size or 15) * 2, 1, (size or 15) * 2),
-        ZIndex = (parent.ZIndex or 1) - 1,
+        Position = UDim2.new(0, -(s or 15), 0, -(s or 15)),
+        Size = UDim2.new(1, (s or 15) * 2, 1, (s or 15) * 2),
+        ZIndex = (p.ZIndex or 1) - 1,
         Image = "rbxassetid://6015897843",
-        ImageColor3 = Library.Config.Theme.Shadow,
-        ImageTransparency = 0.4,
+        ImageColor3 = Library.Config.Theme.Border,
+        ImageTransparency = 0.6,
         ScaleType = Enum.ScaleType.Slice,
         SliceCenter = Rect.new(49, 49, 450, 450),
-        Parent = parent
+        Parent = p
     })
 end
 
-function Utility:Ripple(button)
-    button.ClipsDescendants = true
-    button.MouseButton1Click:Connect(function()
-        local ripple = Utility:Create("ImageLabel", {
+function U:Ripple(btn)
+    btn.ClipsDescendants = true
+    btn.MouseButton1Click:Connect(function()
+        local r = U:New("ImageLabel", {
             BackgroundTransparency = 1,
             Image = "rbxassetid://3570695787",
             ImageColor3 = Library.Config.Theme.Accent,
             ImageTransparency = 0.5,
-            ZIndex = button.ZIndex + 1,
+            ZIndex = btn.ZIndex + 1,
             Position = UDim2.new(0, 0, 0, 0),
             Size = UDim2.new(0, 0, 0, 0),
             AnchorPoint = Vector2.new(0.5, 0.5),
-            Parent = button
+            Parent = btn
         })
         
-        local mouse = Services.UserInputService:GetMouseLocation()
-        local pos = mouse - button.AbsolutePosition
-        ripple.Position = UDim2.new(0, pos.X, 0, pos.Y)
+        local m = Services.UserInputService:GetMouseLocation()
+        local p = m - btn.AbsolutePosition
+        r.Position = UDim2.new(0, p.X, 0, p.Y)
         
-        local size = math.max(button.AbsoluteSize.X, button.AbsoluteSize.Y) * 2
-        Utility:Tween(ripple, {Size = UDim2.new(0, size, 0, size), ImageTransparency = 1}, 0.5)
-        task.delay(0.5, function() ripple:Destroy() end)
+        local sz = math.max(btn.AbsoluteSize.X, btn.AbsoluteSize.Y) * 2.5
+        U:Tween(r, {Size = UDim2.new(0, sz, 0, sz), ImageTransparency = 1}, 0.6)
+        task.delay(0.6, function() r:Destroy() end)
     end)
 end
 
@@ -327,9 +230,7 @@ end
 function Library:SaveConfig(name)
     name = name or "Config"
     pcall(function()
-        if not isfolder(self.Config.ConfigFolder) then
-            makefolder(self.Config.ConfigFolder)
-        end
+        if not isfolder(self.Config.ConfigFolder) then makefolder(self.Config.ConfigFolder) end
         writefile(self.Config.ConfigFolder .. "/" .. name .. ".json", Services.HttpService:JSONEncode({
             Version = self.Version,
             Flags = self.Flags,
@@ -340,65 +241,52 @@ end
 
 function Library:LoadConfig(name)
     name = name or "Config"
-    local success, data = pcall(function()
+    local s, d = pcall(function()
         return Services.HttpService:JSONDecode(readfile(self.Config.ConfigFolder .. "/" .. name .. ".json"))
     end)
     
-    if success and data then
-        for flag, value in pairs(data.Flags or {}) do
-            if self.Options[flag] then
-                pcall(function() self.Options[flag]:Set(value) end)
-            end
+    if s and d then
+        for flag, val in pairs(d.Flags or {}) do
+            if self.Options[flag] then pcall(function() self.Options[flag]:Set(val) end) end
         end
-        self.Flags = data.Flags or {}
+        self.Flags = d.Flags or {}
         return true
     end
     return false
 end
 
 function Library:GetConfigs()
-    local configs = {}
+    local c = {}
     pcall(function()
-        if not isfolder(self.Config.ConfigFolder) then
-            makefolder(self.Config.ConfigFolder)
-        end
+        if not isfolder(self.Config.ConfigFolder) then makefolder(self.Config.ConfigFolder) end
         for _, file in ipairs(listfiles(self.Config.ConfigFolder)) do
             if file:match("%.json$") then
-                local name = file:match("([^/\```+)%.json$")
-                if name then table.insert(configs, name) end
+                local n = file:match("([^/\```+)%.json$")
+                if n then table.insert(c, n) end
             end
         end
     end)
-    return configs
+    return c
 end
 
 function Library:DeleteConfig(name)
-    return pcall(function()
-        delfile(self.Config.ConfigFolder .. "/" .. name .. ".json")
-    end)
+    return pcall(function() delfile(self.Config.ConfigFolder .. "/" .. name .. ".json") end)
 end
 
 -- ════════════════════════════════════════════════════════
 -- CREATE WINDOW
 -- ════════════════════════════════════════════════════════
 
-function Library:CreateWindow(config)
-    config = config or {}
+function Library:CreateWindow(cfg)
+    cfg = cfg or {}
     
-    -- Settings
-    local title = config.Title or "UI Library"
-    local subtitle = config.Subtitle or "v" .. self.Version
-    local keybind = config.Keybind or Enum.KeyCode.RightControl
-    local icon = config.Icon or "rbxassetid://11963374911"
-    local showMax = config.ShowMaximize ~= false
+    local title = cfg.Title or "UI Library"
+    local subtitle = cfg.Subtitle or "v" .. self.Version
+    local keybind = cfg.Keybind or Enum.KeyCode.RightControl
+    local icon = cfg.Icon or "rbxassetid://11963374911"
+    local showMax = cfg.ShowMaximize ~= false
     
-    -- Size
-    local vp = workspace.CurrentCamera.ViewportSize
-    local w = IsMobile and math.clamp(vp.X * 0.95, 340, 500) or math.clamp(vp.X * 0.5, 600, 800)
-    local h = IsMobile and math.clamp(vp.Y * 0.88, 480, 750) or math.clamp(vp.Y * 0.7, 500, 700)
-    
-    -- GUI
-    local gui = Utility:Create("ScreenGui", {
+    local gui = U:New("ScreenGui", {
         Name = "UILib",
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         ResetOnSpawn = false,
@@ -407,8 +295,11 @@ function Library:CreateWindow(config)
         Parent = gethui and gethui() or Services.CoreGui
     })
     
-    -- Minimize Box
-    local miniBox = Utility:Create("Frame", {
+    -- ════════════════════════════════════════════════════════
+    -- MINIMIZE BOX
+    -- ════════════════════════════════════════════════════════
+    
+    local miniBox = U:New("Frame", {
         Name = "MiniBox",
         BackgroundColor3 = Library.Config.Theme.SecondaryBG,
         BorderSizePixel = 0,
@@ -419,51 +310,54 @@ function Library:CreateWindow(config)
         Parent = gui
     })
     
-    Library:RegisterTheme(miniBox, "SecondaryBG")
-    Utility:Corner(miniBox, 16)
-    Utility:Shadow(miniBox, 20)
-    local miniStroke = Utility:Stroke(miniBox, Library.Config.Theme.Accent, 2, 0.3)
-    Library:RegisterTheme(miniStroke, "AccentStroke")
-    Utility:MakeDraggable(miniBox)
+    Library:Reg(miniBox, "S")
+    U:Corner(miniBox, 16)
+    U:Shadow(miniBox, 20)
+    local miniStroke = U:Stroke(miniBox, Library.Config.Theme.Accent, 2, 0.3)
+    Library:Reg(miniStroke, "AS")
+    U:Drag(miniBox)
     
-    local miniIcon = Utility:Create("ImageLabel", {
+    local miniIcon = U:New("ImageLabel", {
         BackgroundTransparency = 1,
         Position = UDim2.new(0.5, 0, 0.5, 0),
-        Size = UDim2.new(0, 50, 0, 50),
+        Size = UDim2.new(0.6, 0, 0.6, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
         Image = icon,
         ImageColor3 = Library.Config.Theme.Accent,
         Parent = miniBox
     })
     
-    Library:RegisterTheme(miniIcon, "AccentImage")
+    Library:Reg(miniIcon, "AI")
     
-    -- Double Click to Restore
-    local clicks = 0
-    local lastClick = 0
-    miniBox.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+    local MiniBox = {}
+    function MiniBox:SetIcon(img) miniIcon.Image = img end
+    function MiniBox:SetColor(color) miniBox.BackgroundColor3 = color end
+    function MiniBox:SetSize(size) U:Tween(miniBox, {Size = UDim2.new(0, size, 0, size)}, 0.3, Enum.EasingStyle.Back) end
+    function MiniBox:SetIconSize(scale) miniIcon.Size = UDim2.new(scale, 0, scale, 0) end
+    
+    local clicks, lastClick = 0, 0
+    miniBox.InputBegan:Connect(function(inp)
+        if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
             local now = tick()
-            if now - lastClick < 0.3 then
-                clicks = clicks + 1
-            else
-                clicks = 1
-            end
+            clicks = (now - lastClick < 0.3) and clicks + 1 or 1
             lastClick = now
             
             if clicks == 2 then
                 clicks = 0
-                Utility:Tween(miniBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+                U:Tween(miniBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
                 task.wait(0.25)
                 miniBox.Visible = false
                 main.Visible = true
-                Utility:Tween(main, {Size = UDim2.new(0, w, 0, h)}, 0.4, Enum.EasingStyle.Quart)
+                U:Tween(main, {Size = UDim2.new(0.35, 0, 0.5, 0)}, 0.4, Enum.EasingStyle.Quart)
             end
         end
     end)
     
-    -- Main Frame
-    local main = Utility:Create("Frame", {
+    -- ════════════════════════════════════════════════════════
+    -- MAIN WINDOW
+    -- ════════════════════════════════════════════════════════
+    
+    local main = U:New("Frame", {
         Name = "Main",
         BackgroundTransparency = 1,
         Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -472,7 +366,16 @@ function Library:CreateWindow(config)
         Parent = gui
     })
     
-    local frame = Utility:Create("Frame", {
+    local uiScale = U:New("UIScale", {Scale = 1, Parent = main})
+    
+    local cam = workspace.CurrentCamera
+    local function updateScale()
+        uiScale.Scale = math.clamp(cam.ViewportSize.X / 1920, 0.5, 1.5)
+    end
+    updateScale()
+    cam:GetPropertyChangedSignal("ViewportSize"):Connect(updateScale)
+    
+    local frame = U:New("Frame", {
         BackgroundColor3 = Library.Config.Theme.Background,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
@@ -480,24 +383,29 @@ function Library:CreateWindow(config)
         Parent = main
     })
     
-    Library:RegisterTheme(frame, "Background")
-    Utility:Corner(frame, 14)
-    Utility:Shadow(main, 25)
-    local frameStroke = Utility:Stroke(frame, Library.Config.Theme.Accent, 2, 0.4)
-    Library:RegisterTheme(frameStroke, "AccentStroke")
+    Library:Reg(frame, "B")
+    U:Corner(frame, 14)
+    U:Shadow(main, 25)
+    local frameStroke = U:Stroke(frame, Library.Config.Theme.Accent, 2, 0.4)
+    Library:Reg(frameStroke, "AS")
     
-    -- Header
-    local header = Utility:Create("Frame", {
+    U:New("UIAspectRatioConstraint", {AspectRatio = 1.6, Parent = main})
+    
+    -- ════════════════════════════════════════════════════════
+    -- HEADER
+    -- ════════════════════════════════════════════════════════
+    
+    local header = U:New("Frame", {
         BackgroundColor3 = Library.Config.Theme.SecondaryBG,
         BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0, 52),
+        Size = UDim2.new(1, 0, 0.1, 0),
         Parent = frame
     })
     
-    Library:RegisterTheme(header, "SecondaryBG")
-    Utility:Corner(header, 14)
+    Library:Reg(header, "S")
+    U:Corner(header, 14)
     
-    local headerLine = Utility:Create("Frame", {
+    local headerLine = U:New("Frame", {
         BackgroundColor3 = Library.Config.Theme.Accent,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 1, -3),
@@ -505,283 +413,260 @@ function Library:CreateWindow(config)
         Parent = header
     })
     
-    Library:RegisterTheme(headerLine, "Accent")
+    Library:Reg(headerLine, "A")
     
-    Utility:Create("TextLabel", {
+    U:New("TextLabel", {
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, 18, 0, 8),
-        Size = UDim2.new(0.5, 0, 0, 22),
+        Position = UDim2.new(0.03, 0, 0.15, 0),
+        Size = UDim2.new(0.5, 0, 0.4, 0),
         Font = Enum.Font.GothamBold,
         Text = title,
         TextColor3 = Library.Config.Theme.Text,
-        TextSize = 16,
+        TextScaled = true,
         TextXAlignment = Enum.TextXAlignment.Left,
-        TextTruncate = Enum.TextTruncate.AtEnd,
         Parent = header
     })
     
-    Utility:Create("TextLabel", {
+    U:New("TextLabel", {
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, 18, 0, 30),
-        Size = UDim2.new(0.5, 0, 0, 16),
+        Position = UDim2.new(0.03, 0, 0.6, 0),
+        Size = UDim2.new(0.5, 0, 0.3, 0),
         Font = Enum.Font.Gotham,
         Text = subtitle,
         TextColor3 = Library.Config.Theme.TextDark,
-        TextSize = 12,
+        TextScaled = true,
         TextXAlignment = Enum.TextXAlignment.Left,
         Parent = header
     })
     
-    -- Buttons
-    local btnSize = 32
-    local btnGap = 8
-    local btnX = 12
+    -- ════════════════════════════════════════════════════════
+    -- HEADER BUTTONS
+    -- ════════════════════════════════════════════════════════
     
-    -- Maximize Button
+    local btnSize = 0.06
+    local btnGap = 0.015
     local isMax = false
-    local normalW, normalH = w, h
     
     if showMax then
-        local maxBtn = Utility:Create("TextButton", {
+        local maxBtn = U:New("TextButton", {
             BackgroundColor3 = Library.Config.Theme.TertiaryBG,
             BorderSizePixel = 0,
-            Position = UDim2.new(1, -(btnSize * 3 + btnGap * 2 + btnX), 0.5, 0),
-            Size = UDim2.new(0, btnSize, 0, btnSize),
+            Position = UDim2.new(1 - (btnSize * 3 + btnGap * 2 + 0.02), 0, 0.5, 0),
+            Size = UDim2.new(btnSize, 0, 0.6, 0),
             AnchorPoint = Vector2.new(0, 0.5),
             Font = Enum.Font.GothamBold,
             Text = "□",
             TextColor3 = Library.Config.Theme.Text,
-            TextSize = 18,
+            TextScaled = true,
             AutoButtonColor = false,
             Parent = header
         })
         
-        Library:RegisterTheme(maxBtn, "TertiaryBG")
-        Utility:Corner(maxBtn, 8)
+        Library:Reg(maxBtn, "T")
+        U:Corner(maxBtn, 8)
         
         maxBtn.MouseButton1Click:Connect(function()
             isMax = not isMax
-            if isMax then
-                normalW, normalH = main.Size.X.Offset, main.Size.Y.Offset
-                local maxW, maxH = vp.X - 40, vp.Y - 40
-                Utility:Tween(main, {Size = UDim2.new(0, maxW, 0, maxH)}, 0.3)
-                maxBtn.Text = "❐"
-            else
-                Utility:Tween(main, {Size = UDim2.new(0, normalW, 0, normalH)}, 0.3)
-                maxBtn.Text = "□"
-            end
+            U:Tween(main, {Size = isMax and UDim2.new(0.9, 0, 0.9, 0) or UDim2.new(0.35, 0, 0.5, 0)}, 0.3)
+            maxBtn.Text = isMax and "❐" or "□"
         end)
         
-        maxBtn.MouseEnter:Connect(function()
-            Utility:Tween(maxBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2)
-        end)
-        
-        maxBtn.MouseLeave:Connect(function()
-            Utility:Tween(maxBtn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.2)
-        end)
+        maxBtn.MouseEnter:Connect(function() U:Tween(maxBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2) end)
+        maxBtn.MouseLeave:Connect(function() U:Tween(maxBtn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.2) end)
     end
     
-    -- Minimize Button
-    local minBtn = Utility:Create("TextButton", {
+    local minBtn = U:New("TextButton", {
         BackgroundColor3 = Library.Config.Theme.TertiaryBG,
         BorderSizePixel = 0,
-        Position = UDim2.new(1, -(btnSize * 2 + btnGap + btnX), 0.5, 0),
-        Size = UDim2.new(0, btnSize, 0, btnSize),
+        Position = UDim2.new(1 - (btnSize * 2 + btnGap + 0.02), 0, 0.5, 0),
+        Size = UDim2.new(btnSize, 0, 0.6, 0),
         AnchorPoint = Vector2.new(0, 0.5),
         Font = Enum.Font.GothamBold,
         Text = "─",
         TextColor3 = Library.Config.Theme.Text,
-        TextSize = 16,
+        TextScaled = true,
         AutoButtonColor = false,
         Parent = header
     })
     
-    Library:RegisterTheme(minBtn, "TertiaryBG")
-    Utility:Corner(minBtn, 8)
+    Library:Reg(minBtn, "T")
+    U:Corner(minBtn, 8)
     
     minBtn.MouseButton1Click:Connect(function()
-        Utility:Tween(main, {Size = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+        U:Tween(main, {Size = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
         task.wait(0.25)
         main.Visible = false
         miniBox.Visible = true
-        Utility:Tween(miniBox, {Size = UDim2.new(0, 90, 0, 90)}, 0.35, Enum.EasingStyle.Quart)
+        U:Tween(miniBox, {Size = UDim2.new(0, 90, 0, 90)}, 0.35, Enum.EasingStyle.Back)
     end)
     
-    minBtn.MouseEnter:Connect(function()
-        Utility:Tween(minBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2)
-    end)
+    minBtn.MouseEnter:Connect(function() U:Tween(minBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2) end)
+    minBtn.MouseLeave:Connect(function() U:Tween(minBtn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.2) end)
     
-    minBtn.MouseLeave:Connect(function()
-        Utility:Tween(minBtn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.2)
-    end)
-    
-    -- Close Button
-    local closeBtn = Utility:Create("TextButton", {
+    local closeBtn = U:New("TextButton", {
         BackgroundColor3 = Color3.fromRGB(231, 76, 60),
         BorderSizePixel = 0,
-        Position = UDim2.new(1, -(btnSize + btnX), 0.5, 0),
-        Size = UDim2.new(0, btnSize, 0, btnSize),
+        Position = UDim2.new(1 - (btnSize + 0.02), 0, 0.5, 0),
+        Size = UDim2.new(btnSize, 0, 0.6, 0),
         AnchorPoint = Vector2.new(0, 0.5),
         Font = Enum.Font.GothamBold,
         Text = "×",
         TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 20,
+        TextScaled = true,
         AutoButtonColor = false,
         Parent = header
     })
     
-    Utility:Corner(closeBtn, 8)
+    U:Corner(closeBtn, 8)
     
     closeBtn.MouseButton1Click:Connect(function()
-        Utility:Tween(main, {Size = UDim2.new(0, 0, 0, 0)}, 0.25)
+        U:Tween(main, {Size = UDim2.new(0, 0, 0, 0)}, 0.25)
         task.wait(0.3)
         gui:Destroy()
     end)
     
-    closeBtn.MouseEnter:Connect(function()
-        Utility:Tween(closeBtn, {BackgroundColor3 = Color3.fromRGB(255, 100, 100)}, 0.2)
-    end)
+    closeBtn.MouseEnter:Connect(function() U:Tween(closeBtn, {BackgroundColor3 = Color3.fromRGB(255, 100, 100)}, 0.2) end)
+    closeBtn.MouseLeave:Connect(function() U:Tween(closeBtn, {BackgroundColor3 = Color3.fromRGB(231, 76, 60)}, 0.2) end)
     
-    closeBtn.MouseLeave:Connect(function()
-        Utility:Tween(closeBtn, {BackgroundColor3 = Color3.fromRGB(231, 76, 60)}, 0.2)
-    end)
+    U:Drag(main, header)
     
-    Utility:MakeDraggable(main, header)
+    -- ════════════════════════════════════════════════════════
+    -- TAB CONTAINER
+    -- ════════════════════════════════════════════════════════
     
-    -- Tab Container
-    local tabW = IsMobile and 70 or 180
+    local tabW = 0.25
     
-    local tabContainer = Utility:Create("ScrollingFrame", {
+    local tabContainer = U:New("ScrollingFrame", {
         BackgroundColor3 = Library.Config.Theme.SecondaryBG,
         BorderSizePixel = 0,
-        Position = UDim2.new(0, 0, 0, 52),
-        Size = UDim2.new(0, tabW, 1, -52),
+        Position = UDim2.new(0, 0, 0.1, 0),
+        Size = UDim2.new(tabW, 0, 0.9, 0),
         CanvasSize = UDim2.new(0, 0, 0, 0),
-        ScrollBarThickness = 5,
+        ScrollBarThickness = 4,
         ScrollBarImageColor3 = Library.Config.Theme.Accent,
         Parent = frame
     })
     
-    Library:RegisterTheme(tabContainer, "SecondaryBG")
+    Library:Reg(tabContainer, "S")
     
-    local tabList = Utility:Create("UIListLayout", {
+    local tabList = U:New("UIListLayout", {
         SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 8),
+        Padding = UDim.new(0.02, 0),
         Parent = tabContainer
     })
     
-    Utility:Create("UIPadding", {
-        PaddingTop = UDim.new(0, 12),
-        PaddingLeft = UDim.new(0, 10),
-        PaddingRight = UDim.new(0, 10),
-        PaddingBottom = UDim.new(0, 12),
+    U:New("UIPadding", {
+        PaddingTop = UDim.new(0.02, 0),
+        PaddingLeft = UDim.new(0.05, 0),
+        PaddingRight = UDim.new(0.05, 0),
+        PaddingBottom = UDim.new(0.02, 0),
         Parent = tabContainer
     })
     
     tabList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        tabContainer.CanvasSize = UDim2.new(0, 0, 0, tabList.AbsoluteContentSize.Y + 24)
+        tabContainer.CanvasSize = UDim2.new(0, 0, 0, tabList.AbsoluteContentSize.Y + 20)
     end)
     
-    -- Content Container
-    local contentContainer = Utility:Create("Frame", {
+    local tabIndicator = U:New("Frame", {
+        BackgroundColor3 = Library.Config.Theme.Accent,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 0, 0),
+        Size = UDim2.new(1, 0, 0, 0),
+        ZIndex = 0,
+        Parent = tabContainer
+    })
+    
+    Library:Reg(tabIndicator, "A")
+    U:Corner(tabIndicator, 12)
+    
+    local contentContainer = U:New("Frame", {
         BackgroundTransparency = 1,
-        Position = UDim2.new(0, tabW, 0, 52),
-        Size = UDim2.new(1, -tabW, 1, -52),
+        Position = UDim2.new(tabW, 0, 0.1, 0),
+        Size = UDim2.new(1 - tabW, 0, 0.9, 0),
         Parent = frame
     })
     
-    -- Window Object
     local Window = {
         Tabs = {},
         CurrentTab = nil,
         Flags = Library.Flags,
         Options = Library.Options,
+        MiniBox = MiniBox,
     }
     
-    function Window:SetIcon(img)
-        miniIcon.Image = img
-    end
+    function Window:SetIcon(img) miniIcon.Image = img end
     
+    -- ════════════════════════════════════════════════════════
     -- CREATE TAB
+    -- ════════════════════════════════════════════════════════
+    
     function Window:CreateTab(cfg)
         if type(cfg) == "string" then cfg = {Name = cfg} end
         
         local tabName = cfg.Name or "Tab"
         local tabIcon = cfg.Icon or "•"
         
-        -- Tab Button
-        local tabBtn = Utility:Create("TextButton", {
+        local tabBtn = U:New("TextButton", {
             BackgroundColor3 = Library.Config.Theme.TertiaryBG,
             BorderSizePixel = 0,
-            Size = UDim2.new(1, 0, 0, IsMobile and 60 or 50),
+            Size = UDim2.new(1, 0, 0.1, 0),
             Text = "",
             AutoButtonColor = false,
+            ZIndex = 1,
             Parent = tabContainer
         })
         
-        Library:RegisterTheme(tabBtn, "TertiaryBG")
-        Utility:Corner(tabBtn, 12)
-        Utility:Ripple(tabBtn)
+        Library:Reg(tabBtn, "T")
+        U:Corner(tabBtn, 12)
+        U:Ripple(tabBtn)
         
-        local icon = Utility:Create("TextLabel", {
+        local icon = U:New("TextLabel", {
             BackgroundTransparency = 1,
-            Position = IsMobile and UDim2.new(0.5, 0, 0, 10) or UDim2.new(0, 15, 0.5, 0),
-            Size = IsMobile and UDim2.new(0, 30, 0, 25) or UDim2.new(0, 30, 0, 30),
-            AnchorPoint = IsMobile and Vector2.new(0.5, 0) or Vector2.new(0, 0.5),
+            Position = UDim2.new(0.15, 0, 0.5, 0),
+            Size = UDim2.new(0.25, 0, 0.5, 0),
+            AnchorPoint = Vector2.new(0, 0.5),
             Font = Enum.Font.GothamBold,
             Text = tabIcon,
             TextColor3 = Library.Config.Theme.TextDark,
-            TextSize = 20,
+            TextScaled = true,
             Parent = tabBtn
         })
         
-        local text = Utility:Create("TextLabel", {
+        local text = U:New("TextLabel", {
             BackgroundTransparency = 1,
-            Position = IsMobile and UDim2.new(0.5, 0, 0, 38) or UDim2.new(0, 50, 0.5, 0),
-            Size = IsMobile and UDim2.new(1, -10, 0, 18) or UDim2.new(1, -60, 0, 24),
-            AnchorPoint = IsMobile and Vector2.new(0.5, 0) or Vector2.new(0, 0.5),
+            Position = UDim2.new(0.45, 0, 0.5, 0),
+            Size = UDim2.new(0.5, 0, 0.4, 0),
+            AnchorPoint = Vector2.new(0, 0.5),
             Font = Enum.Font.GothamBold,
             Text = tabName,
             TextColor3 = Library.Config.Theme.TextDark,
-            TextSize = 14,
+            TextScaled = true,
             TextXAlignment = Enum.TextXAlignment.Left,
-            TextTruncate = Enum.TextTruncate.AtEnd,
             Parent = tabBtn
         })
         
-        local indicator = Utility:Create("Frame", {
-            BackgroundColor3 = Library.Config.Theme.Accent,
-            BorderSizePixel = 0,
-            Size = UDim2.new(0, 0, 1, 0),
-            Parent = tabBtn
-        })
-        
-        Library:RegisterTheme(indicator, "Accent")
-        Utility:Corner(indicator, 12)
-        
-        -- Tab Content
-        local tabContent = Utility:Create("ScrollingFrame", {
+        local tabContent = U:New("ScrollingFrame", {
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
             Size = UDim2.new(1, 0, 1, 0),
             CanvasSize = UDim2.new(0, 0, 0, 0),
-            ScrollBarThickness = 6,
+            ScrollBarThickness = 5,
             ScrollBarImageColor3 = Library.Config.Theme.Accent,
             Visible = false,
             Parent = contentContainer
         })
         
-        local contentList = Utility:Create("UIListLayout", {
+        local contentList = U:New("UIListLayout", {
             SortOrder = Enum.SortOrder.LayoutOrder,
-            Padding = UDim.new(0, 12),
+            Padding = UDim.new(0.025, 0),
             Parent = tabContent
         })
         
-        Utility:Create("UIPadding", {
-            PaddingTop = UDim.new(0, 15),
-            PaddingLeft = UDim.new(0, 15),
-            PaddingRight = UDim.new(0, 15),
-            PaddingBottom = UDim.new(0, 15),
+        U:New("UIPadding", {
+            PaddingTop = UDim.new(0.02, 0),
+            PaddingLeft = UDim.new(0.03, 0),
+            PaddingRight = UDim.new(0.03, 0),
+            PaddingBottom = UDim.new(0.02, 0),
             Parent = tabContent
         })
         
@@ -789,7 +674,6 @@ function Library:CreateWindow(config)
             tabContent.CanvasSize = UDim2.new(0, 0, 0, contentList.AbsoluteContentSize.Y + 30)
         end)
         
-        -- Tab Click
         tabBtn.MouseButton1Click:Connect(function()
             for _, tab in pairs(Window.Tabs) do
                 tab:Deactivate()
@@ -798,61 +682,64 @@ function Library:CreateWindow(config)
             tabContent.Visible = true
             Window.CurrentTab = tabName
             
-            Utility:Tween(tabBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2)
-            Utility:Tween(icon, {TextColor3 = Library.Config.Theme.Text}, 0.2)
-            Utility:Tween(text, {TextColor3 = Library.Config.Theme.Text}, 0.2)
-            Utility:Tween(indicator, {Size = UDim2.new(0, 5, 1, 0)}, 0.3, Enum.EasingStyle.Back)
+            local targetPos = tabBtn.Position
+            local targetSize = tabBtn.Size
+            
+            U:Tween(tabIndicator, {Position = targetPos, Size = targetSize}, 0.4, Enum.EasingStyle.Quint)
+            
+            U:Tween(tabBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.25)
+            U:Tween(icon, {TextColor3 = Library.Config.Theme.Text}, 0.25)
+            U:Tween(text, {TextColor3 = Library.Config.Theme.Text}, 0.25)
         end)
         
         tabBtn.MouseEnter:Connect(function()
             if Window.CurrentTab ~= tabName then
-                Utility:Tween(tabBtn, {BackgroundColor3 = Library.Config.Theme.SecondaryBG}, 0.15)
+                U:Tween(tabBtn, {BackgroundColor3 = Library.Config.Theme.SecondaryBG}, 0.15)
             end
         end)
         
         tabBtn.MouseLeave:Connect(function()
             if Window.CurrentTab ~= tabName then
-                Utility:Tween(tabBtn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.15)
+                U:Tween(tabBtn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.15)
             end
         end)
         
-        local Tab = {
-            Name = tabName,
-            Content = tabContent,
-        }
+        local Tab = {Name = tabName, Content = tabContent}
         
         function Tab:Deactivate()
             tabContent.Visible = false
-            Utility:Tween(tabBtn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.2)
-            Utility:Tween(icon, {TextColor3 = Library.Config.Theme.TextDark}, 0.2)
-            Utility:Tween(text, {TextColor3 = Library.Config.Theme.TextDark}, 0.2)
-            Utility:Tween(indicator, {Size = UDim2.new(0, 0, 1, 0)}, 0.2)
+            U:Tween(tabBtn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.2)
+            U:Tween(icon, {TextColor3 = Library.Config.Theme.TextDark}, 0.2)
+            U:Tween(text, {TextColor3 = Library.Config.Theme.TextDark}, 0.2)
         end
         
+        -- ════════════════════════════════════════════════════════
         -- ADD SECTION
+        -- ════════════════════════════════════════════════════════
+        
         function Tab:AddSection(name)
-            local section = Utility:Create("Frame", {
+            local section = U:New("Frame", {
                 BackgroundColor3 = Library.Config.Theme.SecondaryBG,
                 BorderSizePixel = 0,
-                Size = UDim2.new(1, 0, 0, 45),
+                Size = UDim2.new(1, 0, 0, 50),
                 AutomaticSize = Enum.AutomaticSize.Y,
                 Parent = tabContent
             })
             
-            Library:RegisterTheme(section, "SecondaryBG")
-            Utility:Corner(section, 12)
+            Library:Reg(section, "S")
+            U:Corner(section, 12)
             
-            local header = Utility:Create("Frame", {
+            local header = U:New("Frame", {
                 BackgroundColor3 = Library.Config.Theme.TertiaryBG,
                 BorderSizePixel = 0,
                 Size = UDim2.new(1, 0, 0, 45),
                 Parent = section
             })
             
-            Library:RegisterTheme(header, "TertiaryBG")
-            Utility:Corner(header, 12)
+            Library:Reg(header, "T")
+            U:Corner(header, 12)
             
-            local line = Utility:Create("Frame", {
+            local line = U:New("Frame", {
                 BackgroundColor3 = Library.Config.Theme.Accent,
                 BorderSizePixel = 0,
                 Position = UDim2.new(0, 0, 0, 43),
@@ -860,21 +747,21 @@ function Library:CreateWindow(config)
                 Parent = header
             })
             
-            Library:RegisterTheme(line, "Accent")
+            Library:Reg(line, "A")
             
-            Utility:Create("TextLabel", {
+            U:New("TextLabel", {
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, 15, 0, 0),
-                Size = UDim2.new(1, -30, 0, 45),
+                Position = UDim2.new(0.04, 0, 0, 0),
+                Size = UDim2.new(0.9, 0, 1, 0),
                 Font = Enum.Font.GothamBold,
                 Text = name,
                 TextColor3 = Library.Config.Theme.Text,
-                TextSize = 15,
+                TextScaled = true,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 Parent = header
             })
             
-            local content = Utility:Create("Frame", {
+            local content = U:New("Frame", {
                 BackgroundTransparency = 1,
                 Position = UDim2.new(0, 0, 0, 45),
                 Size = UDim2.new(1, 0, 1, -45),
@@ -882,65 +769,65 @@ function Library:CreateWindow(config)
                 Parent = section
             })
             
-            local list = Utility:Create("UIListLayout", {
+            local list = U:New("UIListLayout", {
                 SortOrder = Enum.SortOrder.LayoutOrder,
-                Padding = UDim.new(0, 10),
+                Padding = UDim.new(0.025, 0),
                 Parent = content
             })
             
-            Utility:Create("UIPadding", {
-                PaddingTop = UDim.new(0, 12),
-                PaddingLeft = UDim.new(0, 15),
-                PaddingRight = UDim.new(0, 15),
-                PaddingBottom = UDim.new(0, 15),
+            U:New("UIPadding", {
+                PaddingTop = UDim.new(0.03, 0),
+                PaddingLeft = UDim.new(0.04, 0),
+                PaddingRight = UDim.new(0.04, 0),
+                PaddingBottom = UDim.new(0.03, 0),
                 Parent = content
             })
             
             local Section = {}
             
+            -- ════════════════════════════════════════════════════════
             -- BUTTON
+            -- ════════════════════════════════════════════════════════
+            
             function Section:AddButton(cfg)
                 cfg = cfg or {}
                 local name = cfg.Name or "Button"
                 local callback = cfg.Callback or function() end
                 
-                local btn = Utility:Create("TextButton", {
+                local btn = U:New("TextButton", {
                     BackgroundColor3 = Library.Config.Theme.TertiaryBG,
                     BorderSizePixel = 0,
-                    Size = UDim2.new(1, 0, 0, 38),
+                    Size = UDim2.new(1, 0, 0, 40),
                     Text = "",
                     AutoButtonColor = false,
                     Parent = content
                 })
                 
-                Library:RegisterTheme(btn, "TertiaryBG")
-                Utility:Corner(btn, 10)
-                Utility:Ripple(btn)
+                Library:Reg(btn, "T")
+                U:Corner(btn, 10)
+                U:Ripple(btn)
                 
-                Utility:Create("TextLabel", {
+                U:New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Size = UDim2.new(1, -20, 1, 0),
-                    Position = UDim2.new(0, 10, 0, 0),
+                    Size = UDim2.new(0.95, 0, 1, 0),
+                    Position = UDim2.new(0.025, 0, 0, 0),
                     Font = Enum.Font.GothamSemibold,
                     Text = name,
                     TextColor3 = Library.Config.Theme.Text,
-                    TextSize = 14,
+                    TextScaled = true,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Parent = btn
                 })
                 
-                btn.MouseEnter:Connect(function()
-                    Utility:Tween(btn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2)
-                end)
-                
-                btn.MouseLeave:Connect(function()
-                    Utility:Tween(btn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.2)
-                end)
-                
+                btn.MouseEnter:Connect(function() U:Tween(btn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2) end)
+                btn.MouseLeave:Connect(function() U:Tween(btn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.2) end)
                 btn.MouseButton1Click:Connect(callback)
             end
             
+            -- ════════════════════════════════════════════════════════
             -- TOGGLE
+            -- ════════════════════════════════════════════════════════
+            
             function Section:AddToggle(cfg)
                 cfg = cfg or {}
                 local name = cfg.Name or "Toggle"
@@ -948,52 +835,52 @@ function Library:CreateWindow(config)
                 local callback = cfg.Callback or function() end
                 local flag = cfg.Flag
                 
-                local toggle = Utility:Create("Frame", {
+                local toggle = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.TertiaryBG,
                     BorderSizePixel = 0,
-                    Size = UDim2.new(1, 0, 0, 38),
+                    Size = UDim2.new(1, 0, 0, 40),
                     Parent = content
                 })
                 
-                Library:RegisterTheme(toggle, "TertiaryBG")
-                Utility:Corner(toggle, 10)
+                Library:Reg(toggle, "T")
+                U:Corner(toggle, 10)
                 
-                Utility:Create("TextLabel", {
+                U:New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 15, 0, 0),
-                    Size = UDim2.new(1, -70, 1, 0),
+                    Position = UDim2.new(0.04, 0, 0, 0),
+                    Size = UDim2.new(0.7, 0, 1, 0),
                     Font = Enum.Font.GothamSemibold,
                     Text = name,
                     TextColor3 = Library.Config.Theme.Text,
-                    TextSize = 14,
+                    TextScaled = true,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Parent = toggle
                 })
                 
-                local switch = Utility:Create("TextButton", {
+                local switch = U:New("TextButton", {
                     BackgroundColor3 = default and Library.Config.Theme.Accent or Library.Config.Theme.Background,
                     BorderSizePixel = 0,
-                    Position = UDim2.new(1, -50, 0.5, 0),
-                    Size = UDim2.new(0, 44, 0, 24),
+                    Position = UDim2.new(0.85, 0, 0.5, 0),
+                    Size = UDim2.new(0.12, 0, 0.6, 0),
                     AnchorPoint = Vector2.new(0, 0.5),
                     Text = "",
                     AutoButtonColor = false,
                     Parent = toggle
                 })
                 
-                if default then Library:RegisterTheme(switch, "Accent") end
-                Utility:Corner(switch, 20)
+                if default then Library:Reg(switch, "A") end
+                U:Corner(switch, 20)
                 
-                local circle = Utility:Create("Frame", {
+                local circle = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.Text,
                     BorderSizePixel = 0,
-                    Position = default and UDim2.new(1, -19, 0.5, 0) or UDim2.new(0, 4, 0.5, 0),
+                    Position = default and UDim2.new(1, -18, 0.5, 0) or UDim2.new(0, 4, 0.5, 0),
                     Size = UDim2.new(0, 16, 0, 16),
                     AnchorPoint = Vector2.new(0, 0.5),
                     Parent = switch
                 })
                 
-                Utility:Corner(circle, 20)
+                U:Corner(circle, 20)
                 
                 local toggled = default
                 
@@ -1002,8 +889,8 @@ function Library:CreateWindow(config)
                     Library.Options[flag] = {
                         Set = function(v)
                             toggled = v
-                            Utility:Tween(switch, {BackgroundColor3 = toggled and Library.Config.Theme.Accent or Library.Config.Theme.Background}, 0.2)
-                            Utility:Tween(circle, {Position = toggled and UDim2.new(1, -19, 0.5, 0) or UDim2.new(0, 4, 0.5, 0)}, 0.3, Enum.EasingStyle.Back)
+                            U:Tween(switch, {BackgroundColor3 = toggled and Library.Config.Theme.Accent or Library.Config.Theme.Background}, 0.2)
+                            U:Tween(circle, {Position = toggled and UDim2.new(1, -18, 0.5, 0) or UDim2.new(0, 4, 0.5, 0)}, 0.3, Enum.EasingStyle.Back)
                             callback(toggled)
                         end,
                         Get = function() return toggled end
@@ -1014,15 +901,18 @@ function Library:CreateWindow(config)
                     toggled = not toggled
                     if flag then Library.Flags[flag] = toggled end
                     
-                    Utility:Tween(switch, {BackgroundColor3 = toggled and Library.Config.Theme.Accent or Library.Config.Theme.Background}, 0.2)
-                    Utility:Tween(circle, {Position = toggled and UDim2.new(1, -19, 0.5, 0) or UDim2.new(0, 4, 0.5, 0)}, 0.3, Enum.EasingStyle.Back)
+                    U:Tween(switch, {BackgroundColor3 = toggled and Library.Config.Theme.Accent or Library.Config.Theme.Background}, 0.2)
+                    U:Tween(circle, {Position = toggled and UDim2.new(1, -18, 0.5, 0) or UDim2.new(0, 4, 0.5, 0)}, 0.3, Enum.EasingStyle.Back)
                     callback(toggled)
                 end)
                 
                 return Library.Options[flag] or {Set = function(v) end, Get = function() return toggled end}
             end
             
+            -- ════════════════════════════════════════════════════════
             -- SLIDER
+            -- ════════════════════════════════════════════════════════
+            
             function Section:AddSlider(cfg)
                 cfg = cfg or {}
                 local name = cfg.Name or "Slider"
@@ -1034,64 +924,64 @@ function Library:CreateWindow(config)
                 local flag = cfg.Flag
                 local suffix = cfg.Suffix or ""
                 
-                local slider = Utility:Create("Frame", {
+                local slider = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.TertiaryBG,
                     BorderSizePixel = 0,
-                    Size = UDim2.new(1, 0, 0, 58),
+                    Size = UDim2.new(1, 0, 0, 60),
                     Parent = content
                 })
                 
-                Library:RegisterTheme(slider, "TertiaryBG")
-                Utility:Corner(slider, 10)
+                Library:Reg(slider, "T")
+                U:Corner(slider, 10)
                 
-                Utility:Create("TextLabel", {
+                U:New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 15, 0, 10),
-                    Size = UDim2.new(0.6, 0, 0, 20),
+                    Position = UDim2.new(0.04, 0, 0.15, 0),
+                    Size = UDim2.new(0.6, 0, 0.3, 0),
                     Font = Enum.Font.GothamSemibold,
                     Text = name,
                     TextColor3 = Library.Config.Theme.Text,
-                    TextSize = 14,
+                    TextScaled = true,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Parent = slider
                 })
                 
-                local valueText = Utility:Create("TextLabel", {
+                local valueText = U:New("TextLabel", {
                     BackgroundColor3 = Library.Config.Theme.Background,
                     BorderSizePixel = 0,
-                    Position = UDim2.new(1, -60, 0, 10),
-                    Size = UDim2.new(0, 50, 0, 20),
+                    Position = UDim2.new(0.85, 0, 0.15, 0),
+                    Size = UDim2.new(0.12, 0, 0.3, 0),
                     Font = Enum.Font.GothamBold,
                     Text = tostring(default) .. suffix,
                     TextColor3 = Library.Config.Theme.Accent,
-                    TextSize = 13,
+                    TextScaled = true,
                     Parent = slider
                 })
                 
-                Library:RegisterTheme(valueText, "AccentText")
-                Utility:Corner(valueText, 6)
+                Library:Reg(valueText, "AT")
+                U:Corner(valueText, 6)
                 
-                local bar = Utility:Create("Frame", {
+                local bar = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.Background,
                     BorderSizePixel = 0,
-                    Position = UDim2.new(0, 15, 1, -18),
-                    Size = UDim2.new(1, -30, 0, 8),
+                    Position = UDim2.new(0.04, 0, 0.65, 0),
+                    Size = UDim2.new(0.92, 0, 0.15, 0),
                     Parent = slider
                 })
                 
-                Utility:Corner(bar, 10)
+                U:Corner(bar, 10)
                 
-                local fill = Utility:Create("Frame", {
+                local fill = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.Accent,
                     BorderSizePixel = 0,
                     Size = UDim2.new((default - min) / (max - min), 0, 1, 0),
                     Parent = bar
                 })
                 
-                Library:RegisterTheme(fill, "Accent")
-                Utility:Corner(fill, 10)
+                Library:Reg(fill, "A")
+                U:Corner(fill, 10)
                 
-                local dot = Utility:Create("Frame", {
+                local dot = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.Text,
                     BorderSizePixel = 0,
                     Position = UDim2.new((default - min) / (max - min), 0, 0.5, 0),
@@ -1100,7 +990,7 @@ function Library:CreateWindow(config)
                     Parent = bar
                 })
                 
-                Utility:Corner(dot, 20)
+                U:Corner(dot, 20)
                 
                 local dragging = false
                 
@@ -1137,14 +1027,14 @@ function Library:CreateWindow(config)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         dragging = true
                         update(input)
-                        Utility:Tween(dot, {Size = UDim2.new(0, 20, 0, 20)}, 0.2, Enum.EasingStyle.Back)
+                        U:Tween(dot, {Size = UDim2.new(0, 20, 0, 20)}, 0.2, Enum.EasingStyle.Back)
                     end
                 end)
                 
                 bar.InputEnded:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         dragging = false
-                        Utility:Tween(dot, {Size = UDim2.new(0, 16, 0, 16)}, 0.2)
+                        U:Tween(dot, {Size = UDim2.new(0, 16, 0, 16)}, 0.2)
                     end
                 end)
                 
@@ -1157,7 +1047,10 @@ function Library:CreateWindow(config)
                 return Library.Options[flag] or {Set = function(v) end, Get = function() return default end}
             end
             
+            -- ════════════════════════════════════════════════════════
             -- DROPDOWN
+            -- ════════════════════════════════════════════════════════
+            
             function Section:AddDropdown(cfg)
                 cfg = cfg or {}
                 local name = cfg.Name or "Dropdown"
@@ -1167,71 +1060,71 @@ function Library:CreateWindow(config)
                 local flag = cfg.Flag
                 local search = cfg.Search or false
                 
-                local dropdown = Utility:Create("Frame", {
+                local dropdown = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.TertiaryBG,
                     BorderSizePixel = 0,
-                    Size = UDim2.new(1, 0, 0, 38),
+                    Size = UDim2.new(1, 0, 0, 40),
                     ClipsDescendants = true,
                     Parent = content
                 })
                 
-                Library:RegisterTheme(dropdown, "TertiaryBG")
-                Utility:Corner(dropdown, 10)
+                Library:Reg(dropdown, "T")
+                U:Corner(dropdown, 10)
                 
-                Utility:Create("TextLabel", {
+                U:New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 15, 0, 0),
-                    Size = UDim2.new(0.4, 0, 0, 38),
+                    Position = UDim2.new(0.04, 0, 0, 0),
+                    Size = UDim2.new(0.4, 0, 1, 0),
                     Font = Enum.Font.GothamSemibold,
                     Text = name,
                     TextColor3 = Library.Config.Theme.Text,
-                    TextSize = 14,
+                    TextScaled = true,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Parent = dropdown
                 })
                 
-                local btn = Utility:Create("TextButton", {
+                local btn = U:New("TextButton", {
                     BackgroundColor3 = Library.Config.Theme.Background,
                     BorderSizePixel = 0,
-                    Position = UDim2.new(0.45, 0, 0, 9),
-                    Size = UDim2.new(0.5, -15, 0, 20),
+                    Position = UDim2.new(0.48, 0, 0.25, 0),
+                    Size = UDim2.new(0.48, 0, 0.5, 0),
                     Font = Enum.Font.Gotham,
                     Text = "  " .. default,
                     TextColor3 = Library.Config.Theme.Accent,
-                    TextSize = 13,
+                    TextScaled = true,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     AutoButtonColor = false,
                     TextTruncate = Enum.TextTruncate.AtEnd,
                     Parent = dropdown
                 })
                 
-                Library:RegisterTheme(btn, "AccentText")
-                Utility:Corner(btn, 8)
+                Library:Reg(btn, "AT")
+                U:Corner(btn, 8)
                 
-                local arrow = Utility:Create("TextLabel", {
+                local arrow = U:New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(1, -22, 0, 0),
-                    Size = UDim2.new(0, 20, 1, 0),
+                    Position = UDim2.new(1, -20, 0, 0),
+                    Size = UDim2.new(0, 18, 1, 0),
                     Font = Enum.Font.GothamBold,
                     Text = "▼",
                     TextColor3 = Library.Config.Theme.TextDark,
-                    TextSize = 10,
+                    TextScaled = true,
                     Parent = btn
                 })
                 
-                local listContainer = Utility:Create("Frame", {
+                local listContainer = U:New("Frame", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 10, 0, 42),
-                    Size = UDim2.new(1, -20, 0, 0),
+                    Position = UDim2.new(0.04, 0, 0, 45),
+                    Size = UDim2.new(0.92, 0, 0, 0),
                     Parent = dropdown
                 })
                 
                 local searchBox
                 if search then
-                    searchBox = Utility:Create("TextBox", {
+                    searchBox = U:New("TextBox", {
                         BackgroundColor3 = Library.Config.Theme.Background,
                         BorderSizePixel = 0,
-                        Size = UDim2.new(1, 0, 0, 28),
+                        Size = UDim2.new(1, 0, 0, 30),
                         Font = Enum.Font.Gotham,
                         PlaceholderText = "🔍 Search...",
                         PlaceholderColor3 = Library.Config.Theme.TextDark,
@@ -1242,14 +1135,14 @@ function Library:CreateWindow(config)
                         Parent = listContainer
                     })
                     
-                    Utility:Corner(searchBox, 7)
-                    Utility:Create("UIPadding", {PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10), Parent = searchBox})
+                    U:Corner(searchBox, 7)
+                    U:New("UIPadding", {PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10), Parent = searchBox})
                 end
                 
-                local list = Utility:Create("ScrollingFrame", {
+                local list = U:New("ScrollingFrame", {
                     BackgroundTransparency = 1,
                     BorderSizePixel = 0,
-                    Position = UDim2.new(0, 0, 0, search and 33 or 0),
+                    Position = UDim2.new(0, 0, 0, search and 35 or 0),
                     Size = UDim2.new(1, 0, 0, 0),
                     CanvasSize = UDim2.new(0, 0, 0, 0),
                     ScrollBarThickness = 4,
@@ -1257,7 +1150,7 @@ function Library:CreateWindow(config)
                     Parent = listContainer
                 })
                 
-                local listLayout = Utility:Create("UIListLayout", {
+                local listLayout = U:New("UIListLayout", {
                     SortOrder = Enum.SortOrder.LayoutOrder,
                     Padding = UDim.new(0, 5),
                     Parent = list
@@ -1295,7 +1188,7 @@ function Library:CreateWindow(config)
                 end
                 
                 local function createItem(itemName)
-                    local item = Utility:Create("TextButton", {
+                    local item = U:New("TextButton", {
                         Name = itemName,
                         BackgroundColor3 = Library.Config.Theme.Background,
                         BorderSizePixel = 0,
@@ -1310,14 +1203,14 @@ function Library:CreateWindow(config)
                         Parent = list
                     })
                     
-                    Utility:Corner(item, 7)
+                    U:Corner(item, 7)
                     
                     item.MouseEnter:Connect(function()
-                        Utility:Tween(item, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2)
+                        U:Tween(item, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2)
                     end)
                     
                     item.MouseLeave:Connect(function()
-                        Utility:Tween(item, {BackgroundColor3 = Library.Config.Theme.Background}, 0.2)
+                        U:Tween(item, {BackgroundColor3 = Library.Config.Theme.Background}, 0.2)
                     end)
                     
                     item.MouseButton1Click:Connect(function()
@@ -1327,8 +1220,8 @@ function Library:CreateWindow(config)
                         callback(itemName)
                         
                         expanded = false
-                        Utility:Tween(dropdown, {Size = UDim2.new(1, 0, 0, 38)}, 0.3, Enum.EasingStyle.Back)
-                        Utility:Tween(arrow, {Rotation = 0}, 0.3)
+                        U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, 40)}, 0.3, Enum.EasingStyle.Back)
+                        U:Tween(arrow, {Rotation = 0}, 0.3)
                     end)
                 end
                 
@@ -1357,92 +1250,25 @@ function Library:CreateWindow(config)
                         end
                         
                         local maxItems = math.min(count, 5)
-                        local searchH = search and 33 or 0
-                        local totalH = 38 + 14 + searchH + (maxItems * 33)
+                        local searchH = search and 35 or 0
+                        local totalH = 40 + 10 + searchH + (maxItems * 33)
                         
-                        Utility:Tween(dropdown, {Size = UDim2.new(1, 0, 0, totalH)}, 0.3, Enum.EasingStyle.Back)
-                        Utility:Tween(arrow, {Rotation = 180}, 0.3)
+                        U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, totalH)}, 0.3, Enum.EasingStyle.Back)
+                        U:Tween(arrow, {Rotation = 180}, 0.3)
                         list.Size = UDim2.new(1, 0, 0, maxItems * 33)
                     else
-                        Utility:Tween(dropdown, {Size = UDim2.new(1, 0, 0, 38)}, 0.3, Enum.EasingStyle.Back)
-                        Utility:Tween(arrow, {Rotation = 0}, 0.3)
+                        U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, 40)}, 0.3, Enum.EasingStyle.Back)
+                        U:Tween(arrow, {Rotation = 0}, 0.3)
                     end
                 end)
                 
                 return Library.Options[flag] or {Set = function(v) end, Get = function() return current end, Refresh = function() end}
             end
             
-            -- TEXTBOX
-            function Section:AddTextbox(cfg)
-                cfg = cfg or {}
-                local name = cfg.Name or "Textbox"
-                local default = cfg.Default or ""
-                local placeholder = cfg.Placeholder or "Enter..."
-                local callback = cfg.Callback or function() end
-                local flag = cfg.Flag
-                
-                local box = Utility:Create("Frame", {
-                    BackgroundColor3 = Library.Config.Theme.TertiaryBG,
-                    BorderSizePixel = 0,
-                    Size = UDim2.new(1, 0, 0, 38),
-                    Parent = content
-                })
-                
-                Library:RegisterTheme(box, "TertiaryBG")
-                Utility:Corner(box, 10)
-                
-                Utility:Create("TextLabel", {
-                    BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 15, 0, 0),
-                    Size = UDim2.new(0.35, 0, 1, 0),
-                    Font = Enum.Font.GothamSemibold,
-                    Text = name,
-                    TextColor3 = Library.Config.Theme.Text,
-                    TextSize = 14,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    Parent = box
-                })
-                
-                local input = Utility:Create("TextBox", {
-                    BackgroundColor3 = Library.Config.Theme.Background,
-                    BorderSizePixel = 0,
-                    Position = UDim2.new(0.4, 0, 0.5, 0),
-                    Size = UDim2.new(0.58, 0, 0, 22),
-                    AnchorPoint = Vector2.new(0, 0.5),
-                    Font = Enum.Font.Gotham,
-                    PlaceholderText = placeholder,
-                    PlaceholderColor3 = Library.Config.Theme.TextDark,
-                    Text = default,
-                    TextColor3 = Library.Config.Theme.Accent,
-                    TextSize = 13,
-                    ClearTextOnFocus = false,
-                    TextTruncate = Enum.TextTruncate.AtEnd,
-                    Parent = box
-                })
-                
-                Library:RegisterTheme(input, "AccentText")
-                Utility:Corner(input, 7)
-                Utility:Create("UIPadding", {PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10), Parent = input})
-                
-                if flag then
-                    Library.Flags[flag] = default
-                    Library.Options[flag] = {
-                        Set = function(v) input.Text = v end,
-                        Get = function() return input.Text end
-                    }
-                end
-                
-                input.FocusLost:Connect(function(enter)
-                    if enter then
-                        if flag then Library.Flags[flag] = input.Text end
-                        callback(input.Text)
-                    end
-                end)
-                
-                return Library.Options[flag] or {Set = function(v) end, Get = function() return input.Text end}
-            end
-            
+            -- ════════════════════════════════════════════════════════
             -- COLORPICKER
+            -- ════════════════════════════════════════════════════════
+            
             function Section:AddColorPicker(cfg)
                 cfg = cfg or {}
                 local name = cfg.Name or "Color"
@@ -1450,93 +1276,92 @@ function Library:CreateWindow(config)
                 local callback = cfg.Callback or function() end
                 local flag = cfg.Flag
                 
-                local picker = Utility:Create("Frame", {
+                local picker = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.TertiaryBG,
                     BorderSizePixel = 0,
-                    Size = UDim2.new(1, 0, 0, 38),
+                    Size = UDim2.new(1, 0, 0, 40),
                     ClipsDescendants = true,
                     Parent = content
                 })
                 
-                Library:RegisterTheme(picker, "TertiaryBG")
-                Utility:Corner(picker, 10)
+                Library:Reg(picker, "T")
+                U:Corner(picker, 10)
                 
-                Utility:Create("TextLabel", {
+                U:New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 15, 0, 0),
-                    Size = UDim2.new(0.7, 0, 0, 38),
+                    Position = UDim2.new(0.04, 0, 0, 0),
+                    Size = UDim2.new(0.7, 0, 1, 0),
                     Font = Enum.Font.GothamSemibold,
                     Text = name,
                     TextColor3 = Library.Config.Theme.Text,
-                    TextSize = 14,
+                    TextScaled = true,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Parent = picker
                 })
                 
-                local display = Utility:Create("TextButton", {
+                local display = U:New("TextButton", {
                     BackgroundColor3 = default,
                     BorderSizePixel = 0,
-                    Position = UDim2.new(1, -58, 0.5, 0),
-                    Size = UDim2.new(0, 48, 0, 22),
-                    AnchorPoint = Vector2.new(0, 0.5),
+                    Position = UDim2.new(0.82, 0, 0.25, 0),
+                    Size = UDim2.new(0.14, 0, 0.5, 0),
                     Text = "",
                     AutoButtonColor = false,
                     Parent = picker
                 })
                 
-                Utility:Corner(display, 7)
-                Utility:Stroke(display, Library.Config.Theme.Border, 2)
+                U:Corner(display, 7)
+                U:Stroke(display, Library.Config.Theme.Border, 2)
                 
-                local palette = Utility:Create("Frame", {
+                local palette = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.Background,
                     BorderSizePixel = 0,
-                    Position = UDim2.new(0, 10, 0, 42),
-                    Size = UDim2.new(1, -20, 0, 165),
+                    Position = UDim2.new(0.04, 0, 0, 45),
+                    Size = UDim2.new(0.92, 0, 0, 170),
                     Visible = false,
                     Parent = picker
                 })
                 
-                Utility:Corner(palette, 10)
+                U:Corner(palette, 10)
                 
-                local canvas = Utility:Create("ImageButton", {
+                local canvas = U:New("ImageButton", {
                     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                     BorderSizePixel = 0,
-                    Position = UDim2.new(0, 10, 0, 10),
-                    Size = UDim2.new(1, -90, 1, -20),
+                    Position = UDim2.new(0.05, 0, 0.05, 0),
+                    Size = UDim2.new(0.7, 0, 0.9, 0),
                     Image = "rbxassetid://4155801252",
                     AutoButtonColor = false,
                     Parent = palette
                 })
                 
-                Utility:Corner(canvas, 8)
+                U:Corner(canvas, 8)
                 
-                local hue = Utility:Create("ImageButton", {
+                local hue = U:New("ImageButton", {
                     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                     BorderSizePixel = 0,
-                    Position = UDim2.new(1, -72, 0, 10),
-                    Size = UDim2.new(0, 32, 1, -20),
+                    Position = UDim2.new(0.78, 0, 0.05, 0),
+                    Size = UDim2.new(0.1, 0, 0.9, 0),
                     Image = "rbxassetid://3641079629",
                     AutoButtonColor = false,
                     Parent = palette
                 })
                 
-                Utility:Corner(hue, 8)
+                U:Corner(hue, 8)
                 
-                local confirm = Utility:Create("TextButton", {
+                local confirm = U:New("TextButton", {
                     BackgroundColor3 = Library.Config.Theme.Accent,
                     BorderSizePixel = 0,
-                    Position = UDim2.new(1, -32, 0, 10),
-                    Size = UDim2.new(0, 22, 0, 22),
+                    Position = UDim2.new(0.9, 0, 0.05, 0),
+                    Size = UDim2.new(0.08, 0, 0.2, 0),
                     Font = Enum.Font.GothamBold,
                     Text = "✓",
                     TextColor3 = Library.Config.Theme.Text,
-                    TextSize = 14,
+                    TextScaled = true,
                     AutoButtonColor = false,
                     Parent = palette
                 })
                 
-                Library:RegisterTheme(confirm, "Accent")
-                Utility:Corner(confirm, 6)
+                Library:Reg(confirm, "A")
+                U:Corner(confirm, 6)
                 
                 local expanded = false
                 local h, s, v = default:ToHSV()
@@ -1597,19 +1422,94 @@ function Library:CreateWindow(config)
                 display.MouseButton1Click:Connect(function()
                     expanded = not expanded
                     palette.Visible = expanded
-                    Utility:Tween(picker, {Size = UDim2.new(1, 0, 0, expanded and 215 or 38)}, 0.3, Enum.EasingStyle.Back)
+                    U:Tween(picker, {Size = UDim2.new(1, 0, 0, expanded and 220 or 40)}, 0.3, Enum.EasingStyle.Back)
                 end)
                 
                 confirm.MouseButton1Click:Connect(function()
                     expanded = false
                     palette.Visible = false
-                    Utility:Tween(picker, {Size = UDim2.new(1, 0, 0, 38)}, 0.3, Enum.EasingStyle.Back)
+                    U:Tween(picker, {Size = UDim2.new(1, 0, 0, 40)}, 0.3, Enum.EasingStyle.Back)
                 end)
                 
                 return Library.Options[flag] or {Set = function(c) end, Get = function() return Color3.fromHSV(h, s, v) end}
             end
             
+            -- ════════════════════════════════════════════════════════
+            -- TEXTBOX
+            -- ════════════════════════════════════════════════════════
+            
+            function Section:AddTextbox(cfg)
+                cfg = cfg or {}
+                local name = cfg.Name or "Textbox"
+                local default = cfg.Default or ""
+                local placeholder = cfg.Placeholder or "Enter..."
+                local callback = cfg.Callback or function() end
+                local flag = cfg.Flag
+                
+                local box = U:New("Frame", {
+                    BackgroundColor3 = Library.Config.Theme.TertiaryBG,
+                    BorderSizePixel = 0,
+                    Size = UDim2.new(1, 0, 0, 40),
+                    Parent = content
+                })
+                
+                Library:Reg(box, "T")
+                U:Corner(box, 10)
+                
+                U:New("TextLabel", {
+                    BackgroundTransparency = 1,
+                    Position = UDim2.new(0.04, 0, 0, 0),
+                    Size = UDim2.new(0.38, 0, 1, 0),
+                    Font = Enum.Font.GothamSemibold,
+                    Text = name,
+                    TextColor3 = Library.Config.Theme.Text,
+                    TextScaled = true,
+                    TextXAlignment = Enum.TextXAlignment.Left,
+                    Parent = box
+                })
+                
+                local input = U:New("TextBox", {
+                    BackgroundColor3 = Library.Config.Theme.Background,
+                    BorderSizePixel = 0,
+                    Position = UDim2.new(0.46, 0, 0.25, 0),
+                    Size = UDim2.new(0.5, 0, 0.5, 0),
+                    Font = Enum.Font.Gotham,
+                    PlaceholderText = placeholder,
+                    PlaceholderColor3 = Library.Config.Theme.TextDark,
+                    Text = default,
+                    TextColor3 = Library.Config.Theme.Accent,
+                    TextScaled = true,
+                    ClearTextOnFocus = false,
+                    TextTruncate = Enum.TextTruncate.AtEnd,
+                    Parent = box
+                })
+                
+                Library:Reg(input, "AT")
+                U:Corner(input, 7)
+                U:New("UIPadding", {PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10), Parent = input})
+                
+                if flag then
+                    Library.Flags[flag] = default
+                    Library.Options[flag] = {
+                        Set = function(v) input.Text = v end,
+                        Get = function() return input.Text end
+                    }
+                end
+                
+                input.FocusLost:Connect(function(enter)
+                    if enter then
+                        if flag then Library.Flags[flag] = input.Text end
+                        callback(input.Text)
+                    end
+                end)
+                
+                return Library.Options[flag] or {Set = function(v) end, Get = function() return input.Text end}
+            end
+            
+            -- ════════════════════════════════════════════════════════
             -- KEYBIND
+            -- ════════════════════════════════════════════════════════
+            
             function Section:AddKeybind(cfg)
                 cfg = cfg or {}
                 local name = cfg.Name or "Keybind"
@@ -1618,44 +1518,43 @@ function Library:CreateWindow(config)
                 local flag = cfg.Flag
                 local mode = cfg.Mode or "Toggle"
                 
-                local keybind = Utility:Create("Frame", {
+                local keybind = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.TertiaryBG,
                     BorderSizePixel = 0,
-                    Size = UDim2.new(1, 0, 0, 38),
+                    Size = UDim2.new(1, 0, 0, 40),
                     Parent = content
                 })
                 
-                Library:RegisterTheme(keybind, "TertiaryBG")
-                Utility:Corner(keybind, 10)
+                Library:Reg(keybind, "T")
+                U:Corner(keybind, 10)
                 
-                Utility:Create("TextLabel", {
+                U:New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 15, 0, 0),
-                    Size = UDim2.new(0.6, 0, 0, 38),
+                    Position = UDim2.new(0.04, 0, 0, 0),
+                    Size = UDim2.new(0.6, 0, 1, 0),
                     Font = Enum.Font.GothamSemibold,
                     Text = name,
                     TextColor3 = Library.Config.Theme.Text,
-                    TextSize = 14,
+                    TextScaled = true,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Parent = keybind
                 })
                 
-                local keyBtn = Utility:Create("TextButton", {
+                local keyBtn = U:New("TextButton", {
                     BackgroundColor3 = Library.Config.Theme.Background,
                     BorderSizePixel = 0,
-                    Position = UDim2.new(1, -72, 0.5, 0),
-                    Size = UDim2.new(0, 62, 0, 22),
-                    AnchorPoint = Vector2.new(0, 0.5),
+                    Position = UDim2.new(0.73, 0, 0.25, 0),
+                    Size = UDim2.new(0.23, 0, 0.5, 0),
                     Font = Enum.Font.Gotham,
                     Text = default.Name,
                     TextColor3 = Library.Config.Theme.Accent,
-                    TextSize = 12,
+                    TextScaled = true,
                     AutoButtonColor = false,
                     Parent = keybind
                 })
                 
-                Library:RegisterTheme(keyBtn, "AccentText")
-                Utility:Corner(keyBtn, 7)
+                Library:Reg(keyBtn, "AT")
+                U:Corner(keyBtn, 7)
                 
                 local current = default
                 local listening = false
@@ -1675,7 +1574,7 @@ function Library:CreateWindow(config)
                 keyBtn.MouseButton1Click:Connect(function()
                     listening = true
                     keyBtn.Text = "..."
-                    Utility:Tween(keyBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2)
+                    U:Tween(keyBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2)
                 end)
                 
                 Services.UserInputService.InputBegan:Connect(function(input, gp)
@@ -1687,7 +1586,7 @@ function Library:CreateWindow(config)
                             keyBtn.Text = input.KeyCode.Name
                             listening = false
                             if flag then Library.Flags[flag] = current end
-                            Utility:Tween(keyBtn, {BackgroundColor3 = Library.Config.Theme.Background}, 0.2)
+                            U:Tween(keyBtn, {BackgroundColor3 = Library.Config.Theme.Background}, 0.2)
                         end
                     elseif input.KeyCode == current then
                         if mode == "Toggle" then
@@ -1711,15 +1610,18 @@ function Library:CreateWindow(config)
                 return Library.Options[flag] or {Set = function(k) end, Get = function() return current end}
             end
             
+            -- ════════════════════════════════════════════════════════
             -- LABEL
+            -- ════════════════════════════════════════════════════════
+            
             function Section:AddLabel(text)
-                local label = Utility:Create("TextLabel", {
+                local label = U:New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Size = UDim2.new(1, 0, 0, 22),
+                    Size = UDim2.new(1, 0, 0, 24),
                     Font = Enum.Font.Gotham,
                     Text = text or "Label",
                     TextColor3 = Library.Config.Theme.TextDark,
-                    TextSize = 13,
+                    TextScaled = true,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     TextWrapped = true,
                     AutomaticSize = Enum.AutomaticSize.Y,
@@ -1729,34 +1631,37 @@ function Library:CreateWindow(config)
                 return {Set = function(t) label.Text = t end}
             end
             
+            -- ════════════════════════════════════════════════════════
             -- PARAGRAPH
+            -- ════════════════════════════════════════════════════════
+            
             function Section:AddParagraph(title, text)
-                local para = Utility:Create("Frame", {
+                local para = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.Background,
                     BorderSizePixel = 0,
-                    Size = UDim2.new(1, 0, 0, 65),
+                    Size = UDim2.new(1, 0, 0, 70),
                     AutomaticSize = Enum.AutomaticSize.Y,
                     Parent = content
                 })
                 
-                Utility:Corner(para, 10)
+                U:Corner(para, 10)
                 
-                local paraTitle = Utility:Create("TextLabel", {
+                local paraTitle = U:New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 15, 0, 10),
-                    Size = UDim2.new(1, -30, 0, 20),
+                    Position = UDim2.new(0.04, 0, 0, 8),
+                    Size = UDim2.new(0.92, 0, 0, 22),
                     Font = Enum.Font.GothamBold,
                     Text = title or "Title",
                     TextColor3 = Library.Config.Theme.Text,
-                    TextSize = 14,
+                    TextScaled = true,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     Parent = para
                 })
                 
-                local paraContent = Utility:Create("TextLabel", {
+                local paraContent = U:New("TextLabel", {
                     BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 15, 0, 32),
-                    Size = UDim2.new(1, -30, 1, -42),
+                    Position = UDim2.new(0.04, 0, 0, 32),
+                    Size = UDim2.new(0.92, 0, 1, -42),
                     Font = Enum.Font.Gotham,
                     Text = text or "Content",
                     TextColor3 = Library.Config.Theme.TextDark,
@@ -1768,7 +1673,7 @@ function Library:CreateWindow(config)
                     Parent = para
                 })
                 
-                Utility:Create("UIPadding", {PaddingBottom = UDim.new(0, 12), Parent = para})
+                U:New("UIPadding", {PaddingBottom = UDim.new(0, 12), Parent = para})
                 
                 return {
                     SetTitle = function(t) paraTitle.Text = t end,
@@ -1776,15 +1681,18 @@ function Library:CreateWindow(config)
                 }
             end
             
+            -- ════════════════════════════════════════════════════════
             -- DIVIDER
+            -- ════════════════════════════════════════════════════════
+            
             function Section:AddDivider(text)
-                local div = Utility:Create("Frame", {
+                local div = U:New("Frame", {
                     BackgroundTransparency = 1,
-                    Size = UDim2.new(1, 0, 0, text and 30 or 10),
+                    Size = UDim2.new(1, 0, 0, text and 32 or 12),
                     Parent = content
                 })
                 
-                local line = Utility:Create("Frame", {
+                local line = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.Border,
                     BorderSizePixel = 0,
                     Position = UDim2.new(0, 0, 0.5, 0),
@@ -1794,11 +1702,11 @@ function Library:CreateWindow(config)
                 })
                 
                 if text then
-                    Utility:Create("TextLabel", {
+                    U:New("TextLabel", {
                         BackgroundColor3 = Library.Config.Theme.SecondaryBG,
                         BorderSizePixel = 0,
                         Position = UDim2.new(0.5, 0, 0.5, 0),
-                        Size = UDim2.new(0, 0, 0, 20),
+                        Size = UDim2.new(0, 0, 0, 22),
                         AnchorPoint = Vector2.new(0.5, 0.5),
                         Font = Enum.Font.GothamBold,
                         Text = " " .. text .. " ",
@@ -1819,14 +1727,15 @@ function Library:CreateWindow(config)
             tabBtn.BackgroundColor3 = Library.Config.Theme.Accent
             icon.TextColor3 = Library.Config.Theme.Text
             text.TextColor3 = Library.Config.Theme.Text
-            indicator.Size = UDim2.new(0, 5, 1, 0)
+            
+            tabIndicator.Position = tabBtn.Position
+            tabIndicator.Size = tabBtn.Size
         end
         
         table.insert(Window.Tabs, Tab)
         return Tab
     end
     
-    -- Keybind Toggle
     if keybind then
         local visible = true
         Services.UserInputService.InputBegan:Connect(function(input, gp)
@@ -1835,30 +1744,17 @@ function Library:CreateWindow(config)
                 
                 if miniBox.Visible then
                     miniBox.Visible = false
-                    Utility:Tween(miniBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.2)
+                    U:Tween(miniBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.2)
                     main.Visible = true
-                    Utility:Tween(main, {Size = visible and UDim2.new(0, w, 0, h) or UDim2.new(0, 0, 0, 0)}, 0.3)
+                    U:Tween(main, {Size = visible and UDim2.new(0.35, 0, 0.5, 0) or UDim2.new(0, 0, 0, 0)}, 0.3)
                 else
-                    Utility:Tween(main, {Size = visible and UDim2.new(0, w, 0, h) or UDim2.new(0, 0, 0, 0)}, 0.3)
+                    U:Tween(main, {Size = visible and UDim2.new(0.35, 0, 0.5, 0) or UDim2.new(0, 0, 0, 0)}, 0.3)
                 end
             end
         end)
     end
     
-    -- Responsive
-    workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
-        local vp = workspace.CurrentCamera.ViewportSize
-        local newW = IsMobile and math.clamp(vp.X * 0.95, 340, 500) or math.clamp(vp.X * 0.5, 600, 800)
-        local newH = IsMobile and math.clamp(vp.Y * 0.88, 480, 750) or math.clamp(vp.Y * 0.7, 500, 700)
-        
-        if main.Visible and main.Size ~= UDim2.new(0, 0, 0, 0) and not isMax then
-            main.Size = UDim2.new(0, newW, 0, newH)
-        end
-        
-        w, h = newW, newH
-    end)
-    
-    Utility:Tween(main, {Size = UDim2.new(0, w, 0, h)}, 0.5, Enum.EasingStyle.Quart)
+    U:Tween(main, {Size = UDim2.new(0.35, 0, 0.5, 0)}, 0.5, Enum.EasingStyle.Quart)
     
     return Window
 end
