@@ -1,24 +1,24 @@
 --[[
     ════════════════════════════════════════════════════════
            UI LIBRARY - ULTIMATE COMPLETE VERSION
-                     Version 12.0.0 ULTIMATE FIX
+                     Version 12.1.0 ENHANCED
     ════════════════════════════════════════════════════════
     
     ✓ حجم واجهة محسّن (أكبر وأوضح)
-    ✓ Dropdown محسّن تماماً مع خيار إخفاء البحث
+    ✓ Dropdown محسّن بدون بحث - أكثر سلاسة
     ✓ Color Picker مُصلح بالكامل
-    ✓ Config Loader UI شامل
     ✓ دعم كامل للجوال
-    ✓ Minimize Box يعمل بشكل مثالي
+    ✓ Minimize Box محسّن ومُصلح
+    ✓ Animated Tab Indicator
     ✓ منع فتح العناصر عند السحب
     ✓ 15 ثيم جاهز
-    ✓ أنيميشن سلس
+    ✓ أنيميشن سلس للغاية
     
     ════════════════════════════════════════════════════════
 ]]
 
 local Library = {}
-Library.Version = "12.0.0"
+Library.Version = "12.1.0"
 Library.Flags = {}
 Library.Options = {}
 Library.ThemeObjects = {}
@@ -48,7 +48,7 @@ Library.Config = {
         AnimationSpeed = 0.25,
         Font = Enum.Font.Gotham,
         TextSize = 14,
-        DefaultSize = UDim2.new(0, 650, 0, 500), -- حجم أكبر وأفضل
+        DefaultSize = UDim2.new(0, 650, 0, 500),
         MinSize = UDim2.new(0, 500, 0, 350),
         MaxSize = UDim2.new(0, 1400, 0, 800),
     },
@@ -152,13 +152,13 @@ function U:Drag(gui, handle)
     local dragging = false
     local dragInput, mousePos, framePos
     local dragStart, startPos
-    local dragThreshold = 5 -- بكسلات لتحديد إذا كان سحب أو نقر
+    local dragThreshold = 5
     
     handle.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragStart = input.Position
             startPos = gui.Position
-            dragging = false -- لا نبدأ السحب مباشرة
+            dragging = false
             
             local connection
             connection = input.Changed:Connect(function()
@@ -180,7 +180,6 @@ function U:Drag(gui, handle)
         if input == dragInput and dragStart then
             local delta = input.Position - dragStart
             
-            -- تحقق إذا تحرك الماوس أكثر من threshold
             if not dragging and delta.Magnitude > dragThreshold then
                 dragging = true
                 mousePos = dragStart
@@ -199,7 +198,6 @@ function U:Drag(gui, handle)
         end
     end)
     
-    -- دالة للتحقق إذا كان السحب نشط
     return function()
         return dragging
     end
@@ -276,7 +274,6 @@ function Library:SaveConfig(name)
             Time = os.date("%Y-%m-%d %H:%M:%S"),
         }
         
-        -- حفظ جميع الـ Flags
         for flag, value in pairs(self.Flags) do
             if type(value) == "Color3" then
                 data.Flags[flag] = {value.R, value.G, value.B}
@@ -304,11 +301,9 @@ function Library:LoadConfig(name)
             for flag, value in pairs(data.Flags) do
                 if self.Options[flag] then
                     pcall(function()
-                        -- تحويل Color3
                         if type(value) == "table" and #value == 3 then
                             value = Color3.new(value[1], value[2], value[3])
                         end
-                        -- تحويل KeyCode
                         if type(value) == "string" and value:match("Enum%.KeyCode%.") then
                             local keyName = value:match("Enum%.KeyCode%.(.+)")
                             value = Enum.KeyCode[keyName]
@@ -358,13 +353,12 @@ end
 function Library:CreateWindow(cfg)
     cfg = cfg or {}
     
-    local title = cfg.Title or "UI Library v12.0"
-    local subtitle = cfg.Subtitle or "Ultimate Edition"
+    local title = cfg.Title or "UI Library v12.1"
+    local subtitle = cfg.Subtitle or "Enhanced Edition"
     local keybind = cfg.Keybind or Enum.KeyCode.RightControl
     local icon = cfg.Icon or "rbxassetid://11963374911"
     local size = cfg.Size or Library.Config.UI.DefaultSize
     
-    -- إنشاء ScreenGui
     local gui = U:New("ScreenGui", {
         Name = "UILibrary_" .. tostring(math.random(1000, 9999)),
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
@@ -386,7 +380,8 @@ function Library:CreateWindow(cfg)
         Size = UDim2.new(0, 0, 0, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
         Visible = false,
-        ZIndex = 10,
+        ZIndex = 100,
+        Active = true, -- مهم للتفاعل
         Parent = gui
     })
     
@@ -395,7 +390,38 @@ function Library:CreateWindow(cfg)
     U:Shadow(miniBox, 20)
     local miniStroke = U:Stroke(miniBox, Library.Config.Theme.Accent, 3, 0)
     Library:Reg(miniStroke, "AS")
-    U:Drag(miniBox)
+    
+    -- سحب MiniBox بتوين سلس
+    local miniDragging = false
+    local miniDragStart, miniStartPos
+    
+    miniBox.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            miniDragStart = input.Position
+            miniStartPos = miniBox.Position
+            miniDragging = false
+        end
+    end)
+    
+    miniBox.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+            if miniDragStart then
+                local delta = input.Position - miniDragStart
+                if not miniDragging and delta.Magnitude > 5 then
+                    miniDragging = true
+                end
+                
+                if miniDragging then
+                    miniBox.Position = UDim2.new(
+                        miniStartPos.X.Scale,
+                        miniStartPos.X.Offset + delta.X,
+                        miniStartPos.Y.Scale,
+                        miniStartPos.Y.Offset + delta.Y
+                    )
+                end
+            end
+        end
+    end)
     
     local miniIcon = U:New("ImageLabel", {
         BackgroundTransparency = 1,
@@ -411,20 +437,31 @@ function Library:CreateWindow(cfg)
     Library:Reg(miniIcon, "AI")
     
     -- تأثير النبض
+    local pulseRunning = false
     local function pulse()
-        if miniBox.Visible then
-            U:Tween(miniIcon, {Size = UDim2.new(0.65, 0, 0.65, 0)}, 0.5, Enum.EasingStyle.Sine)
-            task.wait(0.5)
-            U:Tween(miniIcon, {Size = UDim2.new(0.55, 0, 0.55, 0)}, 0.5, Enum.EasingStyle.Sine)
-            task.wait(0.5)
-            pulse()
+        if miniBox.Visible and not pulseRunning then
+            pulseRunning = true
+            while miniBox.Visible do
+                U:Tween(miniIcon, {Size = UDim2.new(0.65, 0, 0.65, 0)}, 0.5, Enum.EasingStyle.Sine)
+                task.wait(0.5)
+                if not miniBox.Visible then break end
+                U:Tween(miniIcon, {Size = UDim2.new(0.55, 0, 0.55, 0)}, 0.5, Enum.EasingStyle.Sine)
+                task.wait(0.5)
+            end
+            pulseRunning = false
         end
     end
     
-    -- Double-click لفتح النافذة
+    miniBox:GetPropertyChangedSignal("Visible"):Connect(function()
+        if miniBox.Visible then
+            task.spawn(pulse)
+        end
+    end)
+    
+    -- Double-click لفتح النافذة (مُصلح)
     local clicks, lastClick = 0, 0
-    miniBox.InputBegan:Connect(function(inp)
-        if inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch then
+    miniBox.InputEnded:Connect(function(inp)
+        if (inp.UserInputType == Enum.UserInputType.MouseButton1 or inp.UserInputType == Enum.UserInputType.Touch) and not miniDragging then
             local now = tick()
             if now - lastClick < 0.4 then
                 clicks = clicks + 1
@@ -435,20 +472,24 @@ function Library:CreateWindow(cfg)
             
             if clicks >= 2 then
                 clicks = 0
-                -- فتح النافذة الرئيسية
-                U:Tween(miniBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-                task.wait(0.25)
+                -- فتح النافذة الرئيسية بتوين سلس
+                local miniPos = miniBox.AbsolutePosition
+                U:Tween(miniBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+                task.wait(0.35)
                 miniBox.Visible = false
+                miniDragging = false
+                miniDragStart = nil
+                
                 main.Visible = true
-                U:Tween(main, {Size = size}, 0.4, Enum.EasingStyle.Back)
+                main.Position = UDim2.new(0, miniPos.X + 40, 0, miniPos.Y + 40)
+                U:Tween(main, {
+                    Size = size,
+                    Position = UDim2.new(0.5, 0, 0.5, 0)
+                }, 0.5, Enum.EasingStyle.Back)
             end
         end
-    end)
-    
-    miniBox:GetPropertyChangedSignal("Visible"):Connect(function()
-        if miniBox.Visible then
-            task.spawn(pulse)
-        end
+        miniDragging = false
+        miniDragStart = nil
     end)
     
     -- ════════════════════════════════════════════════════════
@@ -463,19 +504,6 @@ function Library:CreateWindow(cfg)
         AnchorPoint = Vector2.new(0.5, 0.5),
         Parent = gui
     })
-    
-    -- تحديد الحجم الأدنى والأقصى
-    local function clampSize(s)
-        local minSize = Library.Config.UI.MinSize
-        local maxSize = Library.Config.UI.MaxSize
-        
-        return UDim2.new(
-            0,
-            math.clamp(s.X.Offset, minSize.X.Offset, maxSize.X.Offset),
-            0,
-            math.clamp(s.Y.Offset, minSize.Y.Offset, maxSize.Y.Offset)
-        )
-    end
     
     local frame = U:New("Frame", {
         BackgroundColor3 = Library.Config.Theme.Background,
@@ -553,13 +581,13 @@ function Library:CreateWindow(cfg)
     Library:Reg(headerIcon, "AI")
     
     -- ════════════════════════════════════════════════════════
-    -- HEADER BUTTONS
+    -- HEADER BUTTONS (بدون زر الإعدادات)
     -- ════════════════════════════════════════════════════════
     
     local btnContainer = U:New("Frame", {
         BackgroundTransparency = 1,
-        Position = UDim2.new(1, -160, 0.5, 0),
-        Size = UDim2.new(0, 150, 0, 30),
+        Position = UDim2.new(1, -80, 0.5, 0),
+        Size = UDim2.new(0, 70, 0, 30),
         AnchorPoint = Vector2.new(0, 0.5),
         Parent = header
     })
@@ -572,23 +600,6 @@ function Library:CreateWindow(cfg)
         Parent = btnContainer
     })
     
-    -- Config Button
-    local configBtn = U:New("TextButton", {
-        BackgroundColor3 = Library.Config.Theme.TertiaryBG,
-        BorderSizePixel = 0,
-        Size = UDim2.new(0, 30, 0, 30),
-        Font = Enum.Font.GothamBold,
-        Text = "⚙",
-        TextColor3 = Library.Config.Theme.Text,
-        TextSize = 16,
-        AutoButtonColor = false,
-        LayoutOrder = 1,
-        Parent = btnContainer
-    })
-    
-    Library:Reg(configBtn, "T")
-    U:Corner(configBtn, 8)
-    
     -- Minimize Button
     local minBtn = U:New("TextButton", {
         BackgroundColor3 = Library.Config.Theme.TertiaryBG,
@@ -599,7 +610,7 @@ function Library:CreateWindow(cfg)
         TextColor3 = Library.Config.Theme.Text,
         TextSize = 14,
         AutoButtonColor = false,
-        LayoutOrder = 2,
+        LayoutOrder = 1,
         Parent = btnContainer
     })
     
@@ -607,13 +618,17 @@ function Library:CreateWindow(cfg)
     U:Corner(minBtn, 8)
     
     minBtn.MouseButton1Click:Connect(function()
-        -- تصغير إلى MiniBox
-        U:Tween(main, {Size = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-        task.wait(0.3)
+        -- تصغير إلى MiniBox بتوين سلس
+        local mainPos = main.AbsolutePosition
+        local mainSize = main.AbsoluteSize
+        
+        U:Tween(main, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        task.wait(0.35)
         main.Visible = false
+        
+        miniBox.Position = UDim2.new(0, mainPos.X + mainSize.X/2, 0, mainPos.Y + mainSize.Y/2)
         miniBox.Visible = true
-        miniBox.Position = UDim2.new(0, main.AbsolutePosition.X + main.AbsoluteSize.X/2, 0, main.AbsolutePosition.Y + main.AbsoluteSize.Y/2)
-        U:Tween(miniBox, {Size = UDim2.new(0, 80, 0, 80)}, 0.35, Enum.EasingStyle.Back)
+        U:Tween(miniBox, {Size = UDim2.new(0, 80, 0, 80)}, 0.4, Enum.EasingStyle.Back)
     end)
     
     minBtn.MouseEnter:Connect(function() U:Tween(minBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2) end)
@@ -629,7 +644,7 @@ function Library:CreateWindow(cfg)
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 18,
         AutoButtonColor = false,
-        LayoutOrder = 3,
+        LayoutOrder = 2,
         Parent = btnContainer
     })
     
@@ -647,326 +662,7 @@ function Library:CreateWindow(cfg)
     local isDragging = U:Drag(main, header)
     
     -- ════════════════════════════════════════════════════════
-    -- CONFIG LOADER UI
-    -- ════════════════════════════════════════════════════════
-    
-    local configPanel = U:New("Frame", {
-        BackgroundColor3 = Library.Config.Theme.Background,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        Size = UDim2.new(0, 0, 0, 0),
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        Visible = false,
-        ZIndex = 100,
-        Parent = frame
-    })
-    
-    Library:Reg(configPanel, "B")
-    U:Corner(configPanel, 12)
-    U:Shadow(configPanel, 25)
-    U:Stroke(configPanel, Library.Config.Theme.Accent, 2, 0.2)
-    
-    local configHeader = U:New("Frame", {
-        BackgroundColor3 = Library.Config.Theme.SecondaryBG,
-        BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0, 45),
-        Parent = configPanel
-    })
-    
-    Library:Reg(configHeader, "S")
-    U:Corner(configHeader, 12)
-    
-    U:New("TextLabel", {
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, 15, 0, 0),
-        Size = UDim2.new(1, -60, 1, 0),
-        Font = Enum.Font.GothamBold,
-        Text = "⚙ Config Manager",
-        TextColor3 = Library.Config.Theme.Text,
-        TextSize = 16,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        Parent = configHeader
-    })
-    
-    local closeConfig = U:New("TextButton", {
-        BackgroundColor3 = Library.Config.Theme.Error,
-        BorderSizePixel = 0,
-        Position = UDim2.new(1, -35, 0.5, 0),
-        Size = UDim2.new(0, 25, 0, 25),
-        AnchorPoint = Vector2.new(0, 0.5),
-        Font = Enum.Font.GothamBold,
-        Text = "×",
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        TextSize = 16,
-        AutoButtonColor = false,
-        Parent = configHeader
-    })
-    
-    U:Corner(closeConfig, 6)
-    
-    closeConfig.MouseButton1Click:Connect(function()
-        U:Tween(configPanel, {Size = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-        task.wait(0.3)
-        configPanel.Visible = false
-    end)
-    
-    -- Config Content
-    local configContent = U:New("Frame", {
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, 0, 0, 50),
-        Size = UDim2.new(1, 0, 1, -50),
-        Parent = configPanel
-    })
-    
-    -- Config Name Input
-    local configNameBox = U:New("Frame", {
-        BackgroundColor3 = Library.Config.Theme.SecondaryBG,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 15, 0, 15),
-        Size = UDim2.new(1, -30, 0, 40),
-        Parent = configContent
-    })
-    
-    Library:Reg(configNameBox, "S")
-    U:Corner(configNameBox, 8)
-    
-    U:New("TextLabel", {
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, 12, 0, 0),
-        Size = UDim2.new(0.3, 0, 1, 0),
-        Font = Enum.Font.GothamSemibold,
-        Text = "Config Name:",
-        TextColor3 = Library.Config.Theme.Text,
-        TextSize = 14,
-        TextXAlignment = Enum.TextXAlignment.Left,
-        Parent = configNameBox
-    })
-    
-    local configNameInput = U:New("TextBox", {
-        BackgroundColor3 = Library.Config.Theme.TertiaryBG,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0.35, 0, 0.2, 0),
-        Size = UDim2.new(0.62, 0, 0.6, 0),
-        Font = Enum.Font.Gotham,
-        PlaceholderText = "default",
-        PlaceholderColor3 = Library.Config.Theme.TextDark,
-        Text = "",
-        TextColor3 = Library.Config.Theme.Text,
-        TextSize = 13,
-        ClearTextOnFocus = false,
-        Parent = configNameBox
-    })
-    
-    Library:Reg(configNameInput, "T")
-    U:Corner(configNameInput, 6)
-    U:New("UIPadding", {PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10), Parent = configNameInput})
-    
-    -- Buttons Container
-    local configBtns = U:New("Frame", {
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, 15, 0, 65),
-        Size = UDim2.new(1, -30, 0, 45),
-        Parent = configContent
-    })
-    
-    U:New("UIListLayout", {
-        FillDirection = Enum.FillDirection.Horizontal,
-        HorizontalAlignment = Enum.HorizontalAlignment.Left,
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 10),
-        Parent = configBtns
-    })
-    
-    local function createConfigBtn(text, color, callback)
-        local btn = U:New("TextButton", {
-            BackgroundColor3 = color,
-            BorderSizePixel = 0,
-            Size = UDim2.new(0, 110, 1, 0),
-            Font = Enum.Font.GothamSemibold,
-            Text = text,
-            TextColor3 = Color3.fromRGB(255, 255, 255),
-            TextSize = 14,
-            AutoButtonColor = false,
-            Parent = configBtns
-        })
-        
-        U:Corner(btn, 8)
-        U:Ripple(btn)
-        
-        btn.MouseButton1Click:Connect(callback)
-        btn.MouseEnter:Connect(function()
-            U:Tween(btn, {BackgroundColor3 = Color3.fromRGB(
-                math.min(color.R * 255 + 30, 255),
-                math.min(color.G * 255 + 30, 255),
-                math.min(color.B * 255 + 30, 255)
-            )}, 0.2)
-        end)
-        btn.MouseLeave:Connect(function()
-            U:Tween(btn, {BackgroundColor3 = color}, 0.2)
-        end)
-        
-        return btn
-    end
-    
-    createConfigBtn("💾 Save", Library.Config.Theme.Success, function()
-        local name = configNameInput.Text ~= "" and configNameInput.Text or "default"
-        local success = Library:SaveConfig(name)
-        if success then
-            -- تحديث القائمة
-            configList:ClearAllChildren()
-            local layout = U:New("UIListLayout", {
-                SortOrder = Enum.SortOrder.LayoutOrder,
-                Padding = UDim.new(0, 5),
-                Parent = configList
-            })
-            for _, cfg in ipairs(Library:GetConfigs()) do
-                createConfigItem(cfg)
-            end
-        end
-    end)
-    
-    createConfigBtn("📂 Load", Library.Config.Theme.Info, function()
-        local name = configNameInput.Text ~= "" and configNameInput.Text or "default"
-        Library:LoadConfig(name)
-    end)
-    
-    createConfigBtn("🗑 Delete", Library.Config.Theme.Error, function()
-        local name = configNameInput.Text ~= "" and configNameInput.Text or "default"
-        Library:DeleteConfig(name)
-        configNameInput.Text = ""
-        -- تحديث القائمة
-        configList:ClearAllChildren()
-        local layout = U:New("UIListLayout", {
-            SortOrder = Enum.SortOrder.LayoutOrder,
-            Padding = UDim.new(0, 5),
-            Parent = configList
-        })
-        for _, cfg in ipairs(Library:GetConfigs()) do
-            createConfigItem(cfg)
-        end
-    end)
-    
-    createConfigBtn("🔄 Refresh", Library.Config.Theme.Warning, function()
-        configList:ClearAllChildren()
-        local layout = U:New("UIListLayout", {
-            SortOrder = Enum.SortOrder.LayoutOrder,
-            Padding = UDim.new(0, 5),
-            Parent = configList
-        })
-        for _, cfg in ipairs(Library:GetConfigs()) do
-            createConfigItem(cfg)
-        end
-    end)
-    
-    -- Config List
-    local configListContainer = U:New("ScrollingFrame", {
-        BackgroundColor3 = Library.Config.Theme.SecondaryBG,
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 15, 0, 120),
-        Size = UDim2.new(1, -30, 1, -135),
-        CanvasSize = UDim2.new(0, 0, 0, 0),
-        ScrollBarThickness = 6,
-        ScrollBarImageColor3 = Library.Config.Theme.Accent,
-        Parent = configContent
-    })
-    
-    Library:Reg(configListContainer, "S")
-    U:Corner(configListContainer, 8)
-    
-    local configList = U:New("Frame", {
-        BackgroundTransparency = 1,
-        Size = UDim2.new(1, 0, 1, 0),
-        Parent = configListContainer
-    })
-    
-    local configListLayout = U:New("UIListLayout", {
-        SortOrder = Enum.SortOrder.LayoutOrder,
-        Padding = UDim.new(0, 5),
-        Parent = configList
-    })
-    
-    U:New("UIPadding", {
-        PaddingTop = UDim.new(0, 8),
-        PaddingLeft = UDim.new(0, 8),
-        PaddingRight = UDim.new(0, 8),
-        PaddingBottom = UDim.new(0, 8),
-        Parent = configList
-    })
-    
-    configListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        configListContainer.CanvasSize = UDim2.new(0, 0, 0, configListLayout.AbsoluteContentSize.Y + 16)
-    end)
-    
-    local function createConfigItem(name)
-        local item = U:New("Frame", {
-            BackgroundColor3 = Library.Config.Theme.TertiaryBG,
-            BorderSizePixel = 0,
-            Size = UDim2.new(1, -16, 0, 40),
-            Parent = configList
-        })
-        
-        Library:Reg(item, "T")
-        U:Corner(item, 8)
-        
-        U:New("TextLabel", {
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, 12, 0, 0),
-            Size = UDim2.new(0.5, 0, 1, 0),
-            Font = Enum.Font.GothamSemibold,
-            Text = "📄 " .. name,
-            TextColor3 = Library.Config.Theme.Text,
-            TextSize = 13,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            Parent = item
-        })
-        
-        local loadBtn = U:New("TextButton", {
-            BackgroundColor3 = Library.Config.Theme.Accent,
-            BorderSizePixel = 0,
-            Position = UDim2.new(1, -75, 0.5, 0),
-            Size = UDim2.new(0, 65, 0, 26),
-            AnchorPoint = Vector2.new(0, 0.5),
-            Font = Enum.Font.GothamSemibold,
-            Text = "Load",
-            TextColor3 = Color3.fromRGB(255, 255, 255),
-            TextSize = 12,
-            AutoButtonColor = false,
-            Parent = item
-        })
-        
-        Library:Reg(loadBtn, "A")
-        U:Corner(loadBtn, 6)
-        
-        loadBtn.MouseButton1Click:Connect(function()
-            Library:LoadConfig(name)
-            configNameInput.Text = name
-        end)
-        
-        loadBtn.MouseEnter:Connect(function()
-            U:Tween(loadBtn, {Size = UDim2.new(0, 70, 0, 28)}, 0.2, Enum.EasingStyle.Back)
-        end)
-        
-        loadBtn.MouseLeave:Connect(function()
-            U:Tween(loadBtn, {Size = UDim2.new(0, 65, 0, 26)}, 0.2)
-        end)
-    end
-    
-    -- Load existing configs
-    for _, cfg in ipairs(Library:GetConfigs()) do
-        createConfigItem(cfg)
-    end
-    
-    configBtn.MouseButton1Click:Connect(function()
-        configPanel.Visible = true
-        configPanel.Size = UDim2.new(0, 0, 0, 0)
-        U:Tween(configPanel, {Size = UDim2.new(0, 500, 0, 400)}, 0.35, Enum.EasingStyle.Back)
-    end)
-    
-    configBtn.MouseEnter:Connect(function() U:Tween(configBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2) end)
-    configBtn.MouseLeave:Connect(function() U:Tween(configBtn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.2) end)
-    
-    -- ════════════════════════════════════════════════════════
-    -- TAB CONTAINER
+    -- TAB CONTAINER مع Animated Indicator
     -- ════════════════════════════════════════════════════════
     
     local tabContainer = U:New("ScrollingFrame", {
@@ -1000,6 +696,23 @@ function Library:CreateWindow(cfg)
         tabContainer.CanvasSize = UDim2.new(0, 0, 0, tabList.AbsoluteContentSize.Y + 20)
     end)
     
+    -- ════════════════════════════════════════════════════════
+    -- ANIMATED TAB INDICATOR ✨
+    -- ════════════════════════════════════════════════════════
+    
+    local tabIndicator = U:New("Frame", {
+        BackgroundColor3 = Library.Config.Theme.Accent,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 10, 0, 10),
+        Size = UDim2.new(1, -20, 0, 45),
+        ZIndex = 0,
+        Visible = false,
+        Parent = tabContainer
+    })
+    
+    Library:Reg(tabIndicator, "A")
+    U:Corner(tabIndicator, 10)
+    
     local contentContainer = U:New("Frame", {
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 180, 0, 50),
@@ -1030,6 +743,7 @@ function Library:CreateWindow(cfg)
             Size = UDim2.new(1, 0, 0, 45),
             Text = "",
             AutoButtonColor = false,
+            ZIndex = 1,
             Parent = tabContainer
         })
         
@@ -1046,6 +760,7 @@ function Library:CreateWindow(cfg)
             Text = tabIcon,
             TextColor3 = Library.Config.Theme.TextDark,
             TextSize = 16,
+            ZIndex = 2,
             Parent = tabBtn
         })
         
@@ -1060,6 +775,7 @@ function Library:CreateWindow(cfg)
             TextSize = 14,
             TextXAlignment = Enum.TextXAlignment.Left,
             TextTruncate = Enum.TextTruncate.AtEnd,
+            ZIndex = 2,
             Parent = tabBtn
         })
         
@@ -1093,7 +809,7 @@ function Library:CreateWindow(cfg)
         end)
         
         tabBtn.MouseButton1Click:Connect(function()
-            if isDragging() then return end -- تجاهل النقر أثناء السحب
+            if isDragging() then return end
             
             for _, tab in pairs(Window.Tabs) do
                 tab:Deactivate()
@@ -1102,7 +818,12 @@ function Library:CreateWindow(cfg)
             tabContent.Visible = true
             Window.CurrentTab = tabName
             
-            U:Tween(tabBtn, {BackgroundColor3 = Library.Config.Theme.Accent}, 0.2)
+            -- تحريك المؤشر بسلاسة
+            tabIndicator.Visible = true
+            U:Tween(tabIndicator, {
+                Position = UDim2.new(0, tabBtn.Position.X.Offset, 0, tabBtn.AbsolutePosition.Y - tabContainer.AbsolutePosition.Y + tabContainer.CanvasPosition.Y)
+            }, 0.35, Enum.EasingStyle.Quart)
+            
             U:Tween(icon, {TextColor3 = Library.Config.Theme.Text}, 0.2)
             U:Tween(text, {TextColor3 = Library.Config.Theme.Text}, 0.2)
         end)
@@ -1119,11 +840,10 @@ function Library:CreateWindow(cfg)
             end
         end)
         
-        local Tab = {Name = tabName, Content = tabContent}
+        local Tab = {Name = tabName, Content = tabContent, Button = tabBtn}
         
         function Tab:Deactivate()
             tabContent.Visible = false
-            U:Tween(tabBtn, {BackgroundColor3 = Library.Config.Theme.TertiaryBG}, 0.2)
             U:Tween(icon, {TextColor3 = Library.Config.Theme.TextDark}, 0.2)
             U:Tween(text, {TextColor3 = Library.Config.Theme.TextDark}, 0.2)
         end
@@ -1329,7 +1049,7 @@ function Library:CreateWindow(cfg)
             end
             
             -- ════════════════════════════════════════════════════════
-            -- SLIDER (محسّن)
+            -- SLIDER
             -- ════════════════════════════════════════════════════════
             
             function Section:AddSlider(cfg)
@@ -1474,7 +1194,7 @@ function Library:CreateWindow(cfg)
             end
             
             -- ════════════════════════════════════════════════════════
-            -- DROPDOWN (مُصلح تماماً مع خيار إخفاء البحث)
+            -- DROPDOWN (محسّن بدون بحث - سلس جداً)
             -- ════════════════════════════════════════════════════════
             
             function Section:AddDropdown(cfg)
@@ -1484,7 +1204,6 @@ function Library:CreateWindow(cfg)
                 local default = cfg.Default or items[1]
                 local callback = cfg.Callback or function() end
                 local flag = cfg.Flag
-                local search = cfg.Search ~= false -- افتراضياً مفعّل
                 
                 local dropdown = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.TertiaryBG,
@@ -1542,45 +1261,17 @@ function Library:CreateWindow(cfg)
                     Parent = btn
                 })
                 
-                local listContainer = U:New("Frame", {
-                    BackgroundTransparency = 1,
-                    Position = UDim2.new(0, 12, 0, 47),
-                    Size = UDim2.new(1, -24, 0, 0),
-                    ZIndex = 8,
-                    Parent = dropdown
-                })
-                
-                local searchBox
-                if search then
-                    searchBox = U:New("TextBox", {
-                        BackgroundColor3 = Library.Config.Theme.Background,
-                        BorderSizePixel = 0,
-                        Size = UDim2.new(1, 0, 0, 32),
-                        Font = Enum.Font.Gotham,
-                        PlaceholderText = "🔍 Search...",
-                        PlaceholderColor3 = Library.Config.Theme.TextDark,
-                        Text = "",
-                        TextColor3 = Library.Config.Theme.Text,
-                        TextSize = 13,
-                        ClearTextOnFocus = false,
-                        ZIndex = 9,
-                        Parent = listContainer
-                    })
-                    
-                    U:Corner(searchBox, 6)
-                    U:New("UIPadding", {PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10), Parent = searchBox})
-                end
-                
                 local list = U:New("ScrollingFrame", {
                     BackgroundColor3 = Library.Config.Theme.Background,
                     BorderSizePixel = 0,
-                    Position = UDim2.new(0, 0, 0, search and 37 or 0),
-                    Size = UDim2.new(1, 0, 0, 0),
+                    Position = UDim2.new(0, 12, 0, 47),
+                    Size = UDim2.new(1, -24, 0, 0),
                     CanvasSize = UDim2.new(0, 0, 0, 0),
                     ScrollBarThickness = 4,
                     ScrollBarImageColor3 = Library.Config.Theme.Accent,
+                    Visible = false,
                     ZIndex = 10,
-                    Parent = listContainer
+                    Parent = dropdown
                 })
                 
                 U:Corner(list, 6)
@@ -1680,26 +1371,18 @@ function Library:CreateWindow(cfg)
                         if flag then Library.Flags[flag] = itemName end
                         callback(itemName)
                         
-                        -- إغلاق القائمة
+                        -- إغلاق القائمة بسلاسة
                         expanded = false
-                        U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, 42)}, 0.25, Enum.EasingStyle.Back)
-                        U:Tween(arrow, {Rotation = 0}, 0.25)
+                        list.Visible = false
+                        U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, 42)}, 0.3, Enum.EasingStyle.Quart)
+                        U:Tween(arrow, {Rotation = 0}, 0.3, Enum.EasingStyle.Quart)
+                        task.wait(0.35)
+                        dropdown.ZIndex = 5
                     end)
                 end
                 
                 for _, item in ipairs(items) do
                     createItem(item)
-                end
-                
-                if search and searchBox then
-                    searchBox:GetPropertyChangedSignal("Text"):Connect(function()
-                        local txt = searchBox.Text:lower()
-                        for _, item in ipairs(list:GetChildren()) do
-                            if item:IsA("TextButton") then
-                                item.Visible = txt == "" or item.Name:lower():find(txt, 1, true)
-                            end
-                        end
-                    end)
                 end
                 
                 btn.MouseButton1Click:Connect(function()
@@ -1708,38 +1391,22 @@ function Library:CreateWindow(cfg)
                     expanded = not expanded
                     
                     if expanded then
-                        local visibleCount = 0
-                        for _, item in ipairs(list:GetChildren()) do
-                            if item:IsA("TextButton") and item.Visible then
-                                visibleCount = visibleCount + 1
-                            end
-                        end
-                        
-                        local maxItems = math.min(visibleCount, 5)
-                        local searchHeight = search and 37 or 0
+                        local maxItems = math.min(#items, 5)
                         local listHeight = math.min(maxItems * 34, 170)
-                        local totalHeight = 42 + 10 + searchHeight + listHeight
+                        local totalHeight = 42 + 10 + listHeight
                         
-                        list.Size = UDim2.new(1, 0, 0, listHeight)
-                        U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, totalHeight)}, 0.3, Enum.EasingStyle.Back)
-                        U:Tween(arrow, {Rotation = 180}, 0.25)
+                        list.Size = UDim2.new(1, -24, 0, listHeight)
+                        list.Visible = true
+                        dropdown.ZIndex = 50
                         
-                        dropdown.ZIndex = 50 -- رفع ZIndex عند الفتح
-                        
-                        if search and searchBox then
-                            searchBox:CaptureFocus()
-                        end
+                        U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, totalHeight)}, 0.35, Enum.EasingStyle.Quart)
+                        U:Tween(arrow, {Rotation = 180}, 0.3, Enum.EasingStyle.Quart)
                     else
-                        U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, 42)}, 0.25, Enum.EasingStyle.Back)
-                        U:Tween(arrow, {Rotation = 0}, 0.25)
-                        
-                        task.wait(0.3)
-                        dropdown.ZIndex = 5 -- إعادة ZIndex
-                        
-                        if search and searchBox then
-                            searchBox:ReleaseFocus()
-                            searchBox.Text = ""
-                        end
+                        list.Visible = false
+                        U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, 42)}, 0.3, Enum.EasingStyle.Quart)
+                        U:Tween(arrow, {Rotation = 0}, 0.3, Enum.EasingStyle.Quart)
+                        task.wait(0.35)
+                        dropdown.ZIndex = 5
                     end
                 end)
                 
@@ -1753,16 +1420,11 @@ function Library:CreateWindow(cfg)
                         if mousePos.X < dropdownPos.X or mousePos.X > dropdownPos.X + dropdownSize.X or
                            mousePos.Y < dropdownPos.Y or mousePos.Y > dropdownPos.Y + dropdownSize.Y then
                             expanded = false
-                            U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, 42)}, 0.25, Enum.EasingStyle.Back)
-                            U:Tween(arrow, {Rotation = 0}, 0.25)
-                            
-                            task.wait(0.3)
+                            list.Visible = false
+                            U:Tween(dropdown, {Size = UDim2.new(1, 0, 0, 42)}, 0.3, Enum.EasingStyle.Quart)
+                            U:Tween(arrow, {Rotation = 0}, 0.3, Enum.EasingStyle.Quart)
+                            task.wait(0.35)
                             dropdown.ZIndex = 5
-                            
-                            if search and searchBox then
-                                searchBox:ReleaseFocus()
-                                searchBox.Text = ""
-                            end
                         end
                     end
                 end)
@@ -1771,7 +1433,7 @@ function Library:CreateWindow(cfg)
             end
             
             -- ════════════════════════════════════════════════════════
-            -- COLORPICKER (مُصلح بالكامل)
+            -- COLORPICKER
             -- ════════════════════════════════════════════════════════
             
             function Section:AddColorPicker(cfg)
@@ -1834,7 +1496,6 @@ function Library:CreateWindow(cfg)
                 U:Corner(palette, 8)
                 U:Stroke(palette, Library.Config.Theme.Accent, 1, 0.5)
                 
-                -- Canvas (Saturation/Value)
                 local canvas = U:New("ImageButton", {
                     BackgroundColor3 = Color3.fromRGB(255, 0, 0),
                     BorderSizePixel = 0,
@@ -1862,7 +1523,6 @@ function Library:CreateWindow(cfg)
                 U:Corner(canvasCursor, 20)
                 U:Stroke(canvasCursor, Color3.fromRGB(0, 0, 0), 2, 0)
                 
-                -- Hue Bar
                 local hueBar = U:New("ImageButton", {
                     BackgroundColor3 = Color3.fromRGB(255, 255, 255),
                     BorderSizePixel = 0,
@@ -1891,7 +1551,6 @@ function Library:CreateWindow(cfg)
                 U:Corner(hueCursor, 20)
                 U:Stroke(hueCursor, Color3.fromRGB(0, 0, 0), 2, 0)
                 
-                -- RGB Inputs
                 local rgbContainer = U:New("Frame", {
                     BackgroundTransparency = 1,
                     Position = UDim2.new(0, 10, 1, -35),
@@ -1954,7 +1613,6 @@ function Library:CreateWindow(cfg)
                 local gInput = createRGBInput("G", g)
                 local bInput = createRGBInput("B", b)
                 
-                -- Confirm Button
                 local confirmBtn = U:New("TextButton", {
                     BackgroundColor3 = Library.Config.Theme.Accent,
                     BorderSizePixel = 0,
@@ -1998,7 +1656,6 @@ function Library:CreateWindow(cfg)
                     }
                 end
                 
-                -- التهيئة الأولية
                 canvas.BackgroundColor3 = Color3.fromHSV(h, 1, 1)
                 canvasCursor.Position = UDim2.new(s, 0, 1 - v, 0)
                 hueCursor.Position = UDim2.new(0.5, 0, 1 - h, 0)
@@ -2020,7 +1677,6 @@ function Library:CreateWindow(cfg)
                     callback(color)
                 end
                 
-                -- Hue Bar Interaction
                 hueBar.InputBegan:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         if not isDragging() then
@@ -2035,7 +1691,6 @@ function Library:CreateWindow(cfg)
                     end
                 end)
                 
-                -- Canvas Interaction
                 canvas.InputBegan:Connect(function(input)
                     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         if not isDragging() then
@@ -2070,7 +1725,6 @@ function Library:CreateWindow(cfg)
                     end
                 end)
                 
-                -- RGB Inputs
                 local function updateFromRGB()
                     local nr = tonumber(rInput.Text) or 0
                     local ng = tonumber(gInput.Text) or 0
@@ -2098,7 +1752,6 @@ function Library:CreateWindow(cfg)
                 gInput.FocusLost:Connect(updateFromRGB)
                 bInput.FocusLost:Connect(updateFromRGB)
                 
-                -- Display Button
                 display.MouseButton1Click:Connect(function()
                     if isDragging() then return end
                     
@@ -2219,7 +1872,7 @@ function Library:CreateWindow(cfg)
                 local default = cfg.Default or Enum.KeyCode.E
                 local callback = cfg.Callback or function() end
                 local flag = cfg.Flag
-                local mode = cfg.Mode or "Toggle" -- Toggle / Hold
+                local mode = cfg.Mode or "Toggle"
                 
                 local keybind = U:New("Frame", {
                     BackgroundColor3 = Library.Config.Theme.TertiaryBG,
@@ -2435,11 +2088,14 @@ function Library:CreateWindow(cfg)
             return Section
         end
         
-        -- تفعيل أول تاب تلقائياً
+        -- تفعيل أول تاب تلقائياً مع المؤشر
         if #Window.Tabs == 0 then
             tabContent.Visible = true
             Window.CurrentTab = tabName
-            tabBtn.BackgroundColor3 = Library.Config.Theme.Accent
+            
+            tabIndicator.Visible = true
+            tabIndicator.Position = UDim2.new(0, tabBtn.Position.X.Offset, 0, 10)
+            
             icon.TextColor3 = Library.Config.Theme.Text
             text.TextColor3 = Library.Config.Theme.Text
         end
@@ -2459,20 +2115,23 @@ function Library:CreateWindow(cfg)
                 visible = not visible
                 
                 if miniBox.Visible then
-                    U:Tween(miniBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.2, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-                    task.wait(0.25)
+                    U:Tween(miniBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+                    task.wait(0.35)
                     miniBox.Visible = false
                     if visible then
                         main.Visible = true
-                        U:Tween(main, {Size = size}, 0.35, Enum.EasingStyle.Back)
+                        U:Tween(main, {Size = size}, 0.4, Enum.EasingStyle.Back)
                     end
                 else
                     if visible then
                         main.Visible = true
-                        U:Tween(main, {Size = size}, 0.35, Enum.EasingStyle.Back)
+                        U:Tween(main, {Size = size}, 0.4, Enum.EasingStyle.Back)
                     else
-                        U:Tween(main, {Size = UDim2.new(0, 0, 0, 0)}, 0.25, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-                        task.wait(0.3)
+                        local mainPos = main.AbsolutePosition
+                        local mainSize = main.AbsoluteSize
+                        
+                        U:Tween(main, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+                        task.wait(0.35)
                         main.Visible = false
                     end
                 end
