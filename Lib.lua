@@ -1,8 +1,8 @@
 --[[
     ╔══════════════════════════════════════════════════════════════╗
-    ║                  DRAKTHON UI LIBRARY V2.0                    ║
-    ║              مكتبة واجهات احترافية محسّنة                    ║
-    ║           ✅ متوافقة مع جميع الأجهزة 100%                   ║
+    ║              DRAKTHON UI LIBRARY V2.5 OPTIMIZED              ║
+    ║          محسّنة وفقاً لأفضل الممارسات البرمجية              ║
+    ║     ✅ Performance Optimized | Error-Proof | Clean Code     ║
     ╚══════════════════════════════════════════════════════════════╝
 ]]
 
@@ -18,6 +18,35 @@ local RunService = game:GetService("RunService")
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
+
+-- ═══════════════════════════════════════════════════════════════
+-- CONSTANTS & PRE-CREATED OBJECTS (تحسين الأداء)
+-- ═══════════════════════════════════════════════════════════════
+
+-- Pre-created TweenInfo objects (المشكلة الثانية)
+local TWEEN_INFO_NORMAL = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local TWEEN_INFO_FAST = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local TWEEN_INFO_BACK = TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+local TWEEN_INFO_BACK_FAST = TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+
+-- ZIndex Layers (المشكلة الثامنة)
+local ZIndexLayers = {
+    BackgroundOverlay = 1,
+    MainWindow = 2,
+    TitleBar = 3,
+    Sidebar = 3,
+    Content = 3,
+    TabButton = 5,
+    TabIndicator = 6,
+    TabLabel = 7,
+    Element = 6,
+    ElementContent = 7,
+    DropdownList = 50,
+    DropdownItem = 51,
+    ConfirmationOverlay = 150,
+    ConfirmationModal = 200,
+    LoaderIcon = 10,
+}
 
 -- ═══════════════════════════════════════════════════════════════
 -- UTILITY FUNCTIONS
@@ -36,66 +65,69 @@ local function CreateInstance(className, properties)
     return instance
 end
 
-local function Tween(object, properties, duration, easingStyle, easingDirection)
-    easingStyle = easingStyle or Enum.EasingStyle.Quad
-    easingDirection = easingDirection or Enum.EasingDirection.Out
-    duration = duration or 0.3
-    
-    local tweenInfo = TweenInfo.new(duration, easingStyle, easingDirection)
+-- محسّنة: استخدام TweenInfo مسبقة الإنشاء
+local function Tween(object, properties, tweenInfo)
+    tweenInfo = tweenInfo or TWEEN_INFO_NORMAL
     local tween = TweenService:Create(object, tweenInfo, properties)
     tween:Play()
     return tween
 end
 
+-- ═══════════════════════════════════════════════════════════════
+-- IMPROVED DRAGGABLE (المشكلة الأولى - حل كامل)
+-- ═══════════════════════════════════════════════════════════════
 local function MakeDraggable(frame, dragHandle, backgroundOverlay)
-    local dragging = false
-    local dragInput, mousePos, framePos
+    local dragConnection
+    local framePos
     
     dragHandle.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or 
            input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            mousePos = input.Position
+            
+            local mousePos = input.Position
             framePos = frame.Position
             
             if backgroundOverlay then
                 backgroundOverlay.Visible = true
-                Tween(backgroundOverlay, {BackgroundTransparency = 0.3}, 0.2)
+                Tween(backgroundOverlay, {BackgroundTransparency = 0.3}, TWEEN_INFO_FAST)
             end
             
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    dragging = false
-                    if backgroundOverlay then
-                        Tween(backgroundOverlay, {BackgroundTransparency = 1}, 0.3)
-                        wait(0.3)
-                        backgroundOverlay.Visible = false
-                    end
+            -- إنشاء الاتصال فقط عند بدء السحب
+            dragConnection = UserInputService.InputChanged:Connect(function(changedInput)
+                if changedInput.UserInputType == input.UserInputType then
+                    local delta = changedInput.Position - mousePos
+                    local viewport = workspace.CurrentCamera.ViewportSize
+                    
+                    local newPosX = framePos.X.Scale * viewport.X + framePos.X.Offset + delta.X
+                    local newPosY = framePos.Y.Scale * viewport.Y + framePos.Y.Offset + delta.Y
+                    
+                    frame.Position = UDim2.new(0, newPosX, 0, newPosY)
                 end
             end)
         end
     end)
     
-    dragHandle.InputChanged:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseMovement or 
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or 
            input.UserInputType == Enum.UserInputType.Touch then
-            dragInput = input
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if input == dragInput and dragging then
-            local delta = input.Position - mousePos
-            local viewport = workspace.CurrentCamera.ViewportSize
-            
-            local newPosX = framePos.X.Scale * viewport.X + framePos.X.Offset + delta.X
-            local newPosY = framePos.Y.Scale * viewport.Y + framePos.Y.Offset + delta.Y
-            
-            frame.Position = UDim2.new(0, newPosX, 0, newPosY)
+            if dragConnection then
+                dragConnection:Disconnect()
+                dragConnection = nil
+                
+                if backgroundOverlay and backgroundOverlay.Visible then
+                    Tween(backgroundOverlay, {BackgroundTransparency = 1}, TWEEN_INFO_NORMAL)
+                    task.delay(0.3, function()
+                        backgroundOverlay.Visible = false
+                    end)
+                end
+            end
         end
     end)
 end
 
+-- ═══════════════════════════════════════════════════════════════
+-- IMPROVED RESIZABLE (المشكلة الأولى - حل كامل)
+-- ═══════════════════════════════════════════════════════════════
 local function MakeResizable(frame, minSize)
     local resizeButton = CreateInstance("TextButton", {
         Size = UDim2.new(0, 20, 0, 20),
@@ -122,52 +154,56 @@ local function MakeResizable(frame, minSize)
         Parent = resizeButton
     })
     
-    local resizing = false
-    local startPos, startSize
+    local resizeConnection
+    local startSize
     
     resizeButton.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or 
            input.UserInputType == Enum.UserInputType.Touch then
-            resizing = true
-            startPos = input.Position
+            
+            local startPos = input.Position
             startSize = frame.AbsoluteSize
             
-            input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then
-                    resizing = false
+            -- إنشاء الاتصال فقط عند بدء التغيير
+            resizeConnection = UserInputService.InputChanged:Connect(function(changedInput)
+                if changedInput.UserInputType == input.UserInputType then
+                    local delta = changedInput.Position - startPos
+                    local newWidth = math.max(minSize.X, startSize.X + delta.X)
+                    local newHeight = math.max(minSize.Y, startSize.Y + delta.Y)
+                    
+                    frame.Size = UDim2.new(0, newWidth, 0, newHeight)
                 end
             end)
         end
     end)
     
-    UserInputService.InputChanged:Connect(function(input)
-        if resizing and (input.UserInputType == Enum.UserInputType.MouseMovement or 
-           input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - startPos
-            local newWidth = math.max(minSize.X, startSize.X + delta.X)
-            local newHeight = math.max(minSize.Y, startSize.Y + delta.Y)
-            
-            frame.Size = UDim2.new(0, newWidth, 0, newHeight)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or 
+           input.UserInputType == Enum.UserInputType.Touch then
+            if resizeConnection then
+                resizeConnection:Disconnect()
+                resizeConnection = nil
+            end
         end
     end)
 end
 
 local function AddHoverEffect(button, normalColor, hoverColor, pressedColor)
     button.MouseEnter:Connect(function()
-        Tween(button, {BackgroundColor3 = hoverColor}, 0.2)
+        Tween(button, {BackgroundColor3 = hoverColor}, TWEEN_INFO_FAST)
     end)
     
     button.MouseLeave:Connect(function()
-        Tween(button, {BackgroundColor3 = normalColor}, 0.2)
+        Tween(button, {BackgroundColor3 = normalColor}, TWEEN_INFO_FAST)
     end)
     
     if pressedColor then
         button.MouseButton1Down:Connect(function()
-            Tween(button, {BackgroundColor3 = pressedColor}, 0.1)
+            Tween(button, {BackgroundColor3 = pressedColor}, TWEEN_INFO_FAST)
         end)
         
         button.MouseButton1Up:Connect(function()
-            Tween(button, {BackgroundColor3 = hoverColor}, 0.1)
+            Tween(button, {BackgroundColor3 = hoverColor}, TWEEN_INFO_FAST)
         end)
     end
 end
@@ -186,15 +222,19 @@ function DrakthonLib:MakeWindow(options)
     -- ═══════════════════════════════════════════════════════════
     -- CREATE SCREEN GUI
     -- ═══════════════════════════════════════════════════════════
+    
+    -- محسّن: استخدام time() بدلاً من tick() (المشكلة السابعة)
+    local screenGuiName = "DrakthonLib_" .. string.format("%.5f", time()):gsub("%.", "")
+    
     local screenGui = CreateInstance("ScreenGui", {
-        Name = "DrakthonLib_" .. tick(),
+        Name = screenGuiName,
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         Parent = PlayerGui
     })
     
     -- ═══════════════════════════════════════════════════════════
-    -- BACKGROUND OVERLAY (الخلفية المتحركة)
+    -- BACKGROUND OVERLAY
     -- ═══════════════════════════════════════════════════════════
     local backgroundOverlay = CreateInstance("Frame", {
         Name = "BackgroundOverlay",
@@ -204,7 +244,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
         Visible = false,
-        ZIndex = 1,
+        ZIndex = ZIndexLayers.BackgroundOverlay,
         Parent = screenGui
     })
     
@@ -219,7 +259,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundColor3 = Color3.fromRGB(33, 33, 33),
         BorderSizePixel = 0,
         ClipsDescendants = false,
-        ZIndex = 2,
+        ZIndex = ZIndexLayers.MainWindow,
         Parent = screenGui
     })
     
@@ -243,7 +283,7 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(1, 0, 0, 45),
         BackgroundColor3 = Color3.fromRGB(28, 28, 28),
         BorderSizePixel = 0,
-        ZIndex = 3,
+        ZIndex = ZIndexLayers.TitleBar,
         Parent = mainFrame
     })
     
@@ -257,7 +297,7 @@ function DrakthonLib:MakeWindow(options)
         Position = UDim2.new(0, 0, 1, -15),
         BackgroundColor3 = Color3.fromRGB(28, 28, 28),
         BorderSizePixel = 0,
-        ZIndex = 3,
+        ZIndex = ZIndexLayers.TitleBar,
         Parent = titleBar
     })
     
@@ -270,7 +310,7 @@ function DrakthonLib:MakeWindow(options)
         TextSize = 16,
         Font = Enum.Font.GothamBold,
         TextXAlignment = Enum.TextXAlignment.Left,
-        ZIndex = 4,
+        ZIndex = ZIndexLayers.TitleBar + 1,
         Parent = titleBar
     })
     
@@ -286,7 +326,7 @@ function DrakthonLib:MakeWindow(options)
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 18,
         Font = Enum.Font.GothamBold,
-        ZIndex = 4,
+        ZIndex = ZIndexLayers.TitleBar + 1,
         Parent = titleBar
     })
     
@@ -304,7 +344,7 @@ function DrakthonLib:MakeWindow(options)
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 18,
         Font = Enum.Font.GothamBold,
-        ZIndex = 4,
+        ZIndex = ZIndexLayers.TitleBar + 1,
         Parent = titleBar
     })
     
@@ -314,7 +354,7 @@ function DrakthonLib:MakeWindow(options)
     })
     
     -- ═══════════════════════════════════════════════════════════
-    -- LOADER ICON (محسّن - قابل للسحب)
+    -- LOADER ICON
     -- ═══════════════════════════════════════════════════════════
     local loaderIcon = CreateInstance("ImageButton", {
         Name = "LoaderIcon",
@@ -325,7 +365,7 @@ function DrakthonLib:MakeWindow(options)
         Image = loaderImage,
         ScaleType = Enum.ScaleType.Fit,
         Visible = false,
-        ZIndex = 10,
+        ZIndex = ZIndexLayers.LoaderIcon,
         Parent = screenGui
     })
     
@@ -340,26 +380,24 @@ function DrakthonLib:MakeWindow(options)
         Parent = loaderIcon
     })
     
-    -- اجعل الأيقونة قابلة للسحب
     MakeDraggable(loaderIcon, loaderIcon)
     
-    -- Loader animation
     local loaderRotation = 0
     local loaderConnection
     
     -- ═══════════════════════════════════════════════════════════
-    -- CONFIRMATION MODAL (داخل الواجهة)
+    -- CONFIRMATION MODAL (محسّن: المشكلة السادسة)
     -- ═══════════════════════════════════════════════════════════
     
-    -- Overlay (خلفية معتمة)
+    -- الآن ابن screenGui وليس mainFrame
     local confirmOverlay = CreateInstance("Frame", {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-        BackgroundTransparency = 0.5,
+        BackgroundTransparency = 1,
         BorderSizePixel = 0,
         Visible = false,
-        ZIndex = 150,
-        Parent = mainFrame
+        ZIndex = ZIndexLayers.ConfirmationOverlay,
+        Parent = screenGui  -- ✅ تغيير الأب
     })
     
     local confirmModal = CreateInstance("Frame", {
@@ -368,7 +406,7 @@ function DrakthonLib:MakeWindow(options)
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Color3.fromRGB(40, 40, 40),
         BorderSizePixel = 0,
-        ZIndex = 200,
+        ZIndex = ZIndexLayers.ConfirmationModal,
         Parent = confirmOverlay
     })
     
@@ -392,7 +430,7 @@ function DrakthonLib:MakeWindow(options)
         TextSize = 20,
         Font = Enum.Font.GothamBold,
         TextXAlignment = Enum.TextXAlignment.Center,
-        ZIndex = 201,
+        ZIndex = ZIndexLayers.ConfirmationModal + 1,
         Parent = confirmModal
     })
     
@@ -407,7 +445,7 @@ function DrakthonLib:MakeWindow(options)
         TextWrapped = true,
         TextXAlignment = Enum.TextXAlignment.Center,
         TextYAlignment = Enum.TextYAlignment.Top,
-        ZIndex = 201,
+        ZIndex = ZIndexLayers.ConfirmationModal + 1,
         Parent = confirmModal
     })
     
@@ -419,7 +457,7 @@ function DrakthonLib:MakeWindow(options)
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 15,
         Font = Enum.Font.GothamBold,
-        ZIndex = 201,
+        ZIndex = ZIndexLayers.ConfirmationModal + 1,
         Parent = confirmModal
     })
     
@@ -436,7 +474,7 @@ function DrakthonLib:MakeWindow(options)
         TextColor3 = Color3.fromRGB(255, 255, 255),
         TextSize = 15,
         Font = Enum.Font.GothamBold,
-        ZIndex = 201,
+        ZIndex = ZIndexLayers.ConfirmationModal + 1,
         Parent = confirmModal
     })
     
@@ -446,18 +484,17 @@ function DrakthonLib:MakeWindow(options)
     })
     
     -- ═══════════════════════════════════════════════════════════
-    -- SIDEBAR (NAVIGATION) - بدون User Profile
+    -- SIDEBAR
     -- ═══════════════════════════════════════════════════════════
     local sidebar = CreateInstance("Frame", {
         Size = UDim2.new(0.32, 0, 1, -45),
         Position = UDim2.new(0, 0, 0, 45),
         BackgroundColor3 = Color3.fromRGB(26, 26, 26),
         BorderSizePixel = 0,
-        ZIndex = 3,
+        ZIndex = ZIndexLayers.Sidebar,
         Parent = mainFrame
     })
     
-    -- Tabs Container (مساحة كاملة)
     local tabsContainer = CreateInstance("ScrollingFrame", {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
@@ -465,7 +502,7 @@ function DrakthonLib:MakeWindow(options)
         ScrollBarThickness = 4,
         ScrollBarImageColor3 = Color3.fromRGB(55, 55, 55),
         CanvasSize = UDim2.new(0, 0, 0, 0),
-        ZIndex = 4,
+        ZIndex = ZIndexLayers.Sidebar + 1,
         Parent = sidebar
     })
     
@@ -498,7 +535,7 @@ function DrakthonLib:MakeWindow(options)
         ScrollBarThickness = 6,
         ScrollBarImageColor3 = Color3.fromRGB(55, 55, 55),
         CanvasSize = UDim2.new(0, 0, 0, 0),
-        ZIndex = 3,
+        ZIndex = ZIndexLayers.Content,
         Parent = mainFrame
     })
     
@@ -511,67 +548,68 @@ function DrakthonLib:MakeWindow(options)
     })
     
     -- ═══════════════════════════════════════════════════════════
-    -- BUTTON INTERACTIONS
+    -- BUTTON INTERACTIONS (محسّن: المشكلة الثالثة والرابعة)
     -- ═══════════════════════════════════════════════════════════
     AddHoverEffect(minimizeBtn, Color3.fromRGB(55, 55, 55), Color3.fromRGB(75, 75, 75), Color3.fromRGB(90, 90, 90))
     AddHoverEffect(closeBtn, Color3.fromRGB(190, 50, 50), Color3.fromRGB(220, 70, 70), Color3.fromRGB(240, 90, 90))
     AddHoverEffect(confirmYesBtn, Color3.fromRGB(190, 50, 50), Color3.fromRGB(220, 70, 70))
     AddHoverEffect(confirmNoBtn, Color3.fromRGB(60, 60, 60), Color3.fromRGB(80, 80, 80))
     
-    -- Close Button
+    -- Close Button (محسّن: استخدام Completed)
     closeBtn.MouseButton1Click:Connect(function()
         confirmOverlay.Visible = true
+        confirmOverlay.BackgroundTransparency = 1
+        Tween(confirmOverlay, {BackgroundTransparency = 0.5}, TWEEN_INFO_FAST)
         confirmModal.Size = UDim2.new(0, 0, 0, 0)
-        Tween(confirmModal, {Size = UDim2.new(0, 350, 0, 170)}, 0.4, Enum.EasingStyle.Back)
+        Tween(confirmModal, {Size = UDim2.new(0, 350, 0, 170)}, TWEEN_INFO_BACK)
     end)
     
+    -- محسّن: استخدام tween.Completed
     confirmYesBtn.MouseButton1Click:Connect(function()
-        Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.4, Enum.EasingStyle.Back)
-        wait(0.4)
+        local closeTween = Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, TWEEN_INFO_BACK)
+        closeTween.Completed:Wait()
         screenGui:Destroy()
     end)
     
     confirmNoBtn.MouseButton1Click:Connect(function()
-        Tween(confirmModal, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
-        wait(0.3)
+        local closeTween = Tween(confirmModal, {Size = UDim2.new(0, 0, 0, 0)}, TWEEN_INFO_BACK_FAST)
+        Tween(confirmOverlay, {BackgroundTransparency = 1}, TWEEN_INFO_NORMAL)
+        closeTween.Completed:Wait()
         confirmOverlay.Visible = false
     end)
     
-    -- Minimize Button
+    -- Minimize Button (محسّن)
     minimizeBtn.MouseButton1Click:Connect(function()
-        Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
-        wait(0.3)
+        local minimizeTween = Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, TWEEN_INFO_BACK_FAST)
+        minimizeTween.Completed:Wait()
         mainFrame.Visible = false
         loaderIcon.Visible = true
         
-        -- Start rotation animation
         loaderConnection = RunService.RenderStepped:Connect(function()
             loaderRotation = (loaderRotation + 2) % 360
             loaderIcon.Rotation = loaderRotation
         end)
         
-        Tween(loaderIcon, {Size = UDim2.new(0, 80, 0, 80)}, 0.3, Enum.EasingStyle.Back)
+        Tween(loaderIcon, {Size = UDim2.new(0, 80, 0, 80)}, TWEEN_INFO_BACK_FAST)
     end)
     
     loaderIcon.MouseButton1Click:Connect(function()
-        -- Stop rotation animation
         if loaderConnection then
             loaderConnection:Disconnect()
             loaderConnection = nil
         end
         
-        Tween(loaderIcon, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
-        wait(0.3)
+        local loaderTween = Tween(loaderIcon, {Size = UDim2.new(0, 0, 0, 0)}, TWEEN_INFO_BACK_FAST)
+        loaderTween.Completed:Wait()
         loaderIcon.Visible = false
         loaderIcon.Rotation = 0
         mainFrame.Visible = true
         mainFrame.Size = UDim2.new(0, 0, 0, 0)
-        Tween(mainFrame, {Size = defaultSize}, 0.4, Enum.EasingStyle.Back)
+        Tween(mainFrame, {Size = defaultSize}, TWEEN_INFO_BACK)
     end)
     
     AddHoverEffect(loaderIcon, Color3.fromRGB(28, 28, 28), Color3.fromRGB(40, 40, 40))
     
-    -- Make draggable and resizable
     MakeDraggable(mainFrame, titleBar, backgroundOverlay)
     MakeResizable(mainFrame, minSize)
     
@@ -593,7 +631,6 @@ function DrakthonLib:MakeWindow(options)
         local tabName = options.Name or "Tab"
         local tabIcon = options.Icon or ""
         
-        -- Tab Button
         local tabButton = CreateInstance("TextButton", {
             Size = UDim2.new(1, 0, 0, 55),
             BackgroundColor3 = Color3.fromRGB(33, 33, 33),
@@ -601,7 +638,7 @@ function DrakthonLib:MakeWindow(options)
             Text = "",
             AutoButtonColor = false,
             ClipsDescendants = false,
-            ZIndex = 5,
+            ZIndex = ZIndexLayers.TabButton,
             Parent = tabsContainer
         })
         
@@ -610,14 +647,13 @@ function DrakthonLib:MakeWindow(options)
             Parent = tabButton
         })
         
-        -- Active Indicator (علامة مميزة)
         local activeIndicator = CreateInstance("Frame", {
             Size = UDim2.new(0, 0, 0, 40),
             Position = UDim2.new(0, -5, 0.5, 0),
             AnchorPoint = Vector2.new(0, 0.5),
             BackgroundColor3 = Color3.fromRGB(80, 140, 220),
             BorderSizePixel = 0,
-            ZIndex = 6,
+            ZIndex = ZIndexLayers.TabIndicator,
             Parent = tabButton
         })
         
@@ -626,7 +662,6 @@ function DrakthonLib:MakeWindow(options)
             Parent = activeIndicator
         })
         
-        -- Icon
         local iconOffset = 15
         if tabIcon ~= "" then
             CreateInstance("ImageLabel", {
@@ -636,13 +671,12 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Image = tabIcon,
                 ScaleType = Enum.ScaleType.Fit,
-                ZIndex = 7,
+                ZIndex = ZIndexLayers.TabLabel,
                 Parent = tabButton
             })
             iconOffset = 58
         end
         
-        -- Label
         CreateInstance("TextLabel", {
             Size = UDim2.new(1, -iconOffset - 10, 1, 0),
             Position = UDim2.new(0, iconOffset, 0, 0),
@@ -653,11 +687,10 @@ function DrakthonLib:MakeWindow(options)
             Font = Enum.Font.GothamBold,
             TextXAlignment = Enum.TextXAlignment.Left,
             TextTruncate = Enum.TextTruncate.AtEnd,
-            ZIndex = 7,
+            ZIndex = ZIndexLayers.TabLabel,
             Parent = tabButton
         })
         
-        -- Tab Container
         local tabContainer = CreateInstance("Frame", {
             Name = tabName .. "_Container",
             Size = UDim2.new(1, -30, 1, -30),
@@ -673,38 +706,33 @@ function DrakthonLib:MakeWindow(options)
             Parent = tabContainer
         })
         
-        -- Update canvas size
         tabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
             contentArea.CanvasSize = UDim2.new(0, 0, 0, tabLayout.AbsoluteContentSize.Y + 30)
         end)
         
-        -- Tab Selection
         tabButton.MouseButton1Click:Connect(function()
             for _, tab in pairs(Window.Tabs) do
-                Tween(tab.Button, {BackgroundColor3 = Color3.fromRGB(33, 33, 33)}, 0.2)
+                Tween(tab.Button, {BackgroundColor3 = Color3.fromRGB(33, 33, 33)}, TWEEN_INFO_FAST)
                 tab.Container.Visible = false
-                -- Animate indicator out
                 Tween(tab.ActiveIndicator, {
                     Size = UDim2.new(0, 0, 0, 40),
                     Position = UDim2.new(0, -5, 0.5, 0)
-                }, 0.3, Enum.EasingStyle.Back)
+                }, TWEEN_INFO_BACK_FAST)
             end
             
-            Tween(tabButton, {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}, 0.2)
+            Tween(tabButton, {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}, TWEEN_INFO_FAST)
             tabContainer.Visible = true
             
-            -- Animate indicator in
             Tween(activeIndicator, {
                 Size = UDim2.new(0, 5, 0, 40),
                 Position = UDim2.new(0, 0, 0.5, 0)
-            }, 0.4, Enum.EasingStyle.Back)
+            }, TWEEN_INFO_BACK)
             
             Window.CurrentTab = tabName
         end)
         
         AddHoverEffect(tabButton, Color3.fromRGB(33, 33, 33), Color3.fromRGB(44, 44, 44))
         
-        -- Tab Object
         local Tab = {
             Name = tabName,
             Button = tabButton,
@@ -713,7 +741,6 @@ function DrakthonLib:MakeWindow(options)
             Elements = {}
         }
         
-        -- Auto-select first tab
         if #Window.Tabs == 0 then
             tabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
             tabContainer.Visible = true
@@ -725,16 +752,12 @@ function DrakthonLib:MakeWindow(options)
         table.insert(Window.Tabs, Tab)
         
         -- ═══════════════════════════════════════════════════════
-        -- ADD PARAGRAPH
+        -- HELPER: CREATE ELEMENT CONTAINER (المشكلة الخامسة)
         -- ═══════════════════════════════════════════════════════
-        function Tab:AddParagraph(options)
-            options = options or {}
-            local title = options.Title or "Paragraph"
-            local text = options.Text or "No text provided"
-            
+        local function CreateElementContainer(height, autoSize)
             local container = CreateInstance("Frame", {
-                Size = UDim2.new(1, 0, 0, 0),
-                AutomaticSize = Enum.AutomaticSize.Y,
+                Size = UDim2.new(1, 0, 0, height),
+                AutomaticSize = autoSize and Enum.AutomaticSize.Y or Enum.AutomaticSize.None,
                 BackgroundColor3 = Color3.fromRGB(44, 44, 44),
                 BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
@@ -757,6 +780,20 @@ function DrakthonLib:MakeWindow(options)
                 PaddingAll = UDim.new(0, 15),
                 Parent = container
             })
+            
+            table.insert(Tab.Elements, container)
+            return container
+        end
+        
+        -- ═══════════════════════════════════════════════════════
+        -- ADD PARAGRAPH
+        -- ═══════════════════════════════════════════════════════
+        function Tab:AddParagraph(options)
+            options = options or {}
+            local title = options.Title or "Paragraph"
+            local text = options.Text or "No text provided"
+            
+            local container = CreateElementContainer(0, true)
             
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 22),
@@ -784,12 +821,11 @@ function DrakthonLib:MakeWindow(options)
                 Parent = container
             })
             
-            table.insert(Tab.Elements, container)
             return container
         end
         
         -- ═══════════════════════════════════════════════════════
-        -- ADD BUTTON
+        -- ADD BUTTON (محسّن: task.spawn)
         -- ═══════════════════════════════════════════════════════
         function Tab:AddButton(options)
             options = options or {}
@@ -798,30 +834,7 @@ function DrakthonLib:MakeWindow(options)
             local icon = options.Icon or ""
             local callback = options.Callback or function() end
             
-            local container = CreateInstance("Frame", {
-                Size = UDim2.new(1, 0, 0, 90),
-                BackgroundColor3 = Color3.fromRGB(44, 44, 44),
-                BorderSizePixel = 0,
-                LayoutOrder = #Tab.Elements + 1,
-                Parent = tabContainer
-            })
-            
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
-                Parent = container
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Color3.fromRGB(60, 60, 60),
-                Thickness = 1,
-                Transparency = 0.7,
-                Parent = container
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 15),
-                Parent = container
-            })
+            local container = CreateElementContainer(90, false)
             
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 22),
@@ -862,23 +875,23 @@ function DrakthonLib:MakeWindow(options)
             end
             
             button.MouseButton1Click:Connect(function()
-                Tween(button, {Size = UDim2.new(0.98, 0, 0, 38)}, 0.1)
-                wait(0.1)
-                Tween(button, {Size = UDim2.new(1, 0, 0, 40)}, 0.1)
+                local pressTween = Tween(button, {Size = UDim2.new(0.98, 0, 0, 38)}, TWEEN_INFO_FAST)
+                pressTween.Completed:Wait()
+                Tween(button, {Size = UDim2.new(1, 0, 0, 40)}, TWEEN_INFO_FAST)
                 
-                spawn(function()
+                -- محسّن: استخدام task.spawn
+                task.spawn(function()
                     pcall(callback)
                 end)
             end)
             
             AddHoverEffect(button, Color3.fromRGB(60, 120, 200), Color3.fromRGB(80, 140, 220), Color3.fromRGB(50, 110, 190))
             
-            table.insert(Tab.Elements, container)
             return container
         end
         
         -- ═══════════════════════════════════════════════════════
-        -- ADD TOGGLE
+        -- ADD TOGGLE (محسّن: task.spawn)
         -- ═══════════════════════════════════════════════════════
         function Tab:AddToggle(options)
             options = options or {}
@@ -889,30 +902,7 @@ function DrakthonLib:MakeWindow(options)
             
             local toggled = default
             
-            local container = CreateInstance("Frame", {
-                Size = UDim2.new(1, 0, 0, 80),
-                BackgroundColor3 = Color3.fromRGB(44, 44, 44),
-                BorderSizePixel = 0,
-                LayoutOrder = #Tab.Elements + 1,
-                Parent = tabContainer
-            })
-            
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
-                Parent = container
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Color3.fromRGB(60, 60, 60),
-                Thickness = 1,
-                Transparency = 0.7,
-                Parent = container
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 15),
-                Parent = container
-            })
+            local container = CreateElementContainer(80, false)
             
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 22),
@@ -939,7 +929,6 @@ function DrakthonLib:MakeWindow(options)
                 Parent = container
             })
             
-            -- Toggle Switch
             local toggleTrack = CreateInstance("TextButton", {
                 Size = UDim2.new(0, 56, 0, 30),
                 Position = UDim2.new(1, -56, 0, 42),
@@ -976,26 +965,25 @@ function DrakthonLib:MakeWindow(options)
                 toggled = not toggled
                 
                 if toggled then
-                    Tween(toggleTrack, {BackgroundColor3 = Color3.fromRGB(80, 200, 120)}, 0.3)
-                    Tween(toggleKnob, {Position = UDim2.new(1, -27, 0.5, 0)}, 0.3, Enum.EasingStyle.Quad)
+                    Tween(toggleTrack, {BackgroundColor3 = Color3.fromRGB(80, 200, 120)}, TWEEN_INFO_NORMAL)
+                    Tween(toggleKnob, {Position = UDim2.new(1, -27, 0.5, 0)}, TWEEN_INFO_NORMAL)
                 else
-                    Tween(toggleTrack, {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}, 0.3)
-                    Tween(toggleKnob, {Position = UDim2.new(0, 3, 0.5, 0)}, 0.3, Enum.EasingStyle.Quad)
+                    Tween(toggleTrack, {BackgroundColor3 = Color3.fromRGB(60, 60, 60)}, TWEEN_INFO_NORMAL)
+                    Tween(toggleKnob, {Position = UDim2.new(0, 3, 0.5, 0)}, TWEEN_INFO_NORMAL)
                 end
                 
-                spawn(function()
+                task.spawn(function()
                     pcall(function()
                         callback(toggled)
                     end)
                 end)
             end)
             
-            table.insert(Tab.Elements, container)
             return container
         end
         
         -- ═══════════════════════════════════════════════════════
-        -- ADD DROPDOWN
+        -- ADD DROPDOWN (محسّن: task.spawn)
         -- ═══════════════════════════════════════════════════════
         function Tab:AddDropdown(options)
             options = options or {}
@@ -1007,32 +995,9 @@ function DrakthonLib:MakeWindow(options)
             local selectedItem = text
             local isOpen = false
             
-            local container = CreateInstance("Frame", {
-                Size = UDim2.new(1, 0, 0, 90),
-                BackgroundColor3 = Color3.fromRGB(44, 44, 44),
-                BorderSizePixel = 0,
-                LayoutOrder = #Tab.Elements + 1,
-                Parent = tabContainer,
-                ClipsDescendants = false,
-                ZIndex = 1
-            })
-            
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
-                Parent = container
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Color3.fromRGB(60, 60, 60),
-                Thickness = 1,
-                Transparency = 0.7,
-                Parent = container
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 15),
-                Parent = container
-            })
+            local container = CreateElementContainer(90, false)
+            container.ClipsDescendants = false
+            container.ZIndex = 1
             
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 22),
@@ -1082,7 +1047,6 @@ function DrakthonLib:MakeWindow(options)
                 Parent = dropdownButton
             })
             
-            -- Dropdown List
             local dropdownList = CreateInstance("ScrollingFrame", {
                 Size = UDim2.new(1, 0, 0, 0),
                 Position = UDim2.new(0, 0, 0, 80),
@@ -1091,7 +1055,7 @@ function DrakthonLib:MakeWindow(options)
                 ScrollBarThickness = 4,
                 ScrollBarImageColor3 = Color3.fromRGB(70, 70, 70),
                 Visible = false,
-                ZIndex = 50,
+                ZIndex = ZIndexLayers.DropdownList,
                 ClipsDescendants = true,
                 Parent = container
             })
@@ -1122,13 +1086,12 @@ function DrakthonLib:MakeWindow(options)
                 dropdownList.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 10)
             end)
             
-            -- Create items
             for i, item in ipairs(items) do
                 local itemButton = CreateInstance("TextButton", {
                     Size = UDim2.new(1, -10, 0, 35),
                     BackgroundColor3 = Color3.fromRGB(60, 60, 60),
                     Text = "",
-                    ZIndex = 51,
+                    ZIndex = ZIndexLayers.DropdownItem,
                     Parent = dropdownList
                 })
                 
@@ -1147,7 +1110,7 @@ function DrakthonLib:MakeWindow(options)
                     Font = Enum.Font.Gotham,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     TextTruncate = Enum.TextTruncate.AtEnd,
-                    ZIndex = 52,
+                    ZIndex = ZIndexLayers.DropdownItem + 1,
                     Parent = itemButton
                 })
                 
@@ -1156,12 +1119,12 @@ function DrakthonLib:MakeWindow(options)
                     dropdownLabel.Text = selectedItem
                     
                     isOpen = false
-                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, 0.3)
-                    Tween(arrowIcon, {Rotation = 0}, 0.3)
-                    wait(0.3)
+                    local closeTween = Tween(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, TWEEN_INFO_NORMAL)
+                    Tween(arrowIcon, {Rotation = 0}, TWEEN_INFO_NORMAL)
+                    closeTween.Completed:Wait()
                     dropdownList.Visible = false
                     
-                    spawn(function()
+                    task.spawn(function()
                         pcall(function()
                             callback(item)
                         end)
@@ -1171,31 +1134,29 @@ function DrakthonLib:MakeWindow(options)
                 AddHoverEffect(itemButton, Color3.fromRGB(60, 60, 60), Color3.fromRGB(80, 80, 80))
             end
             
-            -- Toggle dropdown
             dropdownButton.MouseButton1Click:Connect(function()
                 isOpen = not isOpen
                 
                 if isOpen then
                     dropdownList.Visible = true
                     local maxHeight = math.min(#items * 38, 160)
-                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, maxHeight)}, 0.3, Enum.EasingStyle.Back)
-                    Tween(arrowIcon, {Rotation = 180}, 0.3)
+                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, maxHeight)}, TWEEN_INFO_BACK_FAST)
+                    Tween(arrowIcon, {Rotation = 180}, TWEEN_INFO_NORMAL)
                 else
-                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, 0.3)
-                    Tween(arrowIcon, {Rotation = 0}, 0.3)
-                    wait(0.3)
+                    local closeTween = Tween(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, TWEEN_INFO_NORMAL)
+                    Tween(arrowIcon, {Rotation = 0}, TWEEN_INFO_NORMAL)
+                    closeTween.Completed:Wait()
                     dropdownList.Visible = false
                 end
             end)
             
             AddHoverEffect(dropdownButton, Color3.fromRGB(60, 60, 60), Color3.fromRGB(75, 75, 75))
             
-            table.insert(Tab.Elements, container)
             return container
         end
         
         -- ═══════════════════════════════════════════════════════
-        -- ADD SLIDER
+        -- ADD SLIDER (محسّن: المشكلة الأولى + task.spawn)
         -- ═══════════════════════════════════════════════════════
         function Tab:AddSlider(options)
             options = options or {}
@@ -1205,30 +1166,7 @@ function DrakthonLib:MakeWindow(options)
             local default = options.Default or 50
             local callback = options.Callback or function() end
             
-            local container = CreateInstance("Frame", {
-                Size = UDim2.new(1, 0, 0, 95),
-                BackgroundColor3 = Color3.fromRGB(44, 44, 44),
-                BorderSizePixel = 0,
-                LayoutOrder = #Tab.Elements + 1,
-                Parent = tabContainer
-            })
-            
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
-                Parent = container
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Color3.fromRGB(60, 60, 60),
-                Thickness = 1,
-                Transparency = 0.7,
-                Parent = container
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 15),
-                Parent = container
-            })
+            local container = CreateElementContainer(95, false)
             
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, -70, 0, 22),
@@ -1302,53 +1240,57 @@ function DrakthonLib:MakeWindow(options)
                 Parent = sliderKnob
             })
             
-            local dragging = false
+            local sliderConnection
+            
+            -- محسّن: إنشاء الاتصال فقط عند الحاجة
+            local function startDragging(inputType)
+                sliderConnection = UserInputService.InputChanged:Connect(function(input)
+                    if input.UserInputType == inputType then
+                        local mousePos = input.Position.X
+                        local trackPos = sliderTrack.AbsolutePosition.X
+                        local trackSize = sliderTrack.AbsoluteSize.X
+                        local relative = math.clamp((mousePos - trackPos) / trackSize, 0, 1)
+                        local value = math.floor(min + (max - min) * relative)
+                        
+                        sliderFill.Size = UDim2.new(relative, 0, 1, 0)
+                        sliderKnob.Position = UDim2.new(relative, -10, 0.5, -10)
+                        valueLabel.Text = tostring(value)
+                        
+                        task.spawn(function()
+                            pcall(function()
+                                callback(value)
+                            end)
+                        end)
+                    end
+                end)
+            end
             
             sliderKnob.InputBegan:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or 
                    input.UserInputType == Enum.UserInputType.Touch then
-                    dragging = true
+                    startDragging(input.UserInputType)
                 end
             end)
             
             sliderTrack.InputBegan:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or 
                    input.UserInputType == Enum.UserInputType.Touch then
-                    dragging = true
+                    startDragging(input.UserInputType)
                 end
             end)
             
             UserInputService.InputEnded:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or 
                    input.UserInputType == Enum.UserInputType.Touch then
-                    dragging = false
-                end
-            end)
-            
-            UserInputService.InputChanged:Connect(function(input)
-                if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or 
-                   input.UserInputType == Enum.UserInputType.Touch) then
-                    local mousePos = input.Position.X
-                    local trackPos = sliderTrack.AbsolutePosition.X
-                    local trackSize = sliderTrack.AbsoluteSize.X
-                    local relative = math.clamp((mousePos - trackPos) / trackSize, 0, 1)
-                    local value = math.floor(min + (max - min) * relative)
-                    
-                    sliderFill.Size = UDim2.new(relative, 0, 1, 0)
-                    sliderKnob.Position = UDim2.new(relative, -10, 0.5, -10)
-                    valueLabel.Text = tostring(value)
-                    
-                    spawn(function()
-                        pcall(function()
-                            callback(value)
-                        end)
-                    end)
+                    if sliderConnection then
+                        sliderConnection:Disconnect()
+                        sliderConnection = nil
+                    end
                 end
             end)
             
             AddHoverEffect(sliderKnob, Color3.fromRGB(255, 255, 255), Color3.fromRGB(230, 230, 230))
             
-            table.insert(Tab.Elements, container)
             return container
         end
         
@@ -1357,7 +1299,7 @@ function DrakthonLib:MakeWindow(options)
     
     -- Entrance Animation
     mainFrame.Size = UDim2.new(0, 0, 0, 0)
-    Tween(mainFrame, {Size = defaultSize}, 0.5, Enum.EasingStyle.Back)
+    Tween(mainFrame, {Size = defaultSize}, TWEEN_INFO_BACK)
     
     return Window
 end
