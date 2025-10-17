@@ -1,7 +1,7 @@
 --[[
     ╔═══════════════════════════════════════════════════╗
-    ║           DrakthonLib v3.0 - Premium Fixed        ║
-    ║         تصميم محسّن | إصلاح شامل                 ║
+    ║           DrakthonLib v3.0 - FIXED                ║
+    ║         إصلاح كامل لمشكلة ظهور العناصر           ║
     ╚═══════════════════════════════════════════════════╝
 ]]
 
@@ -97,13 +97,12 @@ DrakthonLib.Themes = {
 }
 
 -- ════════════════════════════════════════════════════
---                    الأصوات المخصصة
+--                    الأصوات
 -- ════════════════════════════════════════════════════
 local Sounds = {
     Click = "rbxassetid://6895079853",
     Hover = "rbxassetid://6895079853",
     Toggle = "rbxassetid://6895079853",
-    Slide = "rbxassetid://6895079853",
     Notification = "rbxassetid://9086208694",
     Success = "rbxassetid://6026984224",
     Error = "rbxassetid://6026984224",
@@ -124,12 +123,10 @@ local Icons = {
     Check = "rbxassetid://11963373004",
     X = "rbxassetid://11963373767",
     ChevronRight = "rbxassetid://11963373149",
-    Menu = "rbxassetid://11963373004",
-    Minimize = "rbxassetid://11963373176",
-    Maximize = "rbxassetid://11963373149",
-    Bell = "rbxassetid://11963373004",
     Info = "rbxassetid://11963373429",
-    AlertTriangle = "rbxassetid://11963373004"
+    AlertTriangle = "rbxassetid://11963373004",
+    Minimize = "rbxassetid://11963373176",
+    Maximize = "rbxassetid://11963373149"
 }
 
 -- ════════════════════════════════════════════════════
@@ -154,10 +151,7 @@ local function PlaySound(soundId, volume)
         sound.Volume = volume or 0.5
         sound.Parent = SoundService
         sound:Play()
-        
-        task.delay(2, function()
-            sound:Destroy()
-        end)
+        task.delay(2, function() sound:Destroy() end)
     end)
 end
 
@@ -166,17 +160,9 @@ local function Tween(object, properties, duration, style, direction)
     style = style or Enum.EasingStyle.Quart
     direction = direction or Enum.EasingDirection.Out
     
-    local tween = TweenService:Create(
-        object,
-        TweenInfo.new(duration, style, direction),
-        properties
-    )
+    local tween = TweenService:Create(object, TweenInfo.new(duration, style, direction), properties)
     tween:Play()
     return tween
-end
-
-local function IsMobile()
-    return UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 end
 
 local function GetTheme()
@@ -196,7 +182,6 @@ function DrakthonLib:CreateWindow(config)
     DrakthonLib.CurrentTheme = theme
     local Theme = GetTheme()
     
-    -- المتغيرات
     local AllPages = {}
     local CurrentPage = nil
     local MinimizeState = false
@@ -207,7 +192,6 @@ function DrakthonLib:CreateWindow(config)
     local MainFrame = Instance.new("Frame")
     local UICorner = Instance.new("UICorner")
     
-    -- إعدادات ScreenGui
     ScreenGui.Name = RandomString(12)
     ScreenGui.Parent = CoreGui
     ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -224,7 +208,6 @@ function DrakthonLib:CreateWindow(config)
     Blocker.ZIndex = 1
     Blocker.Active = true
     
-    -- الإطار الرئيسي
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = ScreenGui
     MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -238,7 +221,9 @@ function DrakthonLib:CreateWindow(config)
     UICorner.CornerRadius = UDim.new(0, 16)
     UICorner.Parent = MainFrame
     
-    -- شريط العنوان
+    -- ════════════════════════════════════════════════════
+    --                  شريط العنوان
+    -- ════════════════════════════════════════════════════
     local TitleBar = Instance.new("Frame")
     local TitleBarGradient = Instance.new("UIGradient")
     local TitleIcon = Instance.new("ImageLabel")
@@ -254,7 +239,7 @@ function DrakthonLib:CreateWindow(config)
     TitleBar.BackgroundTransparency = 0.3
     TitleBar.Size = UDim2.new(1, 0, 0, 50)
     TitleBar.BorderSizePixel = 0
-    TitleBar.ZIndex = 3
+    TitleBar.ZIndex = 10
     
     TitleBarGradient.Color = ColorSequence.new{
         ColorSequenceKeypoint.new(0, Theme.Primary),
@@ -274,7 +259,7 @@ function DrakthonLib:CreateWindow(config)
     TitleIcon.Size = UDim2.new(0, 24, 0, 24)
     TitleIcon.Image = windowIcon
     TitleIcon.ImageColor3 = Theme.Primary
-    TitleIcon.ZIndex = 4
+    TitleIcon.ZIndex = 11
     
     TitleLabel.Name = "Title"
     TitleLabel.Parent = TitleBar
@@ -286,14 +271,14 @@ function DrakthonLib:CreateWindow(config)
     TitleLabel.TextColor3 = Theme.Text
     TitleLabel.TextSize = 16
     TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    TitleLabel.ZIndex = 4
+    TitleLabel.ZIndex = 11
     
     ControlsFrame.Name = "Controls"
     ControlsFrame.Parent = TitleBar
     ControlsFrame.BackgroundTransparency = 1
     ControlsFrame.Position = UDim2.new(1, -90, 0.5, -15)
     ControlsFrame.Size = UDim2.new(0, 80, 0, 30)
-    ControlsFrame.ZIndex = 4
+    ControlsFrame.ZIndex = 11
     
     MinimizeBtn.Name = "Minimize"
     MinimizeBtn.Parent = ControlsFrame
@@ -304,7 +289,7 @@ function DrakthonLib:CreateWindow(config)
     MinimizeBtn.Image = Icons.Minimize
     MinimizeBtn.ImageColor3 = Theme.Warning
     MinimizeBtn.BorderSizePixel = 0
-    MinimizeBtn.ZIndex = 5
+    MinimizeBtn.ZIndex = 12
     
     local MinimizeBtnCorner = Instance.new("UICorner")
     MinimizeBtnCorner.CornerRadius = UDim.new(0, 8)
@@ -319,7 +304,7 @@ function DrakthonLib:CreateWindow(config)
     CloseBtn.Image = Icons.X
     CloseBtn.ImageColor3 = Theme.Error
     CloseBtn.BorderSizePixel = 0
-    CloseBtn.ZIndex = 5
+    CloseBtn.ZIndex = 12
     
     local CloseBtnCorner = Instance.new("UICorner")
     CloseBtnCorner.CornerRadius = UDim.new(0, 8)
@@ -332,7 +317,7 @@ function DrakthonLib:CreateWindow(config)
     TitleDivider.Position = UDim2.new(0, 0, 1, -1)
     TitleDivider.Size = UDim2.new(1, 0, 0, 2)
     TitleDivider.BorderSizePixel = 0
-    TitleDivider.ZIndex = 3
+    TitleDivider.ZIndex = 10
     
     local DividerGradient = Instance.new("UIGradient")
     DividerGradient.Transparency = NumberSequence.new{
@@ -341,43 +326,6 @@ function DrakthonLib:CreateWindow(config)
         NumberSequenceKeypoint.new(1, 1)
     }
     DividerGradient.Parent = TitleDivider
-    
-    -- ════════════════════════════════════════════════════
-    --              المربع المصغّر (Minimize Box)
-    -- ════════════════════════════════════════════════════
-    local MinimizeBox = Instance.new("ImageButton")
-    local MinimizeBoxCorner = Instance.new("UICorner")
-    local MinimizeBoxIcon = Instance.new("ImageLabel")
-    local MinimizeBoxGradient = Instance.new("UIGradient")
-    
-    MinimizeBox.Name = "MinimizeBox"
-    MinimizeBox.Parent = ScreenGui
-    MinimizeBox.BackgroundColor3 = Theme.Primary
-    MinimizeBox.Position = UDim2.new(0, 20, 0, 20)
-    MinimizeBox.Size = UDim2.new(0, 50, 0, 50)
-    MinimizeBox.Visible = false
-    MinimizeBox.AutoButtonColor = false
-    MinimizeBox.BorderSizePixel = 0
-    MinimizeBox.ZIndex = 10
-    
-    MinimizeBoxCorner.CornerRadius = UDim.new(0, 12)
-    MinimizeBoxCorner.Parent = MinimizeBox
-    
-    MinimizeBoxIcon.Name = "Icon"
-    MinimizeBoxIcon.Parent = MinimizeBox
-    MinimizeBoxIcon.BackgroundTransparency = 1
-    MinimizeBoxIcon.Position = UDim2.new(0.5, -15, 0.5, -15)
-    MinimizeBoxIcon.Size = UDim2.new(0, 30, 0, 30)
-    MinimizeBoxIcon.Image = windowIcon
-    MinimizeBoxIcon.ImageColor3 = Theme.Text
-    MinimizeBoxIcon.ZIndex = 11
-    
-    MinimizeBoxGradient.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Theme.Primary),
-        ColorSequenceKeypoint.new(1, Theme.Secondary)
-    }
-    MinimizeBoxGradient.Rotation = 45
-    MinimizeBoxGradient.Parent = MinimizeBox
     
     -- تأثيرات الأزرار
     local function ButtonEffect(button)
@@ -402,15 +350,50 @@ function DrakthonLib:CreateWindow(config)
     ButtonEffect(MinimizeBtn)
     ButtonEffect(CloseBtn)
     
+    -- ════════════════════════════════════════════════════
+    --              المربع المصغّر
+    -- ════════════════════════════════════════════════════
+    local MinimizeBox = Instance.new("ImageButton")
+    local MinimizeBoxCorner = Instance.new("UICorner")
+    local MinimizeBoxIcon = Instance.new("ImageLabel")
+    local MinimizeBoxGradient = Instance.new("UIGradient")
+    
+    MinimizeBox.Name = "MinimizeBox"
+    MinimizeBox.Parent = ScreenGui
+    MinimizeBox.BackgroundColor3 = Theme.Primary
+    MinimizeBox.Position = UDim2.new(0, 20, 0, 20)
+    MinimizeBox.Size = UDim2.new(0, 50, 0, 50)
+    MinimizeBox.Visible = false
+    MinimizeBox.AutoButtonColor = false
+    MinimizeBox.BorderSizePixel = 0
+    MinimizeBox.ZIndex = 20
+    
+    MinimizeBoxCorner.CornerRadius = UDim.new(0, 12)
+    MinimizeBoxCorner.Parent = MinimizeBox
+    
+    MinimizeBoxIcon.Name = "Icon"
+    MinimizeBoxIcon.Parent = MinimizeBox
+    MinimizeBoxIcon.BackgroundTransparency = 1
+    MinimizeBoxIcon.Position = UDim2.new(0.5, -15, 0.5, -15)
+    MinimizeBoxIcon.Size = UDim2.new(0, 30, 0, 30)
+    MinimizeBoxIcon.Image = windowIcon
+    MinimizeBoxIcon.ImageColor3 = Theme.Text
+    MinimizeBoxIcon.ZIndex = 21
+    
+    MinimizeBoxGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Theme.Primary),
+        ColorSequenceKeypoint.new(1, Theme.Secondary)
+    }
+    MinimizeBoxGradient.Rotation = 45
+    MinimizeBoxGradient.Parent = MinimizeBox
+    
     -- وظيفة الإغلاق
     CloseBtn.MouseButton1Click:Connect(function()
         PlaySound(Sounds.Close, 0.6)
-        
         Tween(MainFrame, {Size = UDim2.new(0, 650, 0, 0)}, 0.3)
         task.wait(0.3)
         Tween(MainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3)
         task.wait(0.3)
-        
         ScreenGui:Destroy()
     end)
     
@@ -420,35 +403,28 @@ function DrakthonLib:CreateWindow(config)
         PlaySound(Sounds.Click, 0.5)
         
         if MinimizeState then
-            -- تصغير الواجهة 60%
             local targetSize = UDim2.new(0, 650 * 0.6, 0, 450 * 0.6)
             Tween(MainFrame, {Size = targetSize}, 0.3)
             task.wait(0.3)
-            
-            -- إخفاء كامل
             Tween(MainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3)
             task.wait(0.3)
             
             MainFrame.Visible = false
             MinimizeBox.Visible = true
-            
-            -- أنيميشن ظهور المربع
             MinimizeBox.Size = UDim2.new(0, 0, 0, 0)
             Tween(MinimizeBox, {Size = UDim2.new(0, 50, 0, 50)}, 0.4, Enum.EasingStyle.Back)
         end
     end)
     
-    -- فتح من المربع المصغّر
+    -- فتح من المربع
     MinimizeBox.MouseButton1Click:Connect(function()
         PlaySound(Sounds.Open, 0.6)
         MinimizeState = false
         
-        -- إخفاء المربع
         Tween(MinimizeBox, {Size = UDim2.new(0, 0, 0, 0)}, 0.3)
         task.wait(0.3)
         MinimizeBox.Visible = false
         
-        -- إظهار الواجهة من المنتصف
         MainFrame.Visible = true
         MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
         MainFrame.Size = UDim2.new(0, 0, 0, 0)
@@ -458,7 +434,6 @@ function DrakthonLib:CreateWindow(config)
         Tween(MainFrame, {Size = UDim2.new(0, 650, 0, 450)}, 0.5, Enum.EasingStyle.Back)
     end)
     
-    -- تأثيرات المربع
     MinimizeBox.MouseEnter:Connect(function()
         PlaySound(Sounds.Hover, 0.3)
         Tween(MinimizeBox, {Size = UDim2.new(0, 55, 0, 55)}, 0.2)
@@ -468,19 +443,14 @@ function DrakthonLib:CreateWindow(config)
         Tween(MinimizeBox, {Size = UDim2.new(0, 50, 0, 50)}, 0.2)
     end)
     
-    -- السحب للمربع المصغّر (Drag)
+    -- السحب
     local function MakeDraggable(frame)
         local dragging = false
         local dragInput, dragStart, startPos
         
         local function UpdateDrag(input)
             local delta = input.Position - dragStart
-            local newPos = UDim2.new(
-                0,
-                startPos.X.Offset + delta.X,
-                0,
-                startPos.Y.Offset + delta.Y
-            )
+            local newPos = UDim2.new(0, startPos.X.Offset + delta.X, 0, startPos.Y.Offset + delta.Y)
             Tween(frame, {Position = newPos}, 0.05, Enum.EasingStyle.Linear)
         end
         
@@ -490,8 +460,6 @@ function DrakthonLib:CreateWindow(config)
                 dragging = true
                 dragStart = input.Position
                 startPos = frame.Position
-                
-                -- منع حركة الكاميرا
                 UserInputService.MouseBehavior = Enum.MouseBehavior.Default
                 
                 input.Changed:Connect(function()
@@ -511,7 +479,6 @@ function DrakthonLib:CreateWindow(config)
         end)
     end
     
-    -- السحب للنافذة الرئيسية
     local function MakeTitleBarDraggable()
         local dragging = false
         local dragInput, dragStart, startPos
@@ -533,8 +500,6 @@ function DrakthonLib:CreateWindow(config)
                 dragging = true
                 dragStart = input.Position
                 startPos = MainFrame.Position
-                
-                -- منع حركة الكاميرا
                 UserInputService.MouseBehavior = Enum.MouseBehavior.Default
                 
                 input.Changed:Connect(function()
@@ -557,14 +522,14 @@ function DrakthonLib:CreateWindow(config)
     MakeDraggable(MinimizeBox)
     MakeTitleBarDraggable()
     
-    -- فتح النافذة بأنيميشن
+    -- فتح النافذة
     PlaySound(Sounds.Open, 0.7)
     Tween(MainFrame, {Size = UDim2.new(0, 650, 0, 0)}, 0.4, Enum.EasingStyle.Back)
     task.wait(0.4)
     Tween(MainFrame, {Size = UDim2.new(0, 650, 0, 450)}, 0.5, Enum.EasingStyle.Back)
     
     -- ════════════════════════════════════════════════════
-    --                  نظام التبويبات (Tabs)
+    --                  نظام التبويبات
     -- ════════════════════════════════════════════════════
     local TabsContainer = Instance.new("Frame")
     local TabsUICorner = Instance.new("UICorner")
@@ -600,7 +565,6 @@ function DrakthonLib:CreateWindow(config)
         local tabName = tabConfig.Name or "Tab"
         local tabIcon = tabConfig.Icon or Icons.Box
         
-        -- زر التبويب
         local TabButton = Instance.new("TextButton")
         local TabBtnCorner = Instance.new("UICorner")
         local TabIcon = Instance.new("ImageLabel")
@@ -654,7 +618,6 @@ function DrakthonLib:CreateWindow(config)
         IndicatorCorner.CornerRadius = UDim.new(1, 0)
         IndicatorCorner.Parent = TabIndicator
         
-        -- تأثيرات التبويب
         TabButton.MouseEnter:Connect(function()
             if not CurrentPage or CurrentPage.Name ~= tabName then
                 PlaySound(Sounds.Hover, 0.2)
@@ -671,7 +634,7 @@ function DrakthonLib:CreateWindow(config)
         end)
         
         -- ════════════════════════════════════════════════════
-        --                  إنشاء الصفحة (Page)
+        --                  إنشاء الصفحة - إصلاح ZIndex
         -- ════════════════════════════════════════════════════
         local Page = Instance.new("ScrollingFrame")
         local PageCorner = Instance.new("UICorner")
@@ -692,7 +655,8 @@ function DrakthonLib:CreateWindow(config)
         Page.CanvasSize = UDim2.new(0, 0, 0, 0)
         Page.Visible = false
         Page.ScrollingDirection = Enum.ScrollingDirection.Y
-        Page.ZIndex = 3
+        Page.ZIndex = 4  -- ✅ ZIndex أعلى من TabsContainer
+        Page.ClipsDescendants = false  -- ✅ للتأكد من ظهور المحتوى
         
         PageCorner.CornerRadius = UDim.new(0, 12)
         PageCorner.Parent = Page
@@ -705,24 +669,20 @@ function DrakthonLib:CreateWindow(config)
         PagePadding.PaddingTop = UDim.new(0, 10)
         PagePadding.PaddingBottom = UDim.new(0, 10)
         PagePadding.PaddingLeft = UDim.new(0, 10)
-        PagePadding.PaddingRight = UDim.new(0, 10)
+        PagePadding.PaddingRight = UDim2.new(0, 10)
         
         table.insert(AllPages, Page)
         
-        -- عند الضغط على التبويب
         TabButton.MouseButton1Click:Connect(function()
             PlaySound(Sounds.Click, 0.5)
             
-            -- إخفاء جميع الصفحات
             for _, p in pairs(AllPages) do
                 p.Visible = false
             end
             
-            -- إظهار الصفحة الحالية
             Page.Visible = true
             CurrentPage = Page
             
-            -- تحديث أزرار التبويبات
             for _, btn in pairs(TabsContainer:GetChildren()) do
                 if btn:IsA("TextButton") then
                     Tween(btn, {BackgroundTransparency = 0.5}, 0.2)
@@ -737,14 +697,12 @@ function DrakthonLib:CreateWindow(config)
                 end
             end
             
-            -- تنشيط التبويب الحالي
             Tween(TabButton, {BackgroundTransparency = 0}, 0.2)
             Tween(TabIcon, {ImageColor3 = Theme.Primary}, 0.2)
             Tween(TabLabel, {TextColor3 = Theme.Text}, 0.2)
             Tween(TabIndicator, {Size = UDim2.new(0, 4, 0, 24)}, 0.3, Enum.EasingStyle.Back)
         end)
         
-        -- تفعيل أول تبويب تلقائياً
         if not FirstTabActivated then
             FirstTabActivated = true
             task.wait(0.6)
@@ -752,11 +710,10 @@ function DrakthonLib:CreateWindow(config)
         end
         
         -- ════════════════════════════════════════════════════
-        --                  عناصر الصفحة (Elements)
+        --                  عناصر الصفحة - ZIndex محسّن
         -- ════════════════════════════════════════════════════
         local Elements = {}
         
-        -- ────────────────────── زر (Button) ──────────────────────
         function Elements:CreateButton(buttonConfig)
             buttonConfig = buttonConfig or {}
             local buttonName = buttonConfig.Name or "Button"
@@ -777,7 +734,7 @@ function DrakthonLib:CreateWindow(config)
             ButtonFrame.BackgroundTransparency = 0.3
             ButtonFrame.Size = UDim2.new(1, 0, 0, 60)
             ButtonFrame.BorderSizePixel = 0
-            ButtonFrame.ZIndex = 4
+            ButtonFrame.ZIndex = 5  -- ✅ ZIndex مرتفع
             
             ButtonCorner.CornerRadius = UDim.new(0, 10)
             ButtonCorner.Parent = ButtonFrame
@@ -803,7 +760,7 @@ function DrakthonLib:CreateWindow(config)
             ButtonTitle.TextColor3 = Theme.Text
             ButtonTitle.TextSize = 14
             ButtonTitle.TextXAlignment = Enum.TextXAlignment.Left
-            ButtonTitle.ZIndex = 5
+            ButtonTitle.ZIndex = 6
             
             ButtonDesc.Name = "Description"
             ButtonDesc.Parent = ButtonFrame
@@ -815,7 +772,7 @@ function DrakthonLib:CreateWindow(config)
             ButtonDesc.TextColor3 = Theme.TextDim
             ButtonDesc.TextSize = 12
             ButtonDesc.TextXAlignment = Enum.TextXAlignment.Left
-            ButtonDesc.ZIndex = 5
+            ButtonDesc.ZIndex = 6
             
             ButtonIcon.Name = "Icon"
             ButtonIcon.Parent = ButtonFrame
@@ -824,14 +781,14 @@ function DrakthonLib:CreateWindow(config)
             ButtonIcon.Size = UDim2.new(0, 20, 0, 20)
             ButtonIcon.Image = Icons.ChevronRight
             ButtonIcon.ImageColor3 = Theme.Primary
-            ButtonIcon.ZIndex = 5
+            ButtonIcon.ZIndex = 6
             
             ButtonClick.Name = "Click"
             ButtonClick.Parent = ButtonFrame
             ButtonClick.BackgroundTransparency = 1
             ButtonClick.Size = UDim2.new(1, 0, 1, 0)
             ButtonClick.Text = ""
-            ButtonClick.ZIndex = 6
+            ButtonClick.ZIndex = 7
             
             ButtonClick.MouseEnter:Connect(function()
                 PlaySound(Sounds.Hover, 0.2)
@@ -844,30 +801,17 @@ function DrakthonLib:CreateWindow(config)
                 Tween(ButtonIcon, {Position = UDim2.new(1, -35, 0.5, -10)}, 0.2)
             end)
             
-            ButtonClick.MouseButton1Down:Connect(function()
-                Tween(ButtonFrame, {Size = UDim2.new(1, -4, 0, 58)}, 0.1)
-            end)
-            
-            ButtonClick.MouseButton1Up:Connect(function()
-                Tween(ButtonFrame, {Size = UDim2.new(1, 0, 0, 60)}, 0.1)
-            end)
-            
             ButtonClick.MouseButton1Click:Connect(function()
                 PlaySound(Sounds.Click, 0.5)
                 pcall(buttonCallback)
             end)
             
             return {
-                SetTitle = function(self, text)
-                    ButtonTitle.Text = text
-                end,
-                SetDescription = function(self, text)
-                    ButtonDesc.Text = text
-                end
+                SetTitle = function(self, text) ButtonTitle.Text = text end,
+                SetDescription = function(self, text) ButtonDesc.Text = text end
             }
         end
         
-        -- ────────────────────── تبديل (Toggle) ──────────────────────
         function Elements:CreateToggle(toggleConfig)
             toggleConfig = toggleConfig or {}
             local toggleName = toggleConfig.Name or "Toggle"
@@ -893,7 +837,7 @@ function DrakthonLib:CreateWindow(config)
             ToggleFrame.BackgroundTransparency = 0.3
             ToggleFrame.Size = UDim2.new(1, 0, 0, 60)
             ToggleFrame.BorderSizePixel = 0
-            ToggleFrame.ZIndex = 4
+            ToggleFrame.ZIndex = 5
             
             ToggleCorner.CornerRadius = UDim.new(0, 10)
             ToggleCorner.Parent = ToggleFrame
@@ -908,7 +852,7 @@ function DrakthonLib:CreateWindow(config)
             ToggleTitle.TextColor3 = Theme.Text
             ToggleTitle.TextSize = 14
             ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
-            ToggleTitle.ZIndex = 5
+            ToggleTitle.ZIndex = 6
             
             ToggleDesc.Name = "Description"
             ToggleDesc.Parent = ToggleFrame
@@ -920,7 +864,7 @@ function DrakthonLib:CreateWindow(config)
             ToggleDesc.TextColor3 = Theme.TextDim
             ToggleDesc.TextSize = 12
             ToggleDesc.TextXAlignment = Enum.TextXAlignment.Left
-            ToggleDesc.ZIndex = 5
+            ToggleDesc.ZIndex = 6
             
             ToggleSwitch.Name = "Switch"
             ToggleSwitch.Parent = ToggleFrame
@@ -928,7 +872,7 @@ function DrakthonLib:CreateWindow(config)
             ToggleSwitch.Position = UDim2.new(1, -55, 0.5, -12)
             ToggleSwitch.Size = UDim2.new(0, 45, 0, 24)
             ToggleSwitch.BorderSizePixel = 0
-            ToggleSwitch.ZIndex = 5
+            ToggleSwitch.ZIndex = 6
             
             SwitchCorner.CornerRadius = UDim.new(1, 0)
             SwitchCorner.Parent = ToggleSwitch
@@ -939,7 +883,7 @@ function DrakthonLib:CreateWindow(config)
             SwitchKnob.Position = toggled and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
             SwitchKnob.Size = UDim2.new(0, 20, 0, 20)
             SwitchKnob.BorderSizePixel = 0
-            SwitchKnob.ZIndex = 6
+            SwitchKnob.ZIndex = 7
             
             KnobCorner.CornerRadius = UDim.new(1, 0)
             KnobCorner.Parent = SwitchKnob
@@ -949,7 +893,7 @@ function DrakthonLib:CreateWindow(config)
             ToggleButton.BackgroundTransparency = 1
             ToggleButton.Size = UDim2.new(1, 0, 1, 0)
             ToggleButton.Text = ""
-            ToggleButton.ZIndex = 7
+            ToggleButton.ZIndex = 8
             
             local function UpdateToggle(state)
                 toggled = state
@@ -964,35 +908,19 @@ function DrakthonLib:CreateWindow(config)
                     Tween(SwitchKnob, {Position = UDim2.new(0, 2, 0.5, -10)}, 0.3, Enum.EasingStyle.Back)
                 end
                 
-                pcall(function()
-                    toggleCallback(toggled)
-                end)
+                pcall(function() toggleCallback(toggled) end)
             end
             
             ToggleButton.MouseButton1Click:Connect(function()
                 UpdateToggle(not toggled)
             end)
             
-            ToggleButton.MouseEnter:Connect(function()
-                PlaySound(Sounds.Hover, 0.2)
-                Tween(ToggleFrame, {BackgroundTransparency = 0.1}, 0.2)
-            end)
-            
-            ToggleButton.MouseLeave:Connect(function()
-                Tween(ToggleFrame, {BackgroundTransparency = 0.3}, 0.2)
-            end)
-            
             return {
-                SetState = function(self, state)
-                    UpdateToggle(state)
-                end,
-                GetState = function(self)
-                    return toggled
-                end
+                SetState = function(self, state) UpdateToggle(state) end,
+                GetState = function(self) return toggled end
             }
         end
         
-        -- ────────────────────── سلايدر (Slider) ──────────────────────
         function Elements:CreateSlider(sliderConfig)
             sliderConfig = sliderConfig or {}
             local sliderName = sliderConfig.Name or "Slider"
@@ -1024,7 +952,7 @@ function DrakthonLib:CreateWindow(config)
             SliderFrame.BackgroundTransparency = 0.3
             SliderFrame.Size = UDim2.new(1, 0, 0, 70)
             SliderFrame.BorderSizePixel = 0
-            SliderFrame.ZIndex = 4
+            SliderFrame.ZIndex = 5
             
             SliderCorner.CornerRadius = UDim.new(0, 10)
             SliderCorner.Parent = SliderFrame
@@ -1039,7 +967,7 @@ function DrakthonLib:CreateWindow(config)
             SliderTitle.TextColor3 = Theme.Text
             SliderTitle.TextSize = 14
             SliderTitle.TextXAlignment = Enum.TextXAlignment.Left
-            SliderTitle.ZIndex = 5
+            SliderTitle.ZIndex = 6
             
             ValueDisplay.Name = "ValueDisplay"
             ValueDisplay.Parent = SliderFrame
@@ -1048,7 +976,7 @@ function DrakthonLib:CreateWindow(config)
             ValueDisplay.Position = UDim2.new(1, -70, 0, 8)
             ValueDisplay.Size = UDim2.new(0, 55, 0, 24)
             ValueDisplay.BorderSizePixel = 0
-            ValueDisplay.ZIndex = 5
+            ValueDisplay.ZIndex = 6
             
             ValueCorner.CornerRadius = UDim.new(0, 8)
             ValueCorner.Parent = ValueDisplay
@@ -1061,7 +989,7 @@ function DrakthonLib:CreateWindow(config)
             ValueText.Text = tostring(currentValue)
             ValueText.TextColor3 = Theme.Text
             ValueText.TextSize = 13
-            ValueText.ZIndex = 6
+            ValueText.ZIndex = 7
             
             SliderTrack.Name = "Track"
             SliderTrack.Parent = SliderFrame
@@ -1069,7 +997,7 @@ function DrakthonLib:CreateWindow(config)
             SliderTrack.Position = UDim2.new(0, 15, 1, -20)
             SliderTrack.Size = UDim2.new(1, -30, 0, 6)
             SliderTrack.BorderSizePixel = 0
-            SliderTrack.ZIndex = 5
+            SliderTrack.ZIndex = 6
             
             TrackCorner.CornerRadius = UDim.new(1, 0)
             TrackCorner.Parent = SliderTrack
@@ -1079,7 +1007,7 @@ function DrakthonLib:CreateWindow(config)
             SliderFill.BackgroundColor3 = Theme.Primary
             SliderFill.Size = UDim2.new((currentValue - sliderMin) / (sliderMax - sliderMin), 0, 1, 0)
             SliderFill.BorderSizePixel = 0
-            SliderFill.ZIndex = 6
+            SliderFill.ZIndex = 7
             
             FillCorner.CornerRadius = UDim.new(1, 0)
             FillCorner.Parent = SliderFill
@@ -1090,7 +1018,7 @@ function DrakthonLib:CreateWindow(config)
             SliderKnob.Position = UDim2.new(1, -10, 0.5, -10)
             SliderKnob.Size = UDim2.new(0, 20, 0, 20)
             SliderKnob.BorderSizePixel = 0
-            SliderKnob.ZIndex = 7
+            SliderKnob.ZIndex = 8
             
             KnobCorner.CornerRadius = UDim.new(1, 0)
             KnobCorner.Parent = SliderKnob
@@ -1101,7 +1029,7 @@ function DrakthonLib:CreateWindow(config)
             SliderInput.Size = UDim2.new(1, 0, 1, 20)
             SliderInput.Position = UDim2.new(0, 0, 0, -10)
             SliderInput.Text = ""
-            SliderInput.ZIndex = 8
+            SliderInput.ZIndex = 9
             
             local function UpdateSlider(input)
                 local pos = math.clamp(
@@ -1110,16 +1038,11 @@ function DrakthonLib:CreateWindow(config)
                 )
                 
                 currentValue = math.floor(sliderMin + (sliderMax - sliderMin) * pos)
-                
                 Tween(SliderFill, {Size = UDim2.new(pos, 0, 1, 0)}, 0.05, Enum.EasingStyle.Linear)
                 ValueText.Text = tostring(currentValue)
-                
-                pcall(function()
-                    sliderCallback(currentValue)
-                end)
+                pcall(function() sliderCallback(currentValue) end)
             end
             
-            -- دعم الماوس (PC)
             SliderInput.InputBegan:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 then
                     dragging = true
@@ -1135,38 +1058,17 @@ function DrakthonLib:CreateWindow(config)
                 end
             end)
             
-            -- دعم اللمس (Mobile)
             SliderInput.TouchTap:Connect(function(positions)
-                local input = {Position = positions[1]}
-                UpdateSlider(input)
+                UpdateSlider({Position = positions[1]})
             end)
             
-            SliderInput.TouchPan:Connect(function(positions, totalTranslation, velocity, state)
-                if state == Enum.UserInputState.Begin then
-                    dragging = true
-                    Tween(SliderKnob, {Size = UDim2.new(0, 24, 0, 24), Position = UDim2.new(1, -12, 0.5, -12)}, 0.2)
-                elseif state == Enum.UserInputState.End then
-                    dragging = false
-                    Tween(SliderKnob, {Size = UDim2.new(0, 20, 0, 20), Position = UDim2.new(1, -10, 0.5, -10)}, 0.2)
-                end
-                
-                local input = {Position = positions[#positions]}
-                UpdateSlider(input)
+            SliderInput.TouchPan:Connect(function(positions)
+                UpdateSlider({Position = positions[#positions]})
             end)
             
             UserInputService.InputChanged:Connect(function(input)
                 if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
                     UpdateSlider(input)
-                end
-            end)
-            
-            SliderInput.MouseEnter:Connect(function()
-                Tween(SliderFrame, {BackgroundTransparency = 0.1}, 0.2)
-            end)
-            
-            SliderInput.MouseLeave:Connect(function()
-                if not dragging then
-                    Tween(SliderFrame, {BackgroundTransparency = 0.3}, 0.2)
                 end
             end)
             
@@ -1176,17 +1078,12 @@ function DrakthonLib:CreateWindow(config)
                     local pos = (currentValue - sliderMin) / (sliderMax - sliderMin)
                     Tween(SliderFill, {Size = UDim2.new(pos, 0, 1, 0)}, 0.3)
                     ValueText.Text = tostring(currentValue)
-                    pcall(function()
-                        sliderCallback(currentValue)
-                    end)
+                    pcall(function() sliderCallback(currentValue) end)
                 end,
-                GetValue = function(self)
-                    return currentValue
-                end
+                GetValue = function(self) return currentValue end
             }
         end
         
-        -- ────────────────────── تسمية (Label) ──────────────────────
         function Elements:CreateLabel(labelText)
             labelText = labelText or "Label"
             
@@ -1201,7 +1098,7 @@ function DrakthonLib:CreateWindow(config)
             LabelFrame.BackgroundTransparency = 0.85
             LabelFrame.Size = UDim2.new(1, 0, 0, 40)
             LabelFrame.BorderSizePixel = 0
-            LabelFrame.ZIndex = 4
+            LabelFrame.ZIndex = 5
             
             LabelCorner.CornerRadius = UDim.new(0, 10)
             LabelCorner.Parent = LabelFrame
@@ -1213,7 +1110,7 @@ function DrakthonLib:CreateWindow(config)
             LabelIcon.Size = UDim2.new(0, 20, 0, 20)
             LabelIcon.Image = Icons.Info
             LabelIcon.ImageColor3 = Theme.Primary
-            LabelIcon.ZIndex = 5
+            LabelIcon.ZIndex = 6
             
             LabelText.Name = "Text"
             LabelText.Parent = LabelFrame
@@ -1226,12 +1123,10 @@ function DrakthonLib:CreateWindow(config)
             LabelText.TextSize = 13
             LabelText.TextXAlignment = Enum.TextXAlignment.Left
             LabelText.TextWrapped = true
-            LabelText.ZIndex = 5
+            LabelText.ZIndex = 6
             
             return {
-                SetText = function(self, text)
-                    LabelText.Text = text
-                end
+                SetText = function(self, text) LabelText.Text = text end
             }
         end
         
@@ -1242,7 +1137,7 @@ function DrakthonLib:CreateWindow(config)
 end
 
 -- ════════════════════════════════════════════════════
---            نظام الإشعارات المحسّن
+--            الإشعارات
 -- ════════════════════════════════════════════════════
 local ActiveNotifications = {}
 local MaxNotifications = 2
@@ -1252,15 +1147,13 @@ function DrakthonLib:CreateNotification(notifConfig)
         local oldest = table.remove(ActiveNotifications, 1)
         if oldest and oldest.Parent then
             Tween(oldest, {Position = UDim2.new(1.5, 0, oldest.Position.Y.Scale, 0)}, 0.3)
-            task.delay(0.3, function()
-                oldest:Destroy()
-            end)
+            task.delay(0.3, function() oldest:Destroy() end)
         end
     end
     
     notifConfig = notifConfig or {}
     local title = notifConfig.Title or "Notification"
-    local message = notifConfig.Message or "This is a notification"
+    local message = notifConfig.Message or "Message"
     local duration = notifConfig.Duration or 3
     local callback = notifConfig.Callback or nil
     local notifType = notifConfig.Type or "Info"
@@ -1291,7 +1184,6 @@ function DrakthonLib:CreateNotification(notifConfig)
     local ProgressCorner = Instance.new("UICorner")
     local ProgressFill = Instance.new("Frame")
     local FillCorner = Instance.new("UICorner")
-    local AcceptBtn, DeclineBtn
     
     NotifGui.Name = RandomString(10)
     NotifGui.Parent = CoreGui
@@ -1306,7 +1198,7 @@ function DrakthonLib:CreateNotification(notifConfig)
     NotifFrame.Position = UDim2.new(1.5, 0, yPos, 0)
     NotifFrame.Size = UDim2.new(0, 350, 0, callback and 120 or 100)
     NotifFrame.BorderSizePixel = 0
-    NotifFrame.ZIndex = 10
+    NotifFrame.ZIndex = 100
     
     table.insert(ActiveNotifications, NotifFrame)
     
@@ -1320,7 +1212,7 @@ function DrakthonLib:CreateNotification(notifConfig)
     NotifIcon.Size = UDim2.new(0, 30, 0, 30)
     NotifIcon.Image = typeIcon
     NotifIcon.ImageColor3 = typeColor
-    NotifIcon.ZIndex = 11
+    NotifIcon.ZIndex = 101
     
     NotifTitle.Name = "Title"
     NotifTitle.Parent = NotifFrame
@@ -1332,7 +1224,7 @@ function DrakthonLib:CreateNotification(notifConfig)
     NotifTitle.TextColor3 = Theme.Text
     NotifTitle.TextSize = 14
     NotifTitle.TextXAlignment = Enum.TextXAlignment.Left
-    NotifTitle.ZIndex = 11
+    NotifTitle.ZIndex = 101
     
     NotifMessage.Name = "Message"
     NotifMessage.Parent = NotifFrame
@@ -1346,7 +1238,7 @@ function DrakthonLib:CreateNotification(notifConfig)
     NotifMessage.TextXAlignment = Enum.TextXAlignment.Left
     NotifMessage.TextYAlignment = Enum.TextYAlignment.Top
     NotifMessage.TextWrapped = true
-    NotifMessage.ZIndex = 11
+    NotifMessage.ZIndex = 101
     
     NotifProgress.Name = "Progress"
     NotifProgress.Parent = NotifFrame
@@ -1354,7 +1246,7 @@ function DrakthonLib:CreateNotification(notifConfig)
     NotifProgress.Position = UDim2.new(0, 10, 1, -8)
     NotifProgress.Size = UDim2.new(1, -20, 0, 4)
     NotifProgress.BorderSizePixel = 0
-    NotifProgress.ZIndex = 10
+    NotifProgress.ZIndex = 100
     
     ProgressCorner.CornerRadius = UDim.new(1, 0)
     ProgressCorner.Parent = NotifProgress
@@ -1364,14 +1256,13 @@ function DrakthonLib:CreateNotification(notifConfig)
     ProgressFill.BackgroundColor3 = typeColor
     ProgressFill.Size = UDim2.new(1, 0, 1, 0)
     ProgressFill.BorderSizePixel = 0
-    ProgressFill.ZIndex = 11
+    ProgressFill.ZIndex = 101
     
     FillCorner.CornerRadius = UDim.new(1, 0)
     FillCorner.Parent = ProgressFill
     
-    -- أزرار القبول/الرفض
     if callback and type(callback) == "function" then
-        AcceptBtn = Instance.new("TextButton")
+        local AcceptBtn = Instance.new("TextButton")
         local AcceptCorner = Instance.new("UICorner")
         local AcceptIcon = Instance.new("ImageLabel")
         
@@ -1381,10 +1272,8 @@ function DrakthonLib:CreateNotification(notifConfig)
         AcceptBtn.BackgroundTransparency = 0.3
         AcceptBtn.Position = UDim2.new(1, -75, 0, 80)
         AcceptBtn.Size = UDim2.new(0, 30, 0, 30)
-        AcceptBtn.AutoButtonColor = false
         AcceptBtn.Text = ""
-        AcceptBtn.BorderSizePixel = 0
-        AcceptBtn.ZIndex = 12
+        AcceptBtn.ZIndex = 102
         
         AcceptCorner.CornerRadius = UDim.new(0, 8)
         AcceptCorner.Parent = AcceptBtn
@@ -1395,9 +1284,9 @@ function DrakthonLib:CreateNotification(notifConfig)
         AcceptIcon.Size = UDim2.new(0, 20, 0, 20)
         AcceptIcon.Image = Icons.Check
         AcceptIcon.ImageColor3 = Theme.Text
-        AcceptIcon.ZIndex = 13
+        AcceptIcon.ZIndex = 103
         
-        DeclineBtn = Instance.new("TextButton")
+        local DeclineBtn = Instance.new("TextButton")
         local DeclineCorner = Instance.new("UICorner")
         local DeclineIcon = Instance.new("ImageLabel")
         
@@ -1407,10 +1296,8 @@ function DrakthonLib:CreateNotification(notifConfig)
         DeclineBtn.BackgroundTransparency = 0.3
         DeclineBtn.Position = UDim2.new(1, -110, 0, 80)
         DeclineBtn.Size = UDim2.new(0, 30, 0, 30)
-        DeclineBtn.AutoButtonColor = false
         DeclineBtn.Text = ""
-        DeclineBtn.BorderSizePixel = 0
-        DeclineBtn.ZIndex = 12
+        DeclineBtn.ZIndex = 102
         
         DeclineCorner.CornerRadius = UDim.new(0, 8)
         DeclineCorner.Parent = DeclineBtn
@@ -1421,7 +1308,7 @@ function DrakthonLib:CreateNotification(notifConfig)
         DeclineIcon.Size = UDim2.new(0, 20, 0, 20)
         DeclineIcon.Image = Icons.X
         DeclineIcon.ImageColor3 = Theme.Text
-        DeclineIcon.ZIndex = 13
+        DeclineIcon.ZIndex = 103
         
         local function CloseNotif(result)
             PlaySound(result and Sounds.Success or Sounds.Error, 0.5)
@@ -1435,18 +1322,11 @@ function DrakthonLib:CreateNotification(notifConfig)
                 end
                 NotifGui:Destroy()
             end)
-            pcall(function()
-                callback(result)
-            end)
+            pcall(function() callback(result) end)
         end
         
-        AcceptBtn.MouseButton1Click:Connect(function()
-            CloseNotif(true)
-        end)
-        
-        DeclineBtn.MouseButton1Click:Connect(function()
-            CloseNotif(false)
-        end)
+        AcceptBtn.MouseButton1Click:Connect(function() CloseNotif(true) end)
+        DeclineBtn.MouseButton1Click:Connect(function() CloseNotif(false) end)
         
         AcceptBtn.MouseEnter:Connect(function()
             Tween(AcceptBtn, {BackgroundTransparency = 0.1}, 0.2)
