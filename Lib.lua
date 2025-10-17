@@ -1,15 +1,15 @@
 --[[
     ╔══════════════════════════════════════════════════════════════╗
-    ║                  DRAKTHON UI LIBRARY V7.0                    ║
-    ║       ULTIMATE EDITION - FULL CUSTOMIZATION + SETTINGS       ║
-    ║    ✅ Complete Loader + Settings Tab + Everything Custom    ║
+    ║                  DRAKTHON UI LIBRARY V8.0                    ║
+    ║              ULTIMATE COMPLETE - EVERYTHING WORKS             ║
+    ║    ✅ Full Loader + Settings + Theme Changer + Bug Fixed    ║
     ╚══════════════════════════════════════════════════════════════╝
 ]]
 
 local DrakthonLib = {}
 
 -- ═══════════════════════════════════════════════════════════════
--- PREDEFINED THEMES
+-- THEMES - 12 COMPLETE THEMES
 -- ═══════════════════════════════════════════════════════════════
 local Themes = {
     Default = {
@@ -236,28 +236,9 @@ local Themes = {
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
-local HttpService = game:GetService("HttpService")
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
-
--- ═══════════════════════════════════════════════════════════════
--- ANTI-DUPLICATE SYSTEM
--- ═══════════════════════════════════════════════════════════════
-local function CheckDuplicate(antiDupId)
-    if not antiDupId or antiDupId == "" then
-        return false
-    end
-    
-    for _, gui in ipairs(PlayerGui:GetChildren()) do
-        if gui:GetAttribute("DrakthonID") == antiDupId then
-            warn("[Drakthon] UI with ID '" .. antiDupId .. "' already exists! Ignoring duplicate...")
-            return true
-        end
-    end
-    
-    return false
-end
 
 -- ═══════════════════════════════════════════════════════════════
 -- UTILITY FUNCTIONS
@@ -338,6 +319,8 @@ local function MakeDraggable(frame, dragHandle)
 end
 
 local function AddHoverEffect(button, normalColor, hoverColor, pressedColor)
+    if not normalColor or not hoverColor then return end
+    
     button.MouseEnter:Connect(function()
         Tween(button, {BackgroundColor3 = hoverColor}, 0.2)
     end)
@@ -357,6 +340,21 @@ local function AddHoverEffect(button, normalColor, hoverColor, pressedColor)
     end
 end
 
+local function CheckDuplicate(antiDupId)
+    if not antiDupId or antiDupId == "" then
+        return false
+    end
+    
+    for _, gui in ipairs(PlayerGui:GetChildren()) do
+        if gui:GetAttribute("DrakthonID") == antiDupId then
+            warn("[Drakthon] Duplicate UI detected! ID: " .. antiDupId)
+            return true
+        end
+    end
+    
+    return false
+end
+
 -- ═══════════════════════════════════════════════════════════════
 -- MAIN WINDOW FUNCTION
 -- ═══════════════════════════════════════════════════════════════
@@ -364,75 +362,37 @@ end
 function DrakthonLib:MakeWindow(options)
     options = options or {}
     
-    -- Anti-Duplicate Check
+    -- Anti-Duplicate
     local antiDupId = options.AntiDuplicate or ""
     if CheckDuplicate(antiDupId) then
         return nil
     end
     
-    -- ═══════════════════════════════════════════════════════════
-    -- LOADER CONFIGURATION (COMPLETE)
-    -- ═══════════════════════════════════════════════════════════
+    -- Configuration
+    local windowName = options.Name or "Drakthon Library"
+    local themeName = options.Theme or "Default"
+    local windowSize = options.Size or UDim2.new(0, 550, 0, 350)
+    
+    -- Loader Settings
     local LoaderConfig = {
         Enabled = options.LoaderEnabled ~= false,
         MainImage = options.LoaderImage or "rbxassetid://11422155687",
-        IconImage = options.LoaderIconImage or options.LoaderImage2 or "rbxassetid://679392",
+        MinimizeIcon = options.LoaderMinimizeIcon or "rbxassetid://10734950309",
         Position = options.LoaderPosition or UDim2.new(0, 20, 1, -90),
         Size = options.LoaderSize or UDim2.new(0, 70, 0, 70),
-        BackgroundColor = options.LoaderBackgroundColor or nil,
-        BorderColor = options.LoaderBorderColor or nil,
-        BorderThickness = options.LoaderBorderThickness or 1.5,
-        CornerRadius = options.LoaderCornerRadius or 12,
-        Transparency = options.LoaderTransparency or 0,
-        ImageTransparency = options.LoaderImageTransparency or 0,
-        Draggable = options.LoaderDraggable ~= false,
-        HoverEffect = options.LoaderHoverEffect ~= false,
-        ClickSound = options.LoaderClickSound or nil,
-        ShowOnStart = options.LoaderShowOnStart or false,
     }
     
-    -- ═══════════════════════════════════════════════════════════
-    -- WINDOW CONFIGURATION
-    -- ═══════════════════════════════════════════════════════════
-    local windowName = options.Name or "Drakthon Library"
-    local themeName = options.Theme or "Default"
-    local customTheme = options.CustomTheme or nil
-    local windowSize = options.Size or UDim2.new(0, 550, 0, 350)
-    local closeConfirmation = options.CloseConfirmation ~= false
-    local closeConfirmText = options.CloseConfirmText or "Are you sure you want to close?"
-    local accentColor = options.AccentColor or nil
-    local titleBarHeight = options.TitleBarHeight or 40
-    local sidebarWidth = options.SidebarWidth or 165
-    local animationSpeed = options.AnimationSpeed or 0.3
-    local fontSize = options.FontSize or 1
-    local uiTransparency = options.UITransparency or 0
-    
-    -- Select Theme
-    local Theme = customTheme or Themes[themeName] or Themes.Default
-    
-    -- Apply custom accent if provided
-    if accentColor then
-        Theme.Accent = accentColor
-        Theme.AccentHover = Color3.new(
-            math.min(accentColor.R + 0.1, 1),
-            math.min(accentColor.G + 0.1, 1),
-            math.min(accentColor.B + 0.1, 1)
-        )
-        Theme.AccentPressed = Color3.new(
-            math.max(accentColor.R - 0.1, 0),
-            math.max(accentColor.G - 0.1, 0),
-            math.max(accentColor.B - 0.1, 0)
-        )
-    end
+    -- Theme
+    local Theme = Themes[themeName] or Themes.Default
+    local CurrentThemeName = themeName
     
     -- ═══════════════════════════════════════════════════════════
-    -- CREATE SCREEN GUI
+    -- SCREEN GUI
     -- ═══════════════════════════════════════════════════════════
     local screenGui = CreateInstance("ScreenGui", {
         Name = "DrakthonLib_" .. tick(),
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
-        IgnoreGuiInset = true,
         Parent = PlayerGui
     })
     
@@ -441,58 +401,288 @@ function DrakthonLib:MakeWindow(options)
     end
     
     -- ═══════════════════════════════════════════════════════════
-    -- LOADER ICON (COMPLETE CUSTOMIZATION)
+    -- LOADER WITH SETTINGS
     -- ═══════════════════════════════════════════════════════════
-    local loaderIcon = CreateInstance("Frame", {
-        Name = "LoaderIcon",
-        Size = LoaderConfig.Size,
+    local loaderFrame = CreateInstance("Frame", {
+        Name = "LoaderFrame",
+        Size = UDim2.new(0, 280, 0, 350),
         Position = LoaderConfig.Position,
         AnchorPoint = Vector2.new(0, 1),
-        BackgroundColor3 = LoaderConfig.BackgroundColor or Theme.Secondary,
-        BackgroundTransparency = LoaderConfig.Transparency,
-        Visible = LoaderConfig.ShowOnStart,
+        BackgroundColor3 = Theme.Secondary,
+        Visible = false,
         ZIndex = 100,
         Parent = screenGui
     })
     
     CreateInstance("UICorner", {
-        CornerRadius = UDim.new(0, LoaderConfig.CornerRadius),
-        Parent = loaderIcon
+        CornerRadius = UDim.new(0, 12),
+        Parent = loaderFrame
     })
     
     CreateInstance("UIStroke", {
-        Color = LoaderConfig.BorderColor or Theme.ElementBorder,
-        Thickness = LoaderConfig.BorderThickness,
-        Transparency = 0.3,
-        Parent = loaderIcon
+        Color = Theme.Accent,
+        Thickness = 2,
+        Parent = loaderFrame
     })
     
-    local loaderImageButton = CreateInstance("ImageButton", {
-        Name = "ImageButton",
-        Size = UDim2.new(1, -10, 1, -10),
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundTransparency = 1,
-        Image = LoaderConfig.MainImage,
-        ImageTransparency = LoaderConfig.ImageTransparency,
-        ScaleType = Enum.ScaleType.Fit,
+    -- Loader Header
+    local loaderHeader = CreateInstance("Frame", {
+        Size = UDim2.new(1, 0, 0, 40),
+        BackgroundColor3 = Theme.Tertiary,
         ZIndex = 101,
-        Parent = loaderIcon
+        Parent = loaderFrame
     })
     
-    if LoaderConfig.Draggable then
-        MakeDraggable(loaderIcon, loaderIcon)
-    end
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 12),
+        Parent = loaderHeader
+    })
     
-    if LoaderConfig.HoverEffect then
-        AddHoverEffect(loaderIcon, 
-            LoaderConfig.BackgroundColor or Theme.Secondary, 
-            Theme.Tertiary
-        )
-    end
+    CreateInstance("Frame", {
+        Size = UDim2.new(1, 0, 0, 15),
+        Position = UDim2.new(0, 0, 1, -15),
+        BackgroundColor3 = Theme.Tertiary,
+        ZIndex = 101,
+        Parent = loaderHeader
+    })
+    
+    CreateInstance("TextLabel", {
+        Size = UDim2.new(1, -80, 1, 0),
+        Position = UDim2.new(0, 15, 0, 0),
+        BackgroundTransparency = 1,
+        Text = "⚙️ " .. windowName,
+        TextColor3 = Theme.TextPrimary,
+        TextSize = 14,
+        Font = Enum.Font.GothamBold,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 102,
+        Parent = loaderHeader
+    })
+    
+    -- Close Loader Button
+    local closeLoaderBtn = CreateInstance("TextButton", {
+        Size = UDim2.new(0, 30, 0, 26),
+        Position = UDim2.new(1, -38, 0.5, 0),
+        AnchorPoint = Vector2.new(0, 0.5),
+        BackgroundColor3 = Theme.Error,
+        Text = "✕",
+        TextColor3 = Theme.TextPrimary,
+        TextSize = 14,
+        Font = Enum.Font.GothamBold,
+        ZIndex = 102,
+        Parent = loaderHeader
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 6),
+        Parent = closeLoaderBtn
+    })
+    
+    -- Loader Content
+    local loaderContent = CreateInstance("ScrollingFrame", {
+        Size = UDim2.new(1, 0, 1, -40),
+        Position = UDim2.new(0, 0, 0, 40),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ScrollBarThickness = 4,
+        ScrollBarImageColor3 = Theme.ElementBorder,
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        ZIndex = 101,
+        Parent = loaderFrame
+    })
+    
+    local loaderLayout = CreateInstance("UIListLayout", {
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Padding = UDim.new(0, 8),
+        Parent = loaderContent
+    })
+    
+    CreateInstance("UIPadding", {
+        PaddingAll = UDim.new(0, 12),
+        Parent = loaderContent
+    })
+    
+    loaderLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        loaderContent.CanvasSize = UDim2.new(0, 0, 0, loaderLayout.AbsoluteContentSize.Y + 24)
+    end)
+    
+    -- Loader Image Display
+    local loaderImageDisplay = CreateInstance("ImageLabel", {
+        Size = UDim2.new(1, 0, 0, 120),
+        BackgroundColor3 = Theme.ElementBackground,
+        Image = LoaderConfig.MainImage,
+        ScaleType = Enum.ScaleType.Fit,
+        ZIndex = 102,
+        LayoutOrder = 1,
+        Parent = loaderContent
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 8),
+        Parent = loaderImageDisplay
+    })
+    
+    CreateInstance("UIPadding", {
+        PaddingAll = UDim.new(0, 10),
+        Parent = loaderImageDisplay
+    })
+    
+    -- Theme Selector in Loader
+    local themeFrame = CreateInstance("Frame", {
+        Size = UDim2.new(1, 0, 0, 70),
+        BackgroundColor3 = Theme.ElementBackground,
+        LayoutOrder = 2,
+        ZIndex = 102,
+        Parent = loaderContent
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 8),
+        Parent = themeFrame
+    })
+    
+    CreateInstance("UIPadding", {
+        PaddingAll = UDim.new(0, 10),
+        Parent = themeFrame
+    })
+    
+    CreateInstance("TextLabel", {
+        Size = UDim2.new(1, 0, 0, 18),
+        BackgroundTransparency = 1,
+        Text = "🎨 Select Theme",
+        TextColor3 = Theme.TextPrimary,
+        TextSize = 12,
+        Font = Enum.Font.GothamBold,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 103,
+        Parent = themeFrame
+    })
+    
+    local themeDropdown = CreateInstance("TextButton", {
+        Size = UDim2.new(1, 0, 0, 32),
+        Position = UDim2.new(0, 0, 0, 28),
+        BackgroundColor3 = Theme.Tertiary,
+        Text = "",
+        ZIndex = 103,
+        Parent = themeFrame
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 6),
+        Parent = themeDropdown
+    })
+    
+    local themeLabel = CreateInstance("TextLabel", {
+        Size = UDim2.new(1, -30, 1, 0),
+        Position = UDim2.new(0, 10, 0, 0),
+        BackgroundTransparency = 1,
+        Text = CurrentThemeName,
+        TextColor3 = Theme.TextPrimary,
+        TextSize = 11,
+        Font = Enum.Font.Gotham,
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 104,
+        Parent = themeDropdown
+    })
+    
+    local themeArrow = CreateInstance("TextLabel", {
+        Size = UDim2.new(0, 20, 1, 0),
+        Position = UDim2.new(1, -20, 0, 0),
+        BackgroundTransparency = 1,
+        Text = "▼",
+        TextColor3 = Theme.TextSecondary,
+        TextSize = 10,
+        ZIndex = 104,
+        Parent = themeDropdown
+    })
+    
+    local themeList = CreateInstance("ScrollingFrame", {
+        Size = UDim2.new(1, 0, 0, 0),
+        Position = UDim2.new(0, 0, 1, 5),
+        BackgroundColor3 = Theme.Tertiary,
+        ScrollBarThickness = 4,
+        ScrollBarImageColor3 = Theme.ElementBorder,
+        Visible = false,
+        ZIndex = 200,
+        Parent = themeDropdown
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 6),
+        Parent = themeList
+    })
+    
+    CreateInstance("UIStroke", {
+        Color = Theme.Accent,
+        Thickness = 1.5,
+        Parent = themeList
+    })
+    
+    local themeListLayout = CreateInstance("UIListLayout", {
+        SortOrder = Enum.SortOrder.LayoutOrder,
+        Padding = UDim.new(0, 2),
+        Parent = themeList
+    })
+    
+    CreateInstance("UIPadding", {
+        PaddingAll = UDim.new(0, 4),
+        Parent = themeList
+    })
+    
+    -- Open UI Button in Loader
+    local openUIBtn = CreateInstance("TextButton", {
+        Size = UDim2.new(1, 0, 0, 45),
+        BackgroundColor3 = Theme.Accent,
+        Text = "🚀 Open UI",
+        TextColor3 = Theme.TextPrimary,
+        TextSize = 14,
+        Font = Enum.Font.GothamBold,
+        LayoutOrder = 3,
+        ZIndex = 102,
+        Parent = loaderContent
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 8),
+        Parent = openUIBtn
+    })
+    
+    MakeDraggable(loaderFrame, loaderHeader)
+    
+    -- Minimize Icon (Small)
+    local minimizeIcon = CreateInstance("ImageButton", {
+        Name = "MinimizeIcon",
+        Size = LoaderConfig.Size,
+        Position = LoaderConfig.Position,
+        AnchorPoint = Vector2.new(0, 1),
+        BackgroundColor3 = Theme.Secondary,
+        Image = LoaderConfig.MinimizeIcon,
+        ScaleType = Enum.ScaleType.Fit,
+        Visible = false,
+        ZIndex = 100,
+        Parent = screenGui
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 12),
+        Parent = minimizeIcon
+    })
+    
+    CreateInstance("UIStroke", {
+        Color = Theme.Accent,
+        Thickness = 2,
+        Parent = minimizeIcon
+    })
+    
+    CreateInstance("UIPadding", {
+        PaddingAll = UDim.new(0, 8),
+        Parent = minimizeIcon
+    })
+    
+    MakeDraggable(minimizeIcon, minimizeIcon)
     
     -- ═══════════════════════════════════════════════════════════
-    -- MAIN WINDOW FRAME
+    -- MAIN WINDOW
     -- ═══════════════════════════════════════════════════════════
     local mainFrame = CreateInstance("Frame", {
         Name = "MainWindow",
@@ -500,7 +690,6 @@ function DrakthonLib:MakeWindow(options)
         Position = UDim2.new(0.5, 0, 0.5, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Theme.Background,
-        BackgroundTransparency = uiTransparency,
         BorderSizePixel = 0,
         ClipsDescendants = true,
         Visible = true,
@@ -516,19 +705,13 @@ function DrakthonLib:MakeWindow(options)
     CreateInstance("UIStroke", {
         Color = Theme.ElementBorder,
         Thickness = 1.5,
-        Transparency = 0.5,
         Parent = mainFrame
     })
     
-    -- ═══════════════════════════════════════════════════════════
-    -- TITLE BAR
-    -- ═══════════════════════════════════════════════════════════
+    -- Title Bar
     local titleBar = CreateInstance("Frame", {
-        Name = "TitleBar",
-        Size = UDim2.new(1, 0, 0, titleBarHeight),
+        Size = UDim2.new(1, 0, 0, 40),
         BackgroundColor3 = Theme.Secondary,
-        BackgroundTransparency = uiTransparency,
-        BorderSizePixel = 0,
         ZIndex = 3,
         Parent = mainFrame
     })
@@ -542,8 +725,6 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(1, 0, 0, 15),
         Position = UDim2.new(0, 0, 1, -15),
         BackgroundColor3 = Theme.Secondary,
-        BackgroundTransparency = uiTransparency,
-        BorderSizePixel = 0,
         ZIndex = 3,
         Parent = titleBar
     })
@@ -554,35 +735,14 @@ function DrakthonLib:MakeWindow(options)
         BackgroundTransparency = 1,
         Text = "🌙 " .. windowName,
         TextColor3 = Theme.TextPrimary,
-        TextSize = 15 * fontSize,
+        TextSize = 15,
         Font = Enum.Font.GothamBold,
         TextXAlignment = Enum.TextXAlignment.Left,
         ZIndex = 4,
         Parent = titleBar
     })
     
-    -- Icon in Title Bar
-    if LoaderConfig.IconImage and LoaderConfig.IconImage ~= "" then
-        local imageId = LoaderConfig.IconImage
-        if not string.find(imageId, "rbxassetid://") then
-            imageId = "rbxassetid://" .. imageId
-        end
-        
-        CreateInstance("ImageLabel", {
-            Size = UDim2.new(0, 30, 0, 30),
-            Position = UDim2.new(1, -150, 0.5, 0),
-            AnchorPoint = Vector2.new(0, 0.5),
-            BackgroundTransparency = 1,
-            Image = imageId,
-            ScaleType = Enum.ScaleType.Fit,
-            ZIndex = 4,
-            Parent = titleBar
-        })
-    end
-    
-    -- ═══════════════════════════════════════════════════════════
-    -- CONTROL BUTTONS
-    -- ═══════════════════════════════════════════════════════════
+    -- Minimize Button
     local minimizeBtn = CreateInstance("TextButton", {
         Size = UDim2.new(0, 35, 0, 26),
         Position = UDim2.new(1, -85, 0.5, 0),
@@ -590,7 +750,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundColor3 = Theme.ElementBackground,
         Text = "—",
         TextColor3 = Theme.TextPrimary,
-        TextSize = 16 * fontSize,
+        TextSize = 16,
         Font = Enum.Font.GothamBold,
         ZIndex = 4,
         Parent = titleBar
@@ -601,6 +761,7 @@ function DrakthonLib:MakeWindow(options)
         Parent = minimizeBtn
     })
     
+    -- Close Button
     local closeBtn = CreateInstance("TextButton", {
         Size = UDim2.new(0, 35, 0, 26),
         Position = UDim2.new(1, -42, 0.5, 0),
@@ -608,7 +769,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundColor3 = Theme.Error,
         Text = "✕",
         TextColor3 = Theme.TextPrimary,
-        TextSize = 16 * fontSize,
+        TextSize = 16,
         Font = Enum.Font.GothamBold,
         ZIndex = 4,
         Parent = titleBar
@@ -619,111 +780,11 @@ function DrakthonLib:MakeWindow(options)
         Parent = closeBtn
     })
     
-    -- ═══════════════════════════════════════════════════════════
-    -- CONFIRMATION MODAL
-    -- ═══════════════════════════════════════════════════════════
-    local confirmOverlay = CreateInstance("Frame", {
-        Size = UDim2.new(1, 0, 1, 0),
-        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-        BackgroundTransparency = 0.5,
-        BorderSizePixel = 0,
-        Visible = false,
-        ZIndex = 150,
-        Parent = mainFrame
-    })
-    
-    local confirmModal = CreateInstance("Frame", {
-        Size = UDim2.new(0, 320, 0, 160),
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        BackgroundColor3 = Theme.Tertiary,
-        BorderSizePixel = 0,
-        ZIndex = 200,
-        Parent = confirmOverlay
-    })
-    
-    CreateInstance("UICorner", {
-        CornerRadius = UDim.new(0, 12),
-        Parent = confirmModal
-    })
-    
-    CreateInstance("UIStroke", {
-        Color = Theme.Error,
-        Thickness = 2,
-        Parent = confirmModal
-    })
-    
-    CreateInstance("TextLabel", {
-        Size = UDim2.new(1, -20, 0, 30),
-        Position = UDim2.new(0, 10, 0, 12),
-        BackgroundTransparency = 1,
-        Text = "⚠️ Warning",
-        TextColor3 = Theme.Warning,
-        TextSize = 18 * fontSize,
-        Font = Enum.Font.GothamBold,
-        TextXAlignment = Enum.TextXAlignment.Center,
-        ZIndex = 201,
-        Parent = confirmModal
-    })
-    
-    CreateInstance("TextLabel", {
-        Size = UDim2.new(1, -30, 0, 45),
-        Position = UDim2.new(0, 15, 0, 48),
-        BackgroundTransparency = 1,
-        Text = closeConfirmText,
-        TextColor3 = Theme.TextSecondary,
-        TextSize = 13 * fontSize,
-        Font = Enum.Font.Gotham,
-        TextWrapped = true,
-        TextXAlignment = Enum.TextXAlignment.Center,
-        TextYAlignment = Enum.TextYAlignment.Top,
-        ZIndex = 201,
-        Parent = confirmModal
-    })
-    
-    local confirmYesBtn = CreateInstance("TextButton", {
-        Size = UDim2.new(0, 130, 0, 36),
-        Position = UDim2.new(0.5, -138, 1, -45),
-        BackgroundColor3 = Theme.Error,
-        Text = "✓ Yes",
-        TextColor3 = Theme.TextPrimary,
-        TextSize = 14 * fontSize,
-        Font = Enum.Font.GothamBold,
-        ZIndex = 201,
-        Parent = confirmModal
-    })
-    
-    CreateInstance("UICorner", {
-        CornerRadius = UDim.new(0, 8),
-        Parent = confirmYesBtn
-    })
-    
-    local confirmNoBtn = CreateInstance("TextButton", {
-        Size = UDim2.new(0, 130, 0, 36),
-        Position = UDim2.new(0.5, 8, 1, -45),
-        BackgroundColor3 = Theme.ElementBackground,
-        Text = "✕ No",
-        TextColor3 = Theme.TextPrimary,
-        TextSize = 14 * fontSize,
-        Font = Enum.Font.GothamBold,
-        ZIndex = 201,
-        Parent = confirmModal
-    })
-    
-    CreateInstance("UICorner", {
-        CornerRadius = UDim.new(0, 8),
-        Parent = confirmNoBtn
-    })
-    
-    -- ═══════════════════════════════════════════════════════════
-    -- SIDEBAR
-    -- ═══════════════════════════════════════════════════════════
+    -- Sidebar
     local sidebar = CreateInstance("Frame", {
-        Size = UDim2.new(0, sidebarWidth, 1, -titleBarHeight),
-        Position = UDim2.new(0, 0, 0, titleBarHeight),
+        Size = UDim2.new(0, 165, 1, -40),
+        Position = UDim2.new(0, 0, 0, 40),
         BackgroundColor3 = Theme.Secondary,
-        BackgroundTransparency = uiTransparency,
-        BorderSizePixel = 0,
         ZIndex = 3,
         Parent = mainFrame
     })
@@ -731,7 +792,6 @@ function DrakthonLib:MakeWindow(options)
     local tabsContainer = CreateInstance("ScrollingFrame", {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
-        BorderSizePixel = 0,
         ScrollBarThickness = 4,
         ScrollBarImageColor3 = Theme.ElementBorder,
         CanvasSize = UDim2.new(0, 0, 0, 0),
@@ -746,10 +806,7 @@ function DrakthonLib:MakeWindow(options)
     })
     
     CreateInstance("UIPadding", {
-        PaddingTop = UDim.new(0, 10),
-        PaddingLeft = UDim.new(0, 8),
-        PaddingRight = UDim.new(0, 8),
-        PaddingBottom = UDim.new(0, 10),
+        PaddingAll = UDim.new(0, 10),
         Parent = tabsContainer
     })
     
@@ -757,27 +814,19 @@ function DrakthonLib:MakeWindow(options)
         tabsContainer.CanvasSize = UDim2.new(0, 0, 0, tabsLayout.AbsoluteContentSize.Y + 20)
     end)
     
-    -- ═══════════════════════════════════════════════════════════
-    -- CONTENT AREA
-    -- ═══════════════════════════════════════════════════════════
+    -- Content Area
     local contentArea = CreateInstance("Frame", {
-        Name = "ContentArea",
-        Size = UDim2.new(1, -sidebarWidth, 1, -titleBarHeight),
-        Position = UDim2.new(0, sidebarWidth, 0, titleBarHeight),
+        Size = UDim2.new(1, -165, 1, -40),
+        Position = UDim2.new(0, 165, 0, 40),
         BackgroundColor3 = Theme.Background,
-        BackgroundTransparency = uiTransparency,
-        BorderSizePixel = 0,
-        ClipsDescendants = true,
         ZIndex = 3,
+        ClipsDescendants = true,
         Parent = mainFrame
     })
     
     local contentScroll = CreateInstance("ScrollingFrame", {
-        Name = "ContentScroll",
         Size = UDim2.new(1, 0, 1, 0),
-        Position = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1,
-        BorderSizePixel = 0,
         ScrollBarThickness = 5,
         ScrollBarImageColor3 = Theme.ElementBorder,
         CanvasSize = UDim2.new(0, 0, 0, 0),
@@ -787,67 +836,9 @@ function DrakthonLib:MakeWindow(options)
     })
     
     CreateInstance("UIPadding", {
-        PaddingTop = UDim.new(0, 12),
-        PaddingLeft = UDim.new(0, 12),
-        PaddingRight = UDim.new(0, 12),
-        PaddingBottom = UDim.new(0, 12),
+        PaddingAll = UDim.new(0, 12),
         Parent = contentScroll
     })
-    
-    -- ═══════════════════════════════════════════════════════════
-    -- BUTTON INTERACTIONS
-    -- ═══════════════════════════════════════════════════════════
-    AddHoverEffect(minimizeBtn, Theme.ElementBackground, Theme.Tertiary, Theme.ElementBorder)
-    AddHoverEffect(closeBtn, Theme.Error, Color3.fromRGB(255, 91, 91), Color3.fromRGB(220, 51, 51))
-    AddHoverEffect(confirmYesBtn, Theme.Error, Color3.fromRGB(255, 91, 91))
-    AddHoverEffect(confirmNoBtn, Theme.ElementBackground, Theme.Tertiary)
-    
-    closeBtn.MouseButton1Click:Connect(function()
-        if closeConfirmation then
-            confirmOverlay.Visible = true
-            confirmModal.Size = UDim2.new(0, 0, 0, 0)
-            Tween(confirmModal, {Size = UDim2.new(0, 320, 0, 160)}, animationSpeed + 0.1, Enum.EasingStyle.Back)
-        else
-            screenGui:Destroy()
-        end
-    end)
-    
-    confirmYesBtn.MouseButton1Click:Connect(function()
-        Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, animationSpeed + 0.1, Enum.EasingStyle.Back)
-        wait(animationSpeed + 0.1)
-        screenGui:Destroy()
-    end)
-    
-    confirmNoBtn.MouseButton1Click:Connect(function()
-        Tween(confirmModal, {Size = UDim2.new(0, 0, 0, 0)}, animationSpeed, Enum.EasingStyle.Back)
-        wait(animationSpeed)
-        confirmOverlay.Visible = false
-    end)
-    
-    minimizeBtn.MouseButton1Click:Connect(function()
-        if LoaderConfig.ClickSound then
-            -- Play sound if provided
-        end
-        
-        Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, animationSpeed, Enum.EasingStyle.Back)
-        wait(animationSpeed)
-        mainFrame.Visible = false
-        loaderIcon.Visible = true
-        Tween(loaderIcon, {Size = LoaderConfig.Size}, animationSpeed, Enum.EasingStyle.Back)
-    end)
-    
-    loaderImageButton.MouseButton1Click:Connect(function()
-        if LoaderConfig.ClickSound then
-            -- Play sound if provided
-        end
-        
-        Tween(loaderIcon, {Size = UDim2.new(0, 0, 0, 0)}, animationSpeed, Enum.EasingStyle.Back)
-        wait(animationSpeed)
-        loaderIcon.Visible = false
-        mainFrame.Visible = true
-        mainFrame.Size = UDim2.new(0, 0, 0, 0)
-        Tween(mainFrame, {Size = windowSize}, animationSpeed + 0.1, Enum.EasingStyle.Back)
-    end)
     
     MakeDraggable(mainFrame, titleBar)
     
@@ -857,259 +848,203 @@ function DrakthonLib:MakeWindow(options)
     local Window = {
         Tabs = {},
         CurrentTab = nil,
-        ScreenGui = screenGui,
-        MainFrame = mainFrame,
-        ContentScroll = contentScroll,
         Theme = Theme,
-        Config = {
-            AnimationSpeed = animationSpeed,
-            FontSize = fontSize,
-            UITransparency = uiTransparency,
-            TitleBarHeight = titleBarHeight,
-            SidebarWidth = sidebarWidth,
-            WindowSize = windowSize,
+        ThemeName = CurrentThemeName,
+        Elements = {
+            MainFrame = mainFrame,
+            TitleBar = titleBar,
+            TitleLabel = titleLabel,
+            Sidebar = sidebar,
+            ContentArea = contentArea,
+            MinimizeBtn = minimizeBtn,
+            CloseBtn = closeBtn,
         }
     }
     
-    -- ═══════════════════════════════════════════════════════════
-    -- SETTINGS TAB CREATOR (AUTOMATIC)
-    -- ═══════════════════════════════════════════════════════════
-    function Window:CreateSettingsTab()
-        local SettingsTab = self:MakeTab({
-            Name = "⚙️ Settings",
-            Icon = "rbxassetid://10734950309"
-        })
+    -- Apply Theme Function
+    function Window:ApplyTheme(newTheme)
+        Theme = newTheme
         
-        SettingsTab:AddParagraph({
-            Title = "UI Settings",
-            Text = "Customize your UI appearance and behavior"
-        })
+        -- Update all elements
+        mainFrame.BackgroundColor3 = Theme.Background
+        titleBar.BackgroundColor3 = Theme.Secondary
+        titleLabel.TextColor3 = Theme.TextPrimary
+        sidebar.BackgroundColor3 = Theme.Secondary
+        contentArea.BackgroundColor3 = Theme.Background
+        minimizeBtn.BackgroundColor3 = Theme.ElementBackground
+        minimizeBtn.TextColor3 = Theme.TextPrimary
+        closeBtn.BackgroundColor3 = Theme.Error
+        closeBtn.TextColor3 = Theme.TextPrimary
         
-        -- Theme Selector
-        local themeNames = {}
-        for name, _ in pairs(Themes) do
-            table.insert(themeNames, name)
+        -- Update loader
+        loaderFrame.BackgroundColor3 = Theme.Secondary
+        loaderHeader.BackgroundColor3 = Theme.Tertiary
+        minimizeIcon.BackgroundColor3 = Theme.Secondary
+        openUIBtn.BackgroundColor3 = Theme.Accent
+        themeFrame.BackgroundColor3 = Theme.ElementBackground
+        themeDropdown.BackgroundColor3 = Theme.Tertiary
+        
+        -- Update strokes
+        for _, obj in pairs(mainFrame:GetDescendants()) do
+            if obj:IsA("UIStroke") then
+                if obj.Parent == mainFrame then
+                    obj.Color = Theme.ElementBorder
+                elseif obj.Parent.Name:find("Loader") or obj.Parent.Parent.Name:find("Loader") then
+                    obj.Color = Theme.Accent
+                end
+            end
         end
-        table.sort(themeNames)
         
-        SettingsTab:AddDropdown({
-            Title = "Theme",
-            Text = themeName,
-            Items = themeNames,
-            Callback = function(selected)
-                Theme = Themes[selected]
-                themeName = selected
-                
-                -- Apply theme to all elements
-                mainFrame.BackgroundColor3 = Theme.Background
-                titleBar.BackgroundColor3 = Theme.Secondary
-                sidebar.BackgroundColor3 = Theme.Secondary
-                contentArea.BackgroundColor3 = Theme.Background
-                titleLabel.TextColor3 = Theme.TextPrimary
-                
-                -- Update all tabs
-                for _, tab in pairs(Window.Tabs) do
-                    tab.Button.BackgroundColor3 = Theme.ElementBackground
-                    tab.ActiveIndicator.BackgroundColor3 = Theme.Accent
-                end
-            end
-        })
-        
-        -- UI Scale
-        SettingsTab:AddSlider({
-            Title = "UI Scale",
-            Min = 50,
-            Max = 150,
-            Default = 100,
-            Callback = function(value)
-                local scale = value / 100
-                local newWidth = windowSize.X.Offset * scale
-                local newHeight = windowSize.Y.Offset * scale
-                Tween(mainFrame, {Size = UDim2.new(0, newWidth, 0, newHeight)}, animationSpeed)
-            end
-        })
-        
-        -- UI Transparency
-        SettingsTab:AddSlider({
-            Title = "Background Transparency",
-            Min = 0,
-            Max = 100,
-            Default = uiTransparency * 100,
-            Callback = function(value)
-                uiTransparency = value / 100
-                Tween(mainFrame, {BackgroundTransparency = uiTransparency}, animationSpeed)
-                Tween(titleBar, {BackgroundTransparency = uiTransparency}, animationSpeed)
-                Tween(sidebar, {BackgroundTransparency = uiTransparency}, animationSpeed)
-                Tween(contentArea, {BackgroundTransparency = uiTransparency}, animationSpeed)
-            end
-        })
-        
-        -- Font Size
-        SettingsTab:AddSlider({
-            Title = "Font Size",
-            Min = 50,
-            Max = 150,
-            Default = fontSize * 100,
-            Callback = function(value)
-                fontSize = value / 100
-                titleLabel.TextSize = 15 * fontSize
-                
-                -- Update all text elements
-                for _, descendant in pairs(mainFrame:GetDescendants()) do
-                    if descendant:IsA("TextLabel") or descendant:IsA("TextButton") or descendant:IsA("TextBox") then
-                        local baseSize = descendant:GetAttribute("BaseTextSize") or descendant.TextSize
-                        descendant:SetAttribute("BaseTextSize", baseSize / fontSize)
-                        descendant.TextSize = baseSize
+        -- Update all tabs
+        for _, tab in pairs(Window.Tabs) do
+            tab.Button.BackgroundColor3 = Theme.ElementBackground
+            tab.ActiveIndicator.BackgroundColor3 = Theme.Accent
+            
+            -- Update tab elements
+            for _, element in pairs(tab.Container:GetDescendants()) do
+                if element:IsA("Frame") and element.Name:find("container") or element.Parent.Name:find("Container") then
+                    element.BackgroundColor3 = Theme.ElementBackground
+                elseif element:IsA("TextButton") and element.Parent.Parent.Name:find("Container") then
+                    if element.Name:find("toggle") then
+                        -- Will be handled by toggle logic
+                    else
+                        element.BackgroundColor3 = Theme.Accent
+                        element.TextColor3 = Theme.TextPrimary
                     end
+                elseif element:IsA("TextLabel") then
+                    if element.Parent.Name:find("Title") or element.Parent:IsA("Frame") then
+                        element.TextColor3 = Theme.TextPrimary
+                    else
+                        element.TextColor3 = Theme.TextSecondary
+                    end
+                elseif element:IsA("TextBox") then
+                    element.BackgroundColor3 = Theme.Tertiary
+                    element.TextColor3 = Theme.TextPrimary
+                    element.PlaceholderColor3 = Theme.TextMuted
                 end
             end
-        })
+        end
         
-        -- Animation Speed
-        SettingsTab:AddSlider({
-            Title = "Animation Speed",
-            Min = 10,
-            Max = 100,
-            Default = animationSpeed * 100,
-            Callback = function(value)
-                animationSpeed = value / 100
-                Window.Config.AnimationSpeed = animationSpeed
-            end
-        })
-        
-        -- Sidebar Width
-        SettingsTab:AddSlider({
-            Title = "Sidebar Width",
-            Min = 100,
-            Max = 250,
-            Default = sidebarWidth,
-            Callback = function(value)
-                sidebarWidth = value
-                Tween(sidebar, {Size = UDim2.new(0, sidebarWidth, 1, -titleBarHeight)}, animationSpeed)
-                Tween(contentArea, {
-                    Size = UDim2.new(1, -sidebarWidth, 1, -titleBarHeight),
-                    Position = UDim2.new(0, sidebarWidth, 0, titleBarHeight)
-                }, animationSpeed)
-            end
-        })
-        
-        -- Title Bar Height
-        SettingsTab:AddSlider({
-            Title = "Title Bar Height",
-            Min = 30,
-            Max = 60,
-            Default = titleBarHeight,
-            Callback = function(value)
-                titleBarHeight = value
-                Tween(titleBar, {Size = UDim2.new(1, 0, 0, titleBarHeight)}, animationSpeed)
-                Tween(sidebar, {
-                    Size = UDim2.new(0, sidebarWidth, 1, -titleBarHeight),
-                    Position = UDim2.new(0, 0, 0, titleBarHeight)
-                }, animationSpeed)
-                Tween(contentArea, {
-                    Size = UDim2.new(1, -sidebarWidth, 1, -titleBarHeight),
-                    Position = UDim2.new(0, sidebarWidth, 0, titleBarHeight)
-                }, animationSpeed)
-            end
-        })
-        
-        -- Toggle Close Confirmation
-        SettingsTab:AddToggle({
-            Title = "Close Confirmation",
-            Text = "Show warning when closing",
-            Default = closeConfirmation,
-            Callback = function(value)
-                closeConfirmation = value
-            end
-        })
-        
-        -- Loader Settings
-        SettingsTab:AddParagraph({
-            Title = "Loader Settings",
-            Text = "Customize loader appearance"
-        })
-        
-        SettingsTab:AddToggle({
-            Title = "Loader Draggable",
-            Text = "Allow dragging loader icon",
-            Default = LoaderConfig.Draggable,
-            Callback = function(value)
-                LoaderConfig.Draggable = value
-            end
-        })
-        
-        SettingsTab:AddToggle({
-            Title = "Loader Hover Effect",
-            Text = "Show hover effect on loader",
-            Default = LoaderConfig.HoverEffect,
-            Callback = function(value)
-                LoaderConfig.HoverEffect = value
-            end
-        })
-        
-        SettingsTab:AddSlider({
-            Title = "Loader Transparency",
-            Min = 0,
-            Max = 100,
-            Default = LoaderConfig.Transparency * 100,
-            Callback = function(value)
-                LoaderConfig.Transparency = value / 100
-                Tween(loaderIcon, {BackgroundTransparency = LoaderConfig.Transparency}, animationSpeed)
-            end
-        })
-        
-        -- Reset Button
-        SettingsTab:AddButton({
-            Title = "Reset to Default",
-            Text = "Reset All Settings",
-            Callback = function()
-                -- Reset all settings
-                Theme = Themes.Default
-                fontSize = 1
-                uiTransparency = 0
-                animationSpeed = 0.3
-                sidebarWidth = 165
-                titleBarHeight = 40
-                
-                -- Apply defaults
-                mainFrame.BackgroundColor3 = Theme.Background
-                titleBar.BackgroundColor3 = Theme.Secondary
-                sidebar.BackgroundColor3 = Theme.Secondary
-                contentArea.BackgroundColor3 = Theme.Background
-                
-                Tween(mainFrame, {
-                    Size = windowSize,
-                    BackgroundTransparency = 0
-                }, animationSpeed)
-            end
-        })
-        
-        -- Export Config
-        SettingsTab:AddButton({
-            Title = "Export Config",
-            Text = "Copy to Clipboard",
-            Callback = function()
-                local config = {
-                    Theme = themeName,
-                    FontSize = fontSize,
-                    UITransparency = uiTransparency,
-                    AnimationSpeed = animationSpeed,
-                    SidebarWidth = sidebarWidth,
-                    TitleBarHeight = titleBarHeight,
-                }
-                
-                local configString = HttpService:JSONEncode(config)
-                setclipboard(configString)
-                print("[Drakthon] Config exported to clipboard!")
-            end
-        })
-        
-        return SettingsTab
+        Window.Theme = Theme
     end
     
-    -- ═══════════════════════════════════════════════════════════
-    -- MAKE TAB FUNCTION
-    -- ═══════════════════════════════════════════════════════════
+    -- Create Theme List Items
+    local themeNames = {}
+    for name, _ in pairs(Themes) do
+        table.insert(themeNames, name)
+    end
+    table.sort(themeNames)
+    
+    for _, themeName in ipairs(themeNames) do
+        local themeItem = CreateInstance("TextButton", {
+            Size = UDim2.new(1, -8, 0, 30),
+            BackgroundColor3 = Theme.ElementBackground,
+            Text = "",
+            ZIndex = 201,
+            Parent = themeList
+        })
+        
+        CreateInstance("UICorner", {
+            CornerRadius = UDim.new(0, 4),
+            Parent = themeItem
+        })
+        
+        CreateInstance("TextLabel", {
+            Size = UDim2.new(1, -10, 1, 0),
+            Position = UDim2.new(0, 10, 0, 0),
+            BackgroundTransparency = 1,
+            Text = themeName,
+            TextColor3 = Theme.TextPrimary,
+            TextSize = 11,
+            Font = Enum.Font.Gotham,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            ZIndex = 202,
+            Parent = themeItem
+        })
+        
+        themeItem.MouseButton1Click:Connect(function()
+            CurrentThemeName = themeName
+            themeLabel.Text = themeName
+            Window.ThemeName = themeName
+            Window:ApplyTheme(Themes[themeName])
+            
+            Tween(themeList, {Size = UDim2.new(1, 0, 0, 0)}, 0.3)
+            Tween(themeArrow, {Rotation = 0}, 0.3)
+            wait(0.3)
+            themeList.Visible = false
+        end)
+        
+        AddHoverEffect(themeItem, Theme.ElementBackground, Theme.Tertiary)
+    end
+    
+    themeListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        themeList.CanvasSize = UDim2.new(0, 0, 0, themeListLayout.AbsoluteContentSize.Y + 8)
+    end)
+    
+    local themeListOpen = false
+    themeDropdown.MouseButton1Click:Connect(function()
+        themeListOpen = not themeListOpen
+        
+        if themeListOpen then
+            themeList.Visible = true
+            local maxHeight = math.min(#themeNames * 32, 150)
+            Tween(themeList, {Size = UDim2.new(1, 0, 0, maxHeight)}, 0.3, Enum.EasingStyle.Back)
+            Tween(themeArrow, {Rotation = 180}, 0.3)
+        else
+            Tween(themeList, {Size = UDim2.new(1, 0, 0, 0)}, 0.3)
+            Tween(themeArrow, {Rotation = 0}, 0.3)
+            wait(0.3)
+            themeList.Visible = false
+        end
+    end)
+    
+    -- Button Interactions
+    AddHoverEffect(minimizeBtn, Theme.ElementBackground, Theme.Tertiary)
+    AddHoverEffect(closeBtn, Theme.Error, Color3.fromRGB(255, 91, 91))
+    AddHoverEffect(minimizeIcon, Theme.Secondary, Theme.Tertiary)
+    AddHoverEffect(closeLoaderBtn, Theme.Error, Color3.fromRGB(255, 91, 91))
+    AddHoverEffect(openUIBtn, Theme.Accent, Theme.AccentHover, Theme.AccentPressed)
+    AddHoverEffect(themeDropdown, Theme.Tertiary, Theme.ElementBorder)
+    
+    minimizeBtn.MouseButton1Click:Connect(function()
+        Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+        wait(0.3)
+        mainFrame.Visible = false
+        minimizeIcon.Visible = true
+        Tween(minimizeIcon, {Size = LoaderConfig.Size}, 0.3, Enum.EasingStyle.Back)
+    end)
+    
+    minimizeIcon.MouseButton1Click:Connect(function()
+        loaderFrame.Visible = true
+        Tween(loaderFrame, {Size = UDim2.new(0, 280, 0, 350)}, 0.3, Enum.EasingStyle.Back)
+        Tween(minimizeIcon, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+        wait(0.3)
+        minimizeIcon.Visible = false
+    end)
+    
+    openUIBtn.MouseButton1Click:Connect(function()
+        Tween(loaderFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+        wait(0.3)
+        loaderFrame.Visible = false
+        mainFrame.Visible = true
+        Tween(mainFrame, {Size = windowSize}, 0.4, Enum.EasingStyle.Back)
+    end)
+    
+    closeBtn.MouseButton1Click:Connect(function()
+        Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+        wait(0.3)
+        screenGui:Destroy()
+    end)
+    
+    closeLoaderBtn.MouseButton1Click:Connect(function()
+        Tween(loaderFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+        wait(0.3)
+        loaderFrame.Visible = false
+        minimizeIcon.Visible = true
+        Tween(minimizeIcon, {Size = LoaderConfig.Size}, 0.3, Enum.EasingStyle.Back)
+    end)
+    
+    -- Make Tab Function
     function Window:MakeTab(options)
         options = options or {}
         local tabName = options.Name or "Tab"
@@ -1118,10 +1053,8 @@ function DrakthonLib:MakeWindow(options)
         local tabButton = CreateInstance("TextButton", {
             Size = UDim2.new(1, 0, 0, 48),
             BackgroundColor3 = Theme.ElementBackground,
-            BorderSizePixel = 0,
             Text = "",
             AutoButtonColor = false,
-            ClipsDescendants = false,
             ZIndex = 5,
             Parent = tabsContainer
         })
@@ -1136,7 +1069,6 @@ function DrakthonLib:MakeWindow(options)
             Position = UDim2.new(0, -5, 0.5, 0),
             AnchorPoint = Vector2.new(0, 0.5),
             BackgroundColor3 = Theme.Accent,
-            BorderSizePixel = 0,
             ZIndex = 6,
             Parent = tabButton
         })
@@ -1167,7 +1099,7 @@ function DrakthonLib:MakeWindow(options)
             BackgroundTransparency = 1,
             Text = tabName,
             TextColor3 = Theme.TextSecondary,
-            TextSize = 13 * fontSize,
+            TextSize = 13,
             Font = Enum.Font.GothamBold,
             TextXAlignment = Enum.TextXAlignment.Left,
             TextTruncate = Enum.TextTruncate.AtEnd,
@@ -1179,10 +1111,8 @@ function DrakthonLib:MakeWindow(options)
             Name = tabName .. "_Container",
             Size = UDim2.new(1, -24, 0, 0),
             AutomaticSize = Enum.AutomaticSize.Y,
-            Position = UDim2.new(0, 0, 0, 0),
             BackgroundTransparency = 1,
             Visible = false,
-            BorderSizePixel = 0,
             ClipsDescendants = false,
             ZIndex = 5,
             Parent = contentScroll
@@ -1194,13 +1124,12 @@ function DrakthonLib:MakeWindow(options)
             Parent = tabContainer
         })
         
-        local function updateCanvasSize()
+        local function updateCanvas()
             task.wait(0.05)
-            local contentSize = tabLayout.AbsoluteContentSize.Y
-            contentScroll.CanvasSize = UDim2.new(0, 0, 0, contentSize + 30)
+            contentScroll.CanvasSize = UDim2.new(0, 0, 0, tabLayout.AbsoluteContentSize.Y + 30)
         end
         
-        tabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvasSize)
+        tabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
         
         tabButton.MouseButton1Click:Connect(function()
             for _, tab in pairs(Window.Tabs) do
@@ -1220,8 +1149,7 @@ function DrakthonLib:MakeWindow(options)
                 Position = UDim2.new(0, 0, 0.5, 0)
             }, 0.4, Enum.EasingStyle.Back)
             
-            Window.CurrentTab = tabName
-            updateCanvasSize()
+            updateCanvas()
         end)
         
         AddHoverEffect(tabButton, Theme.ElementBackground, Theme.Tertiary)
@@ -1232,7 +1160,7 @@ function DrakthonLib:MakeWindow(options)
             Container = tabContainer,
             ActiveIndicator = activeIndicator,
             Elements = {},
-            UpdateCanvas = updateCanvasSize
+            UpdateCanvas = updateCanvas
         }
         
         if #Window.Tabs == 0 then
@@ -1240,157 +1168,61 @@ function DrakthonLib:MakeWindow(options)
             tabContainer.Visible = true
             activeIndicator.Size = UDim2.new(0, 4, 0, 35)
             activeIndicator.Position = UDim2.new(0, 0, 0.5, 0)
-            Window.CurrentTab = tabName
-            updateCanvasSize()
+            updateCanvas()
         end
         
         table.insert(Window.Tabs, Tab)
         
-        -- [CONTINUE IN NEXT PART - Tab Elements Functions]
-        
-        function Tab:AddParagraph(options)
-            options = options or {}
-            local title = options.Title or "Paragraph"
-            local text = options.Text or "No text provided"
-            
-            local container = CreateInstance("Frame", {
-                Size = UDim2.new(1, 0, 0, 0),
-                AutomaticSize = Enum.AutomaticSize.Y,
-                BackgroundColor3 = Theme.ElementBackground,
-                BorderSizePixel = 0,
-                LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
-                ZIndex = 6,
-                Parent = tabContainer
-            })
-            
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
-                Parent = container
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Theme.ElementBorder,
-                Thickness = 1,
-                Transparency = 0.7,
-                Parent = container
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 12),
-                Parent = container
-            })
-            
-            CreateInstance("TextLabel", {
-                Size = UDim2.new(1, 0, 0, 20),
-                BackgroundTransparency = 1,
-                Text = "📝 " .. title,
-                TextColor3 = Theme.TextPrimary,
-                TextSize = 14 * fontSize,
-                Font = Enum.Font.GothamBold,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                Visible = true,
-                ZIndex = 7,
-                Parent = container
-            })
-            
-            CreateInstance("TextLabel", {
-                Size = UDim2.new(1, 0, 0, 0),
-                Position = UDim2.new(0, 0, 0, 25),
-                AutomaticSize = Enum.AutomaticSize.Y,
-                BackgroundTransparency = 1,
-                Text = text,
-                TextColor3 = Theme.TextSecondary,
-                TextSize = 12 * fontSize,
-                Font = Enum.Font.Gotham,
-                TextWrapped = true,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextYAlignment = Enum.TextYAlignment.Top,
-                Visible = true,
-                ZIndex = 7,
-                Parent = container
-            })
-            
-            table.insert(Tab.Elements, container)
-            Tab.UpdateCanvas()
-            return container
-        end
-        
+        -- ADD ELEMENTS TO TAB
         function Tab:AddButton(options)
             options = options or {}
             local title = options.Title or "Button"
-            local text = options.Text or "Click Me"
+            local text = options.Text or "Click"
             local callback = options.Callback or function() end
             
             local container = CreateInstance("Frame", {
                 Size = UDim2.new(1, 0, 0, 80),
                 BackgroundColor3 = Theme.ElementBackground,
-                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
                 ZIndex = 6,
                 Parent = tabContainer
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
-                Parent = container
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Theme.ElementBorder,
-                Thickness = 1,
-                Transparency = 0.7,
-                Parent = container
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 12),
-                Parent = container
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(0, 8), Parent = container})
+            CreateInstance("UIStroke", {Color = Theme.ElementBorder, Thickness = 1, Parent = container})
+            CreateInstance("UIPadding", {PaddingAll = UDim.new(0, 12), Parent = container})
             
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 20),
                 BackgroundTransparency = 1,
                 Text = "🔘 " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14 * fontSize,
+                TextSize = 14,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                Visible = true,
                 ZIndex = 7,
                 Parent = container
             })
             
-            local button = CreateInstance("TextButton", {
+            local btn = CreateInstance("TextButton", {
                 Size = UDim2.new(1, 0, 0, 36),
                 Position = UDim2.new(0, 0, 0, 32),
                 BackgroundColor3 = Theme.Accent,
                 Text = text,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 13 * fontSize,
+                TextSize = 13,
                 Font = Enum.Font.GothamBold,
-                Visible = true,
                 ZIndex = 7,
                 Parent = container
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 7),
-                Parent = button
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(0, 7), Parent = btn})
             
-            button.MouseButton1Click:Connect(function()
-                Tween(button, {Size = UDim2.new(0.98, 0, 0, 34)}, 0.1)
-                wait(0.1)
-                Tween(button, {Size = UDim2.new(1, 0, 0, 36)}, 0.1)
-                
-                spawn(function()
-                    pcall(callback)
-                end)
+            btn.MouseButton1Click:Connect(function()
+                pcall(callback)
             end)
             
-            AddHoverEffect(button, Theme.Accent, Theme.AccentHover, Theme.AccentPressed)
+            AddHoverEffect(btn, Theme.Accent, Theme.AccentHover, Theme.AccentPressed)
             
             table.insert(Tab.Elements, container)
             Tab.UpdateCanvas()
@@ -1400,119 +1232,64 @@ function DrakthonLib:MakeWindow(options)
         function Tab:AddToggle(options)
             options = options or {}
             local title = options.Title or "Toggle"
-            local text = options.Text or "Toggle Option"
             local default = options.Default or false
             local callback = options.Callback or function() end
             
             local toggled = default
             
             local container = CreateInstance("Frame", {
-                Size = UDim2.new(1, 0, 0, 72),
+                Size = UDim2.new(1, 0, 0, 70),
                 BackgroundColor3 = Theme.ElementBackground,
-                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
                 ZIndex = 6,
                 Parent = tabContainer
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
-                Parent = container
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Theme.ElementBorder,
-                Thickness = 1,
-                Transparency = 0.7,
-                Parent = container
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 12),
-                Parent = container
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(0, 8), Parent = container})
+            CreateInstance("UIStroke", {Color = Theme.ElementBorder, Thickness = 1, Parent = container})
+            CreateInstance("UIPadding", {PaddingAll = UDim.new(0, 12), Parent = container})
             
             CreateInstance("TextLabel", {
-                Size = UDim2.new(1, 0, 0, 20),
+                Size = UDim2.new(1, -60, 1, 0),
                 BackgroundTransparency = 1,
                 Text = "🔄 " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14 * fontSize,
+                TextSize = 14,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                Visible = true,
-                ZIndex = 7,
-                Parent = container
-            })
-            
-            CreateInstance("TextLabel", {
-                Size = UDim2.new(0.62, 0, 0, 30),
-                Position = UDim2.new(0, 0, 0, 32),
-                BackgroundTransparency = 1,
-                Text = text,
-                TextColor3 = Theme.TextSecondary,
-                TextSize = 12 * fontSize,
-                Font = Enum.Font.Gotham,
-                TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Center,
-                TextWrapped = true,
-                Visible = true,
                 ZIndex = 7,
                 Parent = container
             })
             
-            local toggleTrack = CreateInstance("TextButton", {
+            local toggleBtn = CreateInstance("TextButton", {
                 Size = UDim2.new(0, 50, 0, 26),
-                Position = UDim2.new(1, -50, 0, 38),
+                Position = UDim2.new(1, -50, 0.5, 0),
+                AnchorPoint = Vector2.new(0, 0.5),
                 BackgroundColor3 = toggled and Theme.ToggleOn or Theme.ToggleOff,
                 Text = "",
-                Visible = true,
                 ZIndex = 7,
                 Parent = container
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(1, 0),
-                Parent = toggleTrack
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(1, 0), Parent = toggleBtn})
             
-            local toggleKnob = CreateInstance("Frame", {
+            local knob = CreateInstance("Frame", {
                 Size = UDim2.new(0, 20, 0, 20),
                 Position = toggled and UDim2.new(1, -23, 0.5, 0) or UDim2.new(0, 3, 0.5, 0),
                 AnchorPoint = Vector2.new(0, 0.5),
                 BackgroundColor3 = Theme.TextPrimary,
                 ZIndex = 8,
-                Parent = toggleTrack
+                Parent = toggleBtn
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(1, 0),
-                Parent = toggleKnob
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(1, 0), Parent = knob})
             
-            CreateInstance("UIStroke", {
-                Color = Theme.TextSecondary,
-                Thickness = 1.5,
-                Parent = toggleKnob
-            })
-            
-            toggleTrack.MouseButton1Click:Connect(function()
+            toggleBtn.MouseButton1Click:Connect(function()
                 toggled = not toggled
-                
-                if toggled then
-                    Tween(toggleTrack, {BackgroundColor3 = Theme.ToggleOn}, 0.3)
-                    Tween(toggleKnob, {Position = UDim2.new(1, -23, 0.5, 0)}, 0.3, Enum.EasingStyle.Quad)
-                else
-                    Tween(toggleTrack, {BackgroundColor3 = Theme.ToggleOff}, 0.3)
-                    Tween(toggleKnob, {Position = UDim2.new(0, 3, 0.5, 0)}, 0.3, Enum.EasingStyle.Quad)
-                end
-                
-                spawn(function()
-                    pcall(function()
-                        callback(toggled)
-                    end)
-                end)
+                Tween(toggleBtn, {BackgroundColor3 = toggled and Theme.ToggleOn or Theme.ToggleOff}, 0.3)
+                Tween(knob, {Position = toggled and UDim2.new(1, -23, 0.5, 0) or UDim2.new(0, 3, 0.5, 0)}, 0.3)
+                pcall(function() callback(toggled) end)
             end)
             
             table.insert(Tab.Elements, container)
@@ -1531,39 +1308,23 @@ function DrakthonLib:MakeWindow(options)
             local container = CreateInstance("Frame", {
                 Size = UDim2.new(1, 0, 0, 85),
                 BackgroundColor3 = Theme.ElementBackground,
-                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
                 ZIndex = 6,
                 Parent = tabContainer
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
-                Parent = container
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Theme.ElementBorder,
-                Thickness = 1,
-                Transparency = 0.7,
-                Parent = container
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 12),
-                Parent = container
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(0, 8), Parent = container})
+            CreateInstance("UIStroke", {Color = Theme.ElementBorder, Thickness = 1, Parent = container})
+            CreateInstance("UIPadding", {PaddingAll = UDim.new(0, 12), Parent = container})
             
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, -60, 0, 20),
                 BackgroundTransparency = 1,
                 Text = "🎚️ " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14 * fontSize,
+                TextSize = 14,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                Visible = true,
                 ZIndex = 7,
                 Parent = container
             })
@@ -1574,113 +1335,57 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundColor3 = Theme.Tertiary,
                 Text = tostring(default),
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 13 * fontSize,
+                TextSize = 13,
                 Font = Enum.Font.GothamBold,
-                Visible = true,
                 ZIndex = 7,
                 Parent = container
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 6),
-                Parent = valueLabel
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(0, 6), Parent = valueLabel})
             
-            local sliderTrack = CreateInstance("Frame", {
+            local track = CreateInstance("Frame", {
                 Size = UDim2.new(1, 0, 0, 7),
                 Position = UDim2.new(0, 0, 0, 45),
                 BackgroundColor3 = Theme.Tertiary,
-                BorderSizePixel = 0,
-                Visible = true,
                 ZIndex = 7,
                 Parent = container
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(1, 0),
-                Parent = sliderTrack
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(1, 0), Parent = track})
             
-            local sliderFill = CreateInstance("Frame", {
+            local fill = CreateInstance("Frame", {
                 Size = UDim2.new((default - min) / (max - min), 0, 1, 0),
                 BackgroundColor3 = Theme.Accent,
-                BorderSizePixel = 0,
                 ZIndex = 8,
-                Parent = sliderTrack
+                Parent = track
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(1, 0),
-                Parent = sliderFill
-            })
-            
-            local sliderKnob = CreateInstance("TextButton", {
-                Size = UDim2.new(0, 18, 0, 18),
-                Position = UDim2.new((default - min) / (max - min), -9, 0.5, -9),
-                BackgroundColor3 = Theme.TextPrimary,
-                BorderSizePixel = 0,
-                Text = "",
-                Visible = true,
-                ZIndex = 9,
-                Parent = sliderTrack
-            })
-            
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(1, 0),
-                Parent = sliderKnob
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Theme.Accent,
-                Thickness = 2,
-                Parent = sliderKnob
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(1, 0), Parent = fill})
             
             local dragging = false
             
-            sliderKnob.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-                   input.UserInputType == Enum.UserInputType.Touch then
-                    dragging = true
-                end
-            end)
-            
-            sliderTrack.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-                   input.UserInputType == Enum.UserInputType.Touch then
+            track.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                     dragging = true
                 end
             end)
             
             UserInputService.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-                   input.UserInputType == Enum.UserInputType.Touch then
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                     dragging = false
                 end
             end)
             
             UserInputService.InputChanged:Connect(function(input)
-                if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or 
-                   input.UserInputType == Enum.UserInputType.Touch) then
-                    local mousePos = input.Position.X
-                    local trackPos = sliderTrack.AbsolutePosition.X
-                    local trackSize = sliderTrack.AbsoluteSize.X
-                    local relative = math.clamp((mousePos - trackPos) / trackSize, 0, 1)
-                    local value = math.floor(min + (max - min) * relative)
-                    
-                    sliderFill.Size = UDim2.new(relative, 0, 1, 0)
-                    sliderKnob.Position = UDim2.new(relative, -9, 0.5, -9)
+                if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                    local pos = (input.Position.X - track.AbsolutePosition.X) / track.AbsoluteSize.X
+                    pos = math.clamp(pos, 0, 1)
+                    local value = math.floor(min + (max - min) * pos)
+                    fill.Size = UDim2.new(pos, 0, 1, 0)
                     valueLabel.Text = tostring(value)
-                    
-                    spawn(function()
-                        pcall(function()
-                            callback(value)
-                        end)
-                    end)
+                    pcall(function() callback(value) end)
                 end
             end)
-            
-            AddHoverEffect(sliderKnob, Theme.TextPrimary, Theme.TextSecondary)
             
             table.insert(Tab.Elements, container)
             Tab.UpdateCanvas()
@@ -1690,46 +1395,30 @@ function DrakthonLib:MakeWindow(options)
         function Tab:AddTextBox(options)
             options = options or {}
             local title = options.Title or "TextBox"
-            local placeholder = options.Placeholder or "Type here..."
+            local placeholder = options.Placeholder or "Type..."
             local default = options.Default or ""
             local callback = options.Callback or function() end
             
             local container = CreateInstance("Frame", {
                 Size = UDim2.new(1, 0, 0, 80),
                 BackgroundColor3 = Theme.ElementBackground,
-                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
                 ZIndex = 6,
                 Parent = tabContainer
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
-                Parent = container
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Theme.ElementBorder,
-                Thickness = 1,
-                Transparency = 0.7,
-                Parent = container
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 12),
-                Parent = container
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(0, 8), Parent = container})
+            CreateInstance("UIStroke", {Color = Theme.ElementBorder, Thickness = 1, Parent = container})
+            CreateInstance("UIPadding", {PaddingAll = UDim.new(0, 12), Parent = container})
             
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 20),
                 BackgroundTransparency = 1,
                 Text = "✏️ " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14 * fontSize,
+                TextSize = 14,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                Visible = true,
                 ZIndex = 7,
                 Parent = container
             })
@@ -1742,47 +1431,25 @@ function DrakthonLib:MakeWindow(options)
                 PlaceholderColor3 = Theme.TextMuted,
                 Text = default,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 13 * fontSize,
+                TextSize = 13,
                 Font = Enum.Font.Gotham,
-                ClearTextOnFocus = false,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                Visible = true,
                 ZIndex = 7,
                 Parent = container
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 7),
-                Parent = textBox
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(0, 7), Parent = textBox})
+            CreateInstance("UIPadding", {PaddingLeft = UDim.new(0, 10), PaddingRight = UDim.new(0, 10), Parent = textBox})
             
-            CreateInstance("UIPadding", {
-                PaddingLeft = UDim.new(0, 10),
-                PaddingRight = UDim.new(0, 10),
-                Parent = textBox
-            })
-            
-            local textBoxStroke = CreateInstance("UIStroke", {
-                Color = Theme.ElementBorder,
-                Thickness = 1.5,
-                Transparency = 0.5,
-                Parent = textBox
-            })
+            local stroke = CreateInstance("UIStroke", {Color = Theme.ElementBorder, Thickness = 1.5, Parent = textBox})
             
             textBox.Focused:Connect(function()
-                Tween(textBoxStroke, {Color = Theme.Accent, Transparency = 0}, 0.2)
+                Tween(stroke, {Color = Theme.Accent}, 0.2)
             end)
             
-            textBox.FocusLost:Connect(function(enterPressed)
-                Tween(textBoxStroke, {Color = Theme.ElementBorder, Transparency = 0.5}, 0.2)
-                
-                if enterPressed then
-                    spawn(function()
-                        pcall(function()
-                            callback(textBox.Text)
-                        end)
-                    end)
-                end
+            textBox.FocusLost:Connect(function(enter)
+                Tween(stroke, {Color = Theme.ElementBorder}, 0.2)
+                if enter then pcall(function() callback(textBox.Text) end) end
             end)
             
             table.insert(Tab.Elements, container)
@@ -1790,216 +1457,51 @@ function DrakthonLib:MakeWindow(options)
             return textBox
         end
         
-        function Tab:AddDropdown(options)
+        function Tab:AddParagraph(options)
             options = options or {}
-            local title = options.Title or "Dropdown"
-            local text = options.Text or "Select Option"
-            local items = options.Items or {"Option 1", "Option 2", "Option 3"}
-            local callback = options.Callback or function() end
-            
-            local selectedItem = text
-            local isOpen = false
+            local title = options.Title or "Info"
+            local text = options.Text or "Text"
             
             local container = CreateInstance("Frame", {
-                Size = UDim2.new(1, 0, 0, 80),
+                Size = UDim2.new(1, 0, 0, 0),
+                AutomaticSize = Enum.AutomaticSize.Y,
                 BackgroundColor3 = Theme.ElementBackground,
-                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
-                ClipsDescendants = false,
                 ZIndex = 6,
                 Parent = tabContainer
             })
             
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 8),
-                Parent = container
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Theme.ElementBorder,
-                Thickness = 1,
-                Transparency = 0.7,
-                Parent = container
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 12),
-                Parent = container
-            })
+            CreateInstance("UICorner", {CornerRadius = UDim.new(0, 8), Parent = container})
+            CreateInstance("UIStroke", {Color = Theme.ElementBorder, Thickness = 1, Parent = container})
+            CreateInstance("UIPadding", {PaddingAll = UDim.new(0, 12), Parent = container})
             
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 20),
                 BackgroundTransparency = 1,
-                Text = "📋 " .. title,
+                Text = "📝 " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14 * fontSize,
+                TextSize = 14,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
-                Visible = true,
                 ZIndex = 7,
                 Parent = container
             })
             
-            local dropdownButton = CreateInstance("TextButton", {
-                Size = UDim2.new(1, 0, 0, 36),
-                Position = UDim2.new(0, 0, 0, 32),
-                BackgroundColor3 = Theme.Tertiary,
-                Text = "",
-                Visible = true,
-                ZIndex = 7,
-                Parent = container
-            })
-            
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 7),
-                Parent = dropdownButton
-            })
-            
-            local dropdownLabel = CreateInstance("TextLabel", {
-                Size = UDim2.new(1, -35, 1, 0),
-                Position = UDim2.new(0, 12, 0, 0),
-                BackgroundTransparency = 1,
-                Text = selectedItem,
-                TextColor3 = Theme.TextPrimary,
-                TextSize = 12 * fontSize,
-                Font = Enum.Font.Gotham,
-                TextXAlignment = Enum.TextXAlignment.Left,
-                TextTruncate = Enum.TextTruncate.AtEnd,
-                Visible = true,
-                ZIndex = 8,
-                Parent = dropdownButton
-            })
-            
-            local arrowIcon = CreateInstance("TextLabel", {
-                Size = UDim2.new(0, 25, 1, 0),
-                Position = UDim2.new(1, -25, 0, 0),
-                BackgroundTransparency = 1,
-                Text = "▼",
-                TextColor3 = Theme.TextSecondary,
-                TextSize = 11 * fontSize,
-                Font = Enum.Font.Gotham,
-                Visible = true,
-                ZIndex = 8,
-                Parent = dropdownButton
-            })
-            
-            local dropdownList = CreateInstance("ScrollingFrame", {
+            CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 0),
-                Position = UDim2.new(0, 0, 0, 73),
-                BackgroundColor3 = Theme.Tertiary,
-                BorderSizePixel = 0,
-                ScrollBarThickness = 4,
-                ScrollBarImageColor3 = Theme.ElementBorder,
-                Visible = false,
-                ZIndex = 100,
-                ClipsDescendants = true,
+                Position = UDim2.new(0, 0, 0, 25),
+                AutomaticSize = Enum.AutomaticSize.Y,
+                BackgroundTransparency = 1,
+                Text = text,
+                TextColor3 = Theme.TextSecondary,
+                TextSize = 12,
+                Font = Enum.Font.Gotham,
+                TextWrapped = true,
+                TextXAlignment = Enum.TextXAlignment.Left,
+                TextYAlignment = Enum.TextYAlignment.Top,
+                ZIndex = 7,
                 Parent = container
             })
-            
-            CreateInstance("UICorner", {
-                CornerRadius = UDim.new(0, 7),
-                Parent = dropdownList
-            })
-            
-            CreateInstance("UIStroke", {
-                Color = Theme.Accent,
-                Thickness = 1.5,
-                Parent = dropdownList
-            })
-            
-            local listLayout = CreateInstance("UIListLayout", {
-                SortOrder = Enum.SortOrder.LayoutOrder,
-                Padding = UDim.new(0, 2),
-                Parent = dropdownList
-            })
-            
-            CreateInstance("UIPadding", {
-                PaddingAll = UDim.new(0, 4),
-                Parent = dropdownList
-            })
-            
-            listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-                dropdownList.CanvasSize = UDim2.new(0, 0, 0, listLayout.AbsoluteContentSize.Y + 8)
-            end)
-            
-            for i, item in ipairs(items) do
-                local itemButton = CreateInstance("TextButton", {
-                    Size = UDim2.new(1, -8, 0, 32),
-                    BackgroundColor3 = Theme.ElementBackground,
-                    Text = "",
-                    ZIndex = 101,
-                    Parent = dropdownList
-                })
-                
-                CreateInstance("UICorner", {
-                    CornerRadius = UDim.new(0, 6),
-                    Parent = itemButton
-                })
-                
-                CreateInstance("TextLabel", {
-                    Size = UDim2.new(1, -10, 1, 0),
-                    Position = UDim2.new(0, 8, 0, 0),
-                    BackgroundTransparency = 1,
-                    Text = item,
-                    TextColor3 = Theme.TextPrimary,
-                    TextSize = 11 * fontSize,
-                    Font = Enum.Font.Gotham,
-                    TextXAlignment = Enum.TextXAlignment.Left,
-                    TextTruncate = Enum.TextTruncate.AtEnd,
-                    ZIndex = 102,
-                    Parent = itemButton
-                })
-                
-                itemButton.MouseButton1Click:Connect(function()
-                    selectedItem = item
-                    dropdownLabel.Text = selectedItem
-                    
-                    isOpen = false
-                    
-                    Tween(container, {Size = UDim2.new(1, 0, 0, 80)}, animationSpeed)
-                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, animationSpeed)
-                    Tween(arrowIcon, {Rotation = 0}, animationSpeed)
-                    
-                    wait(animationSpeed)
-                    dropdownList.Visible = false
-                    Tab.UpdateCanvas()
-                    
-                    spawn(function()
-                        pcall(function()
-                            callback(item)
-                        end)
-                    end)
-                end)
-                
-                AddHoverEffect(itemButton, Theme.ElementBackground, Theme.ElementBorder)
-            end
-            
-            dropdownButton.MouseButton1Click:Connect(function()
-                isOpen = not isOpen
-                
-                if isOpen then
-                    dropdownList.Visible = true
-                    local maxHeight = math.min(#items * 34, 140)
-                    
-                    Tween(container, {Size = UDim2.new(1, 0, 0, 80 + maxHeight + 8)}, animationSpeed, Enum.EasingStyle.Back)
-                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, maxHeight)}, animationSpeed, Enum.EasingStyle.Back)
-                    Tween(arrowIcon, {Rotation = 180}, animationSpeed)
-                    
-                    task.wait(animationSpeed)
-                    Tab.UpdateCanvas()
-                else
-                    Tween(container, {Size = UDim2.new(1, 0, 0, 80)}, animationSpeed)
-                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, animationSpeed)
-                    Tween(arrowIcon, {Rotation = 0}, animationSpeed)
-                    
-                    wait(animationSpeed)
-                    dropdownList.Visible = false
-                    Tab.UpdateCanvas()
-                end
-            end)
-            
-            AddHoverEffect(dropdownButton, Theme.Tertiary, Theme.ElementBorder)
             
             table.insert(Tab.Elements, container)
             Tab.UpdateCanvas()
@@ -2009,7 +1511,7 @@ function DrakthonLib:MakeWindow(options)
         return Tab
     end
     
-    -- Open window automatically
+    -- Open UI
     Tween(mainFrame, {Size = windowSize}, 0.5, Enum.EasingStyle.Back)
     
     return Window
