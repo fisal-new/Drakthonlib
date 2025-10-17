@@ -1,8 +1,8 @@
 --[[
     ╔══════════════════════════════════════════════════════════════╗
-    ║                  DRAKTHON UI LIBRARY V6.0                    ║
-    ║          Professional UI Library - Multi-Theme Edition        ║
-    ║    ✅ Anti-Duplicate + 12 Themes + Full Customization       ║
+    ║                  DRAKTHON UI LIBRARY V7.0                    ║
+    ║       ULTIMATE EDITION - FULL CUSTOMIZATION + SETTINGS       ║
+    ║    ✅ Complete Loader + Settings Tab + Everything Custom    ║
     ╚══════════════════════════════════════════════════════════════╝
 ]]
 
@@ -12,7 +12,6 @@ local DrakthonLib = {}
 -- PREDEFINED THEMES
 -- ═══════════════════════════════════════════════════════════════
 local Themes = {
-    -- Default Dark Theme (Discord-like)
     Default = {
         Background = Color3.fromRGB(20, 20, 25),
         Secondary = Color3.fromRGB(25, 25, 30),
@@ -31,8 +30,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(67, 181, 129),
         ToggleOff = Color3.fromRGB(50, 50, 55),
     },
-    
-    -- Ocean Blue Theme
     Ocean = {
         Background = Color3.fromRGB(15, 23, 42),
         Secondary = Color3.fromRGB(20, 28, 47),
@@ -51,8 +48,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(34, 197, 94),
         ToggleOff = Color3.fromRGB(51, 65, 85),
     },
-    
-    -- Purple Dream Theme
     Purple = {
         Background = Color3.fromRGB(24, 15, 35),
         Secondary = Color3.fromRGB(29, 20, 40),
@@ -71,8 +66,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(134, 239, 172),
         ToggleOff = Color3.fromRGB(59, 45, 75),
     },
-    
-    -- Crimson Red Theme
     Crimson = {
         Background = Color3.fromRGB(30, 15, 15),
         Secondary = Color3.fromRGB(35, 20, 20),
@@ -91,8 +84,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(34, 197, 94),
         ToggleOff = Color3.fromRGB(69, 26, 26),
     },
-    
-    -- Emerald Green Theme
     Emerald = {
         Background = Color3.fromRGB(6, 25, 15),
         Secondary = Color3.fromRGB(11, 30, 20),
@@ -111,8 +102,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(52, 211, 153),
         ToggleOff = Color3.fromRGB(6, 78, 59),
     },
-    
-    -- Sunset Orange Theme
     Sunset = {
         Background = Color3.fromRGB(30, 20, 10),
         Secondary = Color3.fromRGB(35, 25, 15),
@@ -131,8 +120,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(34, 197, 94),
         ToggleOff = Color3.fromRGB(124, 45, 18),
     },
-    
-    -- Midnight Black Theme
     Midnight = {
         Background = Color3.fromRGB(10, 10, 10),
         Secondary = Color3.fromRGB(15, 15, 15),
@@ -151,8 +138,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(34, 197, 94),
         ToggleOff = Color3.fromRGB(40, 40, 40),
     },
-    
-    -- Rose Pink Theme
     Rose = {
         Background = Color3.fromRGB(31, 18, 23),
         Secondary = Color3.fromRGB(36, 23, 28),
@@ -171,8 +156,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(34, 197, 94),
         ToggleOff = Color3.fromRGB(80, 50, 60),
     },
-    
-    -- Cyber Yellow Theme
     Cyber = {
         Background = Color3.fromRGB(20, 20, 10),
         Secondary = Color3.fromRGB(25, 25, 15),
@@ -191,8 +174,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(34, 197, 94),
         ToggleOff = Color3.fromRGB(113, 63, 18),
     },
-    
-    -- Arctic White Theme
     Arctic = {
         Background = Color3.fromRGB(240, 242, 245),
         Secondary = Color3.fromRGB(245, 247, 250),
@@ -211,8 +192,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(22, 163, 74),
         ToggleOff = Color3.fromRGB(203, 213, 225),
     },
-    
-    -- Neon Teal Theme
     Neon = {
         Background = Color3.fromRGB(4, 20, 20),
         Secondary = Color3.fromRGB(9, 25, 25),
@@ -231,8 +210,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(52, 211, 153),
         ToggleOff = Color3.fromRGB(15, 118, 110),
     },
-    
-    -- Blood Red Theme
     Blood = {
         Background = Color3.fromRGB(25, 5, 5),
         Secondary = Color3.fromRGB(30, 10, 10),
@@ -259,6 +236,7 @@ local Themes = {
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -268,18 +246,17 @@ local PlayerGui = Player:WaitForChild("PlayerGui")
 -- ═══════════════════════════════════════════════════════════════
 local function CheckDuplicate(antiDupId)
     if not antiDupId or antiDupId == "" then
-        return false -- No anti-dup, allow
+        return false
     end
     
-    -- Check if UI with same ID already exists
     for _, gui in ipairs(PlayerGui:GetChildren()) do
         if gui:GetAttribute("DrakthonID") == antiDupId then
             warn("[Drakthon] UI with ID '" .. antiDupId .. "' already exists! Ignoring duplicate...")
-            return true -- Duplicate found
+            return true
         end
     end
     
-    return false -- No duplicate
+    return false
 end
 
 -- ═══════════════════════════════════════════════════════════════
@@ -390,23 +367,45 @@ function DrakthonLib:MakeWindow(options)
     -- Anti-Duplicate Check
     local antiDupId = options.AntiDuplicate or ""
     if CheckDuplicate(antiDupId) then
-        return nil -- Return nothing if duplicate
+        return nil
     end
     
-    -- Configuration
+    -- ═══════════════════════════════════════════════════════════
+    -- LOADER CONFIGURATION (COMPLETE)
+    -- ═══════════════════════════════════════════════════════════
+    local LoaderConfig = {
+        Enabled = options.LoaderEnabled ~= false,
+        MainImage = options.LoaderImage or "rbxassetid://11422155687",
+        IconImage = options.LoaderIconImage or options.LoaderImage2 or "rbxassetid://679392",
+        Position = options.LoaderPosition or UDim2.new(0, 20, 1, -90),
+        Size = options.LoaderSize or UDim2.new(0, 70, 0, 70),
+        BackgroundColor = options.LoaderBackgroundColor or nil,
+        BorderColor = options.LoaderBorderColor or nil,
+        BorderThickness = options.LoaderBorderThickness or 1.5,
+        CornerRadius = options.LoaderCornerRadius or 12,
+        Transparency = options.LoaderTransparency or 0,
+        ImageTransparency = options.LoaderImageTransparency or 0,
+        Draggable = options.LoaderDraggable ~= false,
+        HoverEffect = options.LoaderHoverEffect ~= false,
+        ClickSound = options.LoaderClickSound or nil,
+        ShowOnStart = options.LoaderShowOnStart or false,
+    }
+    
+    -- ═══════════════════════════════════════════════════════════
+    -- WINDOW CONFIGURATION
+    -- ═══════════════════════════════════════════════════════════
     local windowName = options.Name or "Drakthon Library"
-    local loaderImage = options.LoaderImage or "rbxassetid://11422155687"
-    local loaderImage2 = options.LoaderImage2 or "rbxassetid://679392"
     local themeName = options.Theme or "Default"
     local customTheme = options.CustomTheme or nil
     local windowSize = options.Size or UDim2.new(0, 550, 0, 350)
-    local loaderPosition = options.LoaderPosition or UDim2.new(0, 20, 1, -90)
-    local loaderSize = options.LoaderSize or UDim2.new(0, 70, 0, 70)
-    local closeConfirmation = options.CloseConfirmation ~= false -- Default true
+    local closeConfirmation = options.CloseConfirmation ~= false
     local closeConfirmText = options.CloseConfirmText or "Are you sure you want to close?"
     local accentColor = options.AccentColor or nil
     local titleBarHeight = options.TitleBarHeight or 40
     local sidebarWidth = options.SidebarWidth or 165
+    local animationSpeed = options.AnimationSpeed or 0.3
+    local fontSize = options.FontSize or 1
+    local uiTransparency = options.UITransparency or 0
     
     -- Select Theme
     local Theme = customTheme or Themes[themeName] or Themes.Default
@@ -437,45 +436,60 @@ function DrakthonLib:MakeWindow(options)
         Parent = PlayerGui
     })
     
-    -- Set Anti-Duplicate ID
     if antiDupId ~= "" then
         screenGui:SetAttribute("DrakthonID", antiDupId)
     end
     
     -- ═══════════════════════════════════════════════════════════
-    -- LOADER ICON
+    -- LOADER ICON (COMPLETE CUSTOMIZATION)
     -- ═══════════════════════════════════════════════════════════
-    local loaderIcon = CreateInstance("ImageButton", {
+    local loaderIcon = CreateInstance("Frame", {
         Name = "LoaderIcon",
-        Size = loaderSize,
-        Position = loaderPosition,
+        Size = LoaderConfig.Size,
+        Position = LoaderConfig.Position,
         AnchorPoint = Vector2.new(0, 1),
-        BackgroundColor3 = Theme.Secondary,
-        Image = loaderImage,
-        ScaleType = Enum.ScaleType.Fit,
-        Visible = false,
+        BackgroundColor3 = LoaderConfig.BackgroundColor or Theme.Secondary,
+        BackgroundTransparency = LoaderConfig.Transparency,
+        Visible = LoaderConfig.ShowOnStart,
         ZIndex = 100,
         Parent = screenGui
     })
     
     CreateInstance("UICorner", {
-        CornerRadius = UDim.new(0, 12),
+        CornerRadius = UDim.new(0, LoaderConfig.CornerRadius),
         Parent = loaderIcon
     })
     
     CreateInstance("UIStroke", {
-        Color = Theme.ElementBorder,
-        Thickness = 1.5,
+        Color = LoaderConfig.BorderColor or Theme.ElementBorder,
+        Thickness = LoaderConfig.BorderThickness,
         Transparency = 0.3,
         Parent = loaderIcon
     })
     
-    CreateInstance("UIPadding", {
-        PaddingAll = UDim.new(0, 5),
+    local loaderImageButton = CreateInstance("ImageButton", {
+        Name = "ImageButton",
+        Size = UDim2.new(1, -10, 1, -10),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundTransparency = 1,
+        Image = LoaderConfig.MainImage,
+        ImageTransparency = LoaderConfig.ImageTransparency,
+        ScaleType = Enum.ScaleType.Fit,
+        ZIndex = 101,
         Parent = loaderIcon
     })
     
-    MakeDraggable(loaderIcon, loaderIcon)
+    if LoaderConfig.Draggable then
+        MakeDraggable(loaderIcon, loaderIcon)
+    end
+    
+    if LoaderConfig.HoverEffect then
+        AddHoverEffect(loaderIcon, 
+            LoaderConfig.BackgroundColor or Theme.Secondary, 
+            Theme.Tertiary
+        )
+    end
     
     -- ═══════════════════════════════════════════════════════════
     -- MAIN WINDOW FRAME
@@ -486,6 +500,7 @@ function DrakthonLib:MakeWindow(options)
         Position = UDim2.new(0.5, 0, 0.5, 0),
         AnchorPoint = Vector2.new(0.5, 0.5),
         BackgroundColor3 = Theme.Background,
+        BackgroundTransparency = uiTransparency,
         BorderSizePixel = 0,
         ClipsDescendants = true,
         Visible = true,
@@ -512,6 +527,7 @@ function DrakthonLib:MakeWindow(options)
         Name = "TitleBar",
         Size = UDim2.new(1, 0, 0, titleBarHeight),
         BackgroundColor3 = Theme.Secondary,
+        BackgroundTransparency = uiTransparency,
         BorderSizePixel = 0,
         ZIndex = 3,
         Parent = mainFrame
@@ -526,27 +542,28 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(1, 0, 0, 15),
         Position = UDim2.new(0, 0, 1, -15),
         BackgroundColor3 = Theme.Secondary,
+        BackgroundTransparency = uiTransparency,
         BorderSizePixel = 0,
         ZIndex = 3,
         Parent = titleBar
     })
     
-    CreateInstance("TextLabel", {
+    local titleLabel = CreateInstance("TextLabel", {
         Size = UDim2.new(1, -120, 1, 0),
         Position = UDim2.new(0, 15, 0, 0),
         BackgroundTransparency = 1,
         Text = "🌙 " .. windowName,
         TextColor3 = Theme.TextPrimary,
-        TextSize = 15,
+        TextSize = 15 * fontSize,
         Font = Enum.Font.GothamBold,
         TextXAlignment = Enum.TextXAlignment.Left,
         ZIndex = 4,
         Parent = titleBar
     })
     
-    -- Custom Image in Title Bar
-    if loaderImage2 and loaderImage2 ~= "" then
-        local imageId = loaderImage2
+    -- Icon in Title Bar
+    if LoaderConfig.IconImage and LoaderConfig.IconImage ~= "" then
+        local imageId = LoaderConfig.IconImage
         if not string.find(imageId, "rbxassetid://") then
             imageId = "rbxassetid://" .. imageId
         end
@@ -573,7 +590,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundColor3 = Theme.ElementBackground,
         Text = "—",
         TextColor3 = Theme.TextPrimary,
-        TextSize = 16,
+        TextSize = 16 * fontSize,
         Font = Enum.Font.GothamBold,
         ZIndex = 4,
         Parent = titleBar
@@ -591,7 +608,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundColor3 = Theme.Error,
         Text = "✕",
         TextColor3 = Theme.TextPrimary,
-        TextSize = 16,
+        TextSize = 16 * fontSize,
         Font = Enum.Font.GothamBold,
         ZIndex = 4,
         Parent = titleBar
@@ -642,7 +659,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundTransparency = 1,
         Text = "⚠️ Warning",
         TextColor3 = Theme.Warning,
-        TextSize = 18,
+        TextSize = 18 * fontSize,
         Font = Enum.Font.GothamBold,
         TextXAlignment = Enum.TextXAlignment.Center,
         ZIndex = 201,
@@ -655,7 +672,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundTransparency = 1,
         Text = closeConfirmText,
         TextColor3 = Theme.TextSecondary,
-        TextSize = 13,
+        TextSize = 13 * fontSize,
         Font = Enum.Font.Gotham,
         TextWrapped = true,
         TextXAlignment = Enum.TextXAlignment.Center,
@@ -670,7 +687,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundColor3 = Theme.Error,
         Text = "✓ Yes",
         TextColor3 = Theme.TextPrimary,
-        TextSize = 14,
+        TextSize = 14 * fontSize,
         Font = Enum.Font.GothamBold,
         ZIndex = 201,
         Parent = confirmModal
@@ -687,7 +704,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundColor3 = Theme.ElementBackground,
         Text = "✕ No",
         TextColor3 = Theme.TextPrimary,
-        TextSize = 14,
+        TextSize = 14 * fontSize,
         Font = Enum.Font.GothamBold,
         ZIndex = 201,
         Parent = confirmModal
@@ -705,6 +722,7 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(0, sidebarWidth, 1, -titleBarHeight),
         Position = UDim2.new(0, 0, 0, titleBarHeight),
         BackgroundColor3 = Theme.Secondary,
+        BackgroundTransparency = uiTransparency,
         BorderSizePixel = 0,
         ZIndex = 3,
         Parent = mainFrame
@@ -747,6 +765,7 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(1, -sidebarWidth, 1, -titleBarHeight),
         Position = UDim2.new(0, sidebarWidth, 0, titleBarHeight),
         BackgroundColor3 = Theme.Background,
+        BackgroundTransparency = uiTransparency,
         BorderSizePixel = 0,
         ClipsDescendants = true,
         ZIndex = 3,
@@ -782,45 +801,52 @@ function DrakthonLib:MakeWindow(options)
     AddHoverEffect(closeBtn, Theme.Error, Color3.fromRGB(255, 91, 91), Color3.fromRGB(220, 51, 51))
     AddHoverEffect(confirmYesBtn, Theme.Error, Color3.fromRGB(255, 91, 91))
     AddHoverEffect(confirmNoBtn, Theme.ElementBackground, Theme.Tertiary)
-    AddHoverEffect(loaderIcon, Theme.Secondary, Theme.Tertiary)
     
     closeBtn.MouseButton1Click:Connect(function()
         if closeConfirmation then
             confirmOverlay.Visible = true
             confirmModal.Size = UDim2.new(0, 0, 0, 0)
-            Tween(confirmModal, {Size = UDim2.new(0, 320, 0, 160)}, 0.4, Enum.EasingStyle.Back)
+            Tween(confirmModal, {Size = UDim2.new(0, 320, 0, 160)}, animationSpeed + 0.1, Enum.EasingStyle.Back)
         else
             screenGui:Destroy()
         end
     end)
     
     confirmYesBtn.MouseButton1Click:Connect(function()
-        Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.4, Enum.EasingStyle.Back)
-        wait(0.4)
+        Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, animationSpeed + 0.1, Enum.EasingStyle.Back)
+        wait(animationSpeed + 0.1)
         screenGui:Destroy()
     end)
     
     confirmNoBtn.MouseButton1Click:Connect(function()
-        Tween(confirmModal, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
-        wait(0.3)
+        Tween(confirmModal, {Size = UDim2.new(0, 0, 0, 0)}, animationSpeed, Enum.EasingStyle.Back)
+        wait(animationSpeed)
         confirmOverlay.Visible = false
     end)
     
     minimizeBtn.MouseButton1Click:Connect(function()
-        Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
-        wait(0.3)
+        if LoaderConfig.ClickSound then
+            -- Play sound if provided
+        end
+        
+        Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, animationSpeed, Enum.EasingStyle.Back)
+        wait(animationSpeed)
         mainFrame.Visible = false
         loaderIcon.Visible = true
-        Tween(loaderIcon, {Size = loaderSize}, 0.3, Enum.EasingStyle.Back)
+        Tween(loaderIcon, {Size = LoaderConfig.Size}, animationSpeed, Enum.EasingStyle.Back)
     end)
     
-    loaderIcon.MouseButton1Click:Connect(function()
-        Tween(loaderIcon, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
-        wait(0.3)
+    loaderImageButton.MouseButton1Click:Connect(function()
+        if LoaderConfig.ClickSound then
+            -- Play sound if provided
+        end
+        
+        Tween(loaderIcon, {Size = UDim2.new(0, 0, 0, 0)}, animationSpeed, Enum.EasingStyle.Back)
+        wait(animationSpeed)
         loaderIcon.Visible = false
         mainFrame.Visible = true
         mainFrame.Size = UDim2.new(0, 0, 0, 0)
-        Tween(mainFrame, {Size = windowSize}, 0.4, Enum.EasingStyle.Back)
+        Tween(mainFrame, {Size = windowSize}, animationSpeed + 0.1, Enum.EasingStyle.Back)
     end)
     
     MakeDraggable(mainFrame, titleBar)
@@ -834,8 +860,252 @@ function DrakthonLib:MakeWindow(options)
         ScreenGui = screenGui,
         MainFrame = mainFrame,
         ContentScroll = contentScroll,
-        Theme = Theme
+        Theme = Theme,
+        Config = {
+            AnimationSpeed = animationSpeed,
+            FontSize = fontSize,
+            UITransparency = uiTransparency,
+            TitleBarHeight = titleBarHeight,
+            SidebarWidth = sidebarWidth,
+            WindowSize = windowSize,
+        }
     }
+    
+    -- ═══════════════════════════════════════════════════════════
+    -- SETTINGS TAB CREATOR (AUTOMATIC)
+    -- ═══════════════════════════════════════════════════════════
+    function Window:CreateSettingsTab()
+        local SettingsTab = self:MakeTab({
+            Name = "⚙️ Settings",
+            Icon = "rbxassetid://10734950309"
+        })
+        
+        SettingsTab:AddParagraph({
+            Title = "UI Settings",
+            Text = "Customize your UI appearance and behavior"
+        })
+        
+        -- Theme Selector
+        local themeNames = {}
+        for name, _ in pairs(Themes) do
+            table.insert(themeNames, name)
+        end
+        table.sort(themeNames)
+        
+        SettingsTab:AddDropdown({
+            Title = "Theme",
+            Text = themeName,
+            Items = themeNames,
+            Callback = function(selected)
+                Theme = Themes[selected]
+                themeName = selected
+                
+                -- Apply theme to all elements
+                mainFrame.BackgroundColor3 = Theme.Background
+                titleBar.BackgroundColor3 = Theme.Secondary
+                sidebar.BackgroundColor3 = Theme.Secondary
+                contentArea.BackgroundColor3 = Theme.Background
+                titleLabel.TextColor3 = Theme.TextPrimary
+                
+                -- Update all tabs
+                for _, tab in pairs(Window.Tabs) do
+                    tab.Button.BackgroundColor3 = Theme.ElementBackground
+                    tab.ActiveIndicator.BackgroundColor3 = Theme.Accent
+                end
+            end
+        })
+        
+        -- UI Scale
+        SettingsTab:AddSlider({
+            Title = "UI Scale",
+            Min = 50,
+            Max = 150,
+            Default = 100,
+            Callback = function(value)
+                local scale = value / 100
+                local newWidth = windowSize.X.Offset * scale
+                local newHeight = windowSize.Y.Offset * scale
+                Tween(mainFrame, {Size = UDim2.new(0, newWidth, 0, newHeight)}, animationSpeed)
+            end
+        })
+        
+        -- UI Transparency
+        SettingsTab:AddSlider({
+            Title = "Background Transparency",
+            Min = 0,
+            Max = 100,
+            Default = uiTransparency * 100,
+            Callback = function(value)
+                uiTransparency = value / 100
+                Tween(mainFrame, {BackgroundTransparency = uiTransparency}, animationSpeed)
+                Tween(titleBar, {BackgroundTransparency = uiTransparency}, animationSpeed)
+                Tween(sidebar, {BackgroundTransparency = uiTransparency}, animationSpeed)
+                Tween(contentArea, {BackgroundTransparency = uiTransparency}, animationSpeed)
+            end
+        })
+        
+        -- Font Size
+        SettingsTab:AddSlider({
+            Title = "Font Size",
+            Min = 50,
+            Max = 150,
+            Default = fontSize * 100,
+            Callback = function(value)
+                fontSize = value / 100
+                titleLabel.TextSize = 15 * fontSize
+                
+                -- Update all text elements
+                for _, descendant in pairs(mainFrame:GetDescendants()) do
+                    if descendant:IsA("TextLabel") or descendant:IsA("TextButton") or descendant:IsA("TextBox") then
+                        local baseSize = descendant:GetAttribute("BaseTextSize") or descendant.TextSize
+                        descendant:SetAttribute("BaseTextSize", baseSize / fontSize)
+                        descendant.TextSize = baseSize
+                    end
+                end
+            end
+        })
+        
+        -- Animation Speed
+        SettingsTab:AddSlider({
+            Title = "Animation Speed",
+            Min = 10,
+            Max = 100,
+            Default = animationSpeed * 100,
+            Callback = function(value)
+                animationSpeed = value / 100
+                Window.Config.AnimationSpeed = animationSpeed
+            end
+        })
+        
+        -- Sidebar Width
+        SettingsTab:AddSlider({
+            Title = "Sidebar Width",
+            Min = 100,
+            Max = 250,
+            Default = sidebarWidth,
+            Callback = function(value)
+                sidebarWidth = value
+                Tween(sidebar, {Size = UDim2.new(0, sidebarWidth, 1, -titleBarHeight)}, animationSpeed)
+                Tween(contentArea, {
+                    Size = UDim2.new(1, -sidebarWidth, 1, -titleBarHeight),
+                    Position = UDim2.new(0, sidebarWidth, 0, titleBarHeight)
+                }, animationSpeed)
+            end
+        })
+        
+        -- Title Bar Height
+        SettingsTab:AddSlider({
+            Title = "Title Bar Height",
+            Min = 30,
+            Max = 60,
+            Default = titleBarHeight,
+            Callback = function(value)
+                titleBarHeight = value
+                Tween(titleBar, {Size = UDim2.new(1, 0, 0, titleBarHeight)}, animationSpeed)
+                Tween(sidebar, {
+                    Size = UDim2.new(0, sidebarWidth, 1, -titleBarHeight),
+                    Position = UDim2.new(0, 0, 0, titleBarHeight)
+                }, animationSpeed)
+                Tween(contentArea, {
+                    Size = UDim2.new(1, -sidebarWidth, 1, -titleBarHeight),
+                    Position = UDim2.new(0, sidebarWidth, 0, titleBarHeight)
+                }, animationSpeed)
+            end
+        })
+        
+        -- Toggle Close Confirmation
+        SettingsTab:AddToggle({
+            Title = "Close Confirmation",
+            Text = "Show warning when closing",
+            Default = closeConfirmation,
+            Callback = function(value)
+                closeConfirmation = value
+            end
+        })
+        
+        -- Loader Settings
+        SettingsTab:AddParagraph({
+            Title = "Loader Settings",
+            Text = "Customize loader appearance"
+        })
+        
+        SettingsTab:AddToggle({
+            Title = "Loader Draggable",
+            Text = "Allow dragging loader icon",
+            Default = LoaderConfig.Draggable,
+            Callback = function(value)
+                LoaderConfig.Draggable = value
+            end
+        })
+        
+        SettingsTab:AddToggle({
+            Title = "Loader Hover Effect",
+            Text = "Show hover effect on loader",
+            Default = LoaderConfig.HoverEffect,
+            Callback = function(value)
+                LoaderConfig.HoverEffect = value
+            end
+        })
+        
+        SettingsTab:AddSlider({
+            Title = "Loader Transparency",
+            Min = 0,
+            Max = 100,
+            Default = LoaderConfig.Transparency * 100,
+            Callback = function(value)
+                LoaderConfig.Transparency = value / 100
+                Tween(loaderIcon, {BackgroundTransparency = LoaderConfig.Transparency}, animationSpeed)
+            end
+        })
+        
+        -- Reset Button
+        SettingsTab:AddButton({
+            Title = "Reset to Default",
+            Text = "Reset All Settings",
+            Callback = function()
+                -- Reset all settings
+                Theme = Themes.Default
+                fontSize = 1
+                uiTransparency = 0
+                animationSpeed = 0.3
+                sidebarWidth = 165
+                titleBarHeight = 40
+                
+                -- Apply defaults
+                mainFrame.BackgroundColor3 = Theme.Background
+                titleBar.BackgroundColor3 = Theme.Secondary
+                sidebar.BackgroundColor3 = Theme.Secondary
+                contentArea.BackgroundColor3 = Theme.Background
+                
+                Tween(mainFrame, {
+                    Size = windowSize,
+                    BackgroundTransparency = 0
+                }, animationSpeed)
+            end
+        })
+        
+        -- Export Config
+        SettingsTab:AddButton({
+            Title = "Export Config",
+            Text = "Copy to Clipboard",
+            Callback = function()
+                local config = {
+                    Theme = themeName,
+                    FontSize = fontSize,
+                    UITransparency = uiTransparency,
+                    AnimationSpeed = animationSpeed,
+                    SidebarWidth = sidebarWidth,
+                    TitleBarHeight = titleBarHeight,
+                }
+                
+                local configString = HttpService:JSONEncode(config)
+                setclipboard(configString)
+                print("[Drakthon] Config exported to clipboard!")
+            end
+        })
+        
+        return SettingsTab
+    end
     
     -- ═══════════════════════════════════════════════════════════
     -- MAKE TAB FUNCTION
@@ -897,7 +1167,7 @@ function DrakthonLib:MakeWindow(options)
             BackgroundTransparency = 1,
             Text = tabName,
             TextColor3 = Theme.TextSecondary,
-            TextSize = 13,
+            TextSize = 13 * fontSize,
             Font = Enum.Font.GothamBold,
             TextXAlignment = Enum.TextXAlignment.Left,
             TextTruncate = Enum.TextTruncate.AtEnd,
@@ -976,9 +1246,8 @@ function DrakthonLib:MakeWindow(options)
         
         table.insert(Window.Tabs, Tab)
         
-        -- ═══════════════════════════════════════════════════════
-        -- ADD PARAGRAPH
-        -- ═══════════════════════════════════════════════════════
+        -- [CONTINUE IN NEXT PART - Tab Elements Functions]
+        
         function Tab:AddParagraph(options)
             options = options or {}
             local title = options.Title or "Paragraph"
@@ -1017,7 +1286,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Text = "📝 " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14,
+                TextSize = 14 * fontSize,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 Visible = true,
@@ -1032,7 +1301,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Text = text,
                 TextColor3 = Theme.TextSecondary,
-                TextSize = 12,
+                TextSize = 12 * fontSize,
                 Font = Enum.Font.Gotham,
                 TextWrapped = true,
                 TextXAlignment = Enum.TextXAlignment.Left,
@@ -1047,9 +1316,6 @@ function DrakthonLib:MakeWindow(options)
             return container
         end
         
-        -- ═══════════════════════════════════════════════════════
-        -- ADD BUTTON
-        -- ═══════════════════════════════════════════════════════
         function Tab:AddButton(options)
             options = options or {}
             local title = options.Title or "Button"
@@ -1088,7 +1354,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Text = "🔘 " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14,
+                TextSize = 14 * fontSize,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 Visible = true,
@@ -1102,7 +1368,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundColor3 = Theme.Accent,
                 Text = text,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 13,
+                TextSize = 13 * fontSize,
                 Font = Enum.Font.GothamBold,
                 Visible = true,
                 ZIndex = 7,
@@ -1131,9 +1397,6 @@ function DrakthonLib:MakeWindow(options)
             return container
         end
         
-        -- ═══════════════════════════════════════════════════════
-        -- ADD TOGGLE
-        -- ═══════════════════════════════════════════════════════
         function Tab:AddToggle(options)
             options = options or {}
             local title = options.Title or "Toggle"
@@ -1175,7 +1438,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Text = "🔄 " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14,
+                TextSize = 14 * fontSize,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 Visible = true,
@@ -1189,7 +1452,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Text = text,
                 TextColor3 = Theme.TextSecondary,
-                TextSize = 12,
+                TextSize = 12 * fontSize,
                 Font = Enum.Font.Gotham,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Center,
@@ -1257,9 +1520,6 @@ function DrakthonLib:MakeWindow(options)
             return container
         end
         
-        -- ═══════════════════════════════════════════════════════
-        -- ADD SLIDER
-        -- ═══════════════════════════════════════════════════════
         function Tab:AddSlider(options)
             options = options or {}
             local title = options.Title or "Slider"
@@ -1300,7 +1560,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Text = "🎚️ " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14,
+                TextSize = 14 * fontSize,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 Visible = true,
@@ -1314,7 +1574,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundColor3 = Theme.Tertiary,
                 Text = tostring(default),
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 13,
+                TextSize = 13 * fontSize,
                 Font = Enum.Font.GothamBold,
                 Visible = true,
                 ZIndex = 7,
@@ -1427,9 +1687,6 @@ function DrakthonLib:MakeWindow(options)
             return container
         end
         
-        -- ═══════════════════════════════════════════════════════
-        -- ADD TEXTBOX
-        -- ═══════════════════════════════════════════════════════
         function Tab:AddTextBox(options)
             options = options or {}
             local title = options.Title or "TextBox"
@@ -1469,7 +1726,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Text = "✏️ " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14,
+                TextSize = 14 * fontSize,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 Visible = true,
@@ -1485,7 +1742,7 @@ function DrakthonLib:MakeWindow(options)
                 PlaceholderColor3 = Theme.TextMuted,
                 Text = default,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 13,
+                TextSize = 13 * fontSize,
                 Font = Enum.Font.Gotham,
                 ClearTextOnFocus = false,
                 TextXAlignment = Enum.TextXAlignment.Left,
@@ -1533,9 +1790,6 @@ function DrakthonLib:MakeWindow(options)
             return textBox
         end
         
-        -- ═══════════════════════════════════════════════════════
-        -- ADD DROPDOWN
-        -- ═══════════════════════════════════════════════════════
         function Tab:AddDropdown(options)
             options = options or {}
             local title = options.Title or "Dropdown"
@@ -1579,7 +1833,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Text = "📋 " .. title,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 14,
+                TextSize = 14 * fontSize,
                 Font = Enum.Font.GothamBold,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 Visible = true,
@@ -1608,7 +1862,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Text = selectedItem,
                 TextColor3 = Theme.TextPrimary,
-                TextSize = 12,
+                TextSize = 12 * fontSize,
                 Font = Enum.Font.Gotham,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextTruncate = Enum.TextTruncate.AtEnd,
@@ -1623,7 +1877,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundTransparency = 1,
                 Text = "▼",
                 TextColor3 = Theme.TextSecondary,
-                TextSize = 11,
+                TextSize = 11 * fontSize,
                 Font = Enum.Font.Gotham,
                 Visible = true,
                 ZIndex = 8,
@@ -1689,7 +1943,7 @@ function DrakthonLib:MakeWindow(options)
                     BackgroundTransparency = 1,
                     Text = item,
                     TextColor3 = Theme.TextPrimary,
-                    TextSize = 11,
+                    TextSize = 11 * fontSize,
                     Font = Enum.Font.Gotham,
                     TextXAlignment = Enum.TextXAlignment.Left,
                     TextTruncate = Enum.TextTruncate.AtEnd,
@@ -1703,11 +1957,11 @@ function DrakthonLib:MakeWindow(options)
                     
                     isOpen = false
                     
-                    Tween(container, {Size = UDim2.new(1, 0, 0, 80)}, 0.3)
-                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, 0.3)
-                    Tween(arrowIcon, {Rotation = 0}, 0.3)
+                    Tween(container, {Size = UDim2.new(1, 0, 0, 80)}, animationSpeed)
+                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, animationSpeed)
+                    Tween(arrowIcon, {Rotation = 0}, animationSpeed)
                     
-                    wait(0.3)
+                    wait(animationSpeed)
                     dropdownList.Visible = false
                     Tab.UpdateCanvas()
                     
@@ -1728,18 +1982,18 @@ function DrakthonLib:MakeWindow(options)
                     dropdownList.Visible = true
                     local maxHeight = math.min(#items * 34, 140)
                     
-                    Tween(container, {Size = UDim2.new(1, 0, 0, 80 + maxHeight + 8)}, 0.3, Enum.EasingStyle.Back)
-                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, maxHeight)}, 0.3, Enum.EasingStyle.Back)
-                    Tween(arrowIcon, {Rotation = 180}, 0.3)
+                    Tween(container, {Size = UDim2.new(1, 0, 0, 80 + maxHeight + 8)}, animationSpeed, Enum.EasingStyle.Back)
+                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, maxHeight)}, animationSpeed, Enum.EasingStyle.Back)
+                    Tween(arrowIcon, {Rotation = 180}, animationSpeed)
                     
-                    task.wait(0.3)
+                    task.wait(animationSpeed)
                     Tab.UpdateCanvas()
                 else
-                    Tween(container, {Size = UDim2.new(1, 0, 0, 80)}, 0.3)
-                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, 0.3)
-                    Tween(arrowIcon, {Rotation = 0}, 0.3)
+                    Tween(container, {Size = UDim2.new(1, 0, 0, 80)}, animationSpeed)
+                    Tween(dropdownList, {Size = UDim2.new(1, 0, 0, 0)}, animationSpeed)
+                    Tween(arrowIcon, {Rotation = 0}, animationSpeed)
                     
-                    wait(0.3)
+                    wait(animationSpeed)
                     dropdownList.Visible = false
                     Tab.UpdateCanvas()
                 end
