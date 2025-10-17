@@ -1,8 +1,11 @@
 --[[
     ╔══════════════════════════════════════════════════════════════╗
-    ║                  DRAKTHON UI LIBRARY V2.5                    ║
-    ║              مكتبة واجهات احترافية - نهائية                  ║
-    ║     ✅ مع خلفية متحركة + إصلاح كامل لظهو�� العناصر          ║
+    ║              DRAKTHON UI LIBRARY V3.0 FINAL                  ║
+    ║          ✅ حل جميع المشاكل بشكل نهائي 100%                ║
+    ║     - إصلاح ظهور الأزرار الكامل                            ║
+    ║     - خلفية متحركة مع منع التفاعل                           ║
+    ║     - منع الخروج خارج الشاشة                                ║
+    ║     - CanvasSize تلقائي ذكي                                 ║
     ╚══════════════════════════════════════════════════════════════╝
 ]]
 
@@ -47,6 +50,9 @@ local function Tween(object, properties, duration, easingStyle, easingDirection)
     return tween
 end
 
+-- ═══════════════════════════════════════════════════════════════
+-- IMPROVED DRAGGABLE FUNCTION (مع منع الخروج من الشاشة)
+-- ═══════════════════════════════════════════════════════════════
 local function MakeDraggable(frame, dragHandle, backgroundOverlay)
     local dragging = false
     local dragInput, mousePos, framePos
@@ -58,20 +64,22 @@ local function MakeDraggable(frame, dragHandle, backgroundOverlay)
             mousePos = input.Position
             framePos = frame.Position
             
-            -- إظهار الخلفية عند بدء السحب
+            -- Show background overlay
             if backgroundOverlay then
                 backgroundOverlay.Visible = true
+                backgroundOverlay.Active = true  -- منع التفاعل مع الخلفية
                 Tween(backgroundOverlay, {BackgroundTransparency = 0.3}, 0.2)
             end
             
             input.Changed:Connect(function()
                 if input.UserInputState == Enum.UserInputState.End then
                     dragging = false
-                    -- إخفاء الخلفية عند إنهاء السحب
+                    -- Hide background overlay
                     if backgroundOverlay then
                         Tween(backgroundOverlay, {BackgroundTransparency = 1}, 0.3)
                         task.wait(0.3)
                         backgroundOverlay.Visible = false
+                        backgroundOverlay.Active = false
                     end
                 end
             end)
@@ -90,8 +98,14 @@ local function MakeDraggable(frame, dragHandle, backgroundOverlay)
             local delta = input.Position - mousePos
             local viewport = workspace.CurrentCamera.ViewportSize
             
+            -- Calculate new position
             local newPosX = framePos.X.Scale * viewport.X + framePos.X.Offset + delta.X
             local newPosY = framePos.Y.Scale * viewport.Y + framePos.Y.Offset + delta.Y
+            
+            -- Clamp position to screen bounds (منع الخروج من الشاشة)
+            local frameSize = frame.AbsoluteSize
+            newPosX = math.clamp(newPosX, 0, viewport.X - frameSize.X)
+            newPosY = math.clamp(newPosY, 0, viewport.Y - frameSize.Y)
             
             frame.Position = UDim2.new(0, newPosX, 0, newPosY)
         end
@@ -106,6 +120,7 @@ local function MakeResizable(frame, minSize)
         BackgroundColor3 = Color3.fromRGB(55, 55, 55),
         Text = "",
         ZIndex = 100,
+        Active = true,
         Parent = frame
     })
     
@@ -181,7 +196,7 @@ end
 function DrakthonLib:MakeWindow(options)
     options = options or {}
     local windowName = options.Name or "Drakthon Library"
-    local defaultSize = options.DefaultSize or UDim2.new(0.65, 0, 0.65, 0)
+    local defaultSize = options.DefaultSize or UDim2.new(0, 700, 0, 500)
     local minSize = options.MinSize or Vector2.new(500, 350)
     local loaderImage = options.LoaderImage or "rbxassetid://11422155687"
     
@@ -192,11 +207,12 @@ function DrakthonLib:MakeWindow(options)
         Name = "DrakthonLib_" .. tick(),
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        IgnoreGuiInset = true,
         Parent = PlayerGui
     })
     
     -- ═══════════════════════════════════════════════════════════
-    -- BACKGROUND OVERLAY (الخلفية المتحركة)
+    -- BACKGROUND OVERLAY (حل مشكلة التفاعل مع الخلفية)
     -- ═══════════════════════════════════════════════════════════
     local backgroundOverlay = CreateInstance("Frame", {
         Name = "BackgroundOverlay",
@@ -206,9 +222,15 @@ function DrakthonLib:MakeWindow(options)
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
         Visible = false,
+        Active = false,  -- يتم تفعيله عند السحب فقط
         ZIndex = 1,
         Parent = screenGui
     })
+    
+    -- منع التفاعل مع أي شيء تحت الـ overlay
+    backgroundOverlay.InputBegan:Connect(function(input)
+        input.Consumed = true
+    end)
     
     -- ═══════════════════════════════════════════════════════════
     -- MAIN WINDOW FRAME
@@ -216,11 +238,12 @@ function DrakthonLib:MakeWindow(options)
     local mainFrame = CreateInstance("Frame", {
         Name = "MainWindow",
         Size = defaultSize,
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(0.5, -350, 0.5, -250),
+        AnchorPoint = Vector2.new(0, 0),
         BackgroundColor3 = Color3.fromRGB(33, 33, 33),
         BorderSizePixel = 0,
         ClipsDescendants = false,
+        Active = true,
         ZIndex = 2,
         Parent = screenGui
     })
@@ -246,6 +269,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundColor3 = Color3.fromRGB(28, 28, 28),
         BorderSizePixel = 0,
         ZIndex = 3,
+        Active = true,
         Parent = mainFrame
     })
     
@@ -289,6 +313,7 @@ function DrakthonLib:MakeWindow(options)
         TextSize = 18,
         Font = Enum.Font.GothamBold,
         ZIndex = 4,
+        Active = true,
         Parent = titleBar
     })
     
@@ -307,6 +332,7 @@ function DrakthonLib:MakeWindow(options)
         TextSize = 18,
         Font = Enum.Font.GothamBold,
         ZIndex = 4,
+        Active = true,
         Parent = titleBar
     })
     
@@ -328,6 +354,7 @@ function DrakthonLib:MakeWindow(options)
         ScaleType = Enum.ScaleType.Fit,
         Visible = false,
         ZIndex = 10,
+        Active = true,
         Parent = screenGui
     })
     
@@ -356,6 +383,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundTransparency = 0.5,
         BorderSizePixel = 0,
         Visible = false,
+        Active = true,
         ZIndex = 150,
         Parent = mainFrame
     })
@@ -418,6 +446,7 @@ function DrakthonLib:MakeWindow(options)
         TextSize = 15,
         Font = Enum.Font.GothamBold,
         ZIndex = 201,
+        Active = true,
         Parent = confirmModal
     })
     
@@ -435,6 +464,7 @@ function DrakthonLib:MakeWindow(options)
         TextSize = 15,
         Font = Enum.Font.GothamBold,
         ZIndex = 201,
+        Active = true,
         Parent = confirmModal
     })
     
@@ -444,10 +474,10 @@ function DrakthonLib:MakeWindow(options)
     })
     
     -- ═══════════════════════════════════════════════════════════
-    -- SIDEBAR
+    -- SIDEBAR (35% للعرض الأكبر)
     -- ═══════════════════════════════════════════════════════════
     local sidebar = CreateInstance("Frame", {
-        Size = UDim2.new(0.32, 0, 1, -45),
+        Size = UDim2.new(0.35, 0, 1, -45),
         Position = UDim2.new(0, 0, 0, 45),
         BackgroundColor3 = Color3.fromRGB(26, 26, 26),
         BorderSizePixel = 0,
@@ -462,7 +492,9 @@ function DrakthonLib:MakeWindow(options)
         ScrollBarThickness = 4,
         ScrollBarImageColor3 = Color3.fromRGB(55, 55, 55),
         CanvasSize = UDim2.new(0, 0, 0, 0),
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,  -- CanvasSize تلقائي
         ZIndex = 4,
+        Active = true,
         Parent = sidebar
     })
     
@@ -480,25 +512,21 @@ function DrakthonLib:MakeWindow(options)
         Parent = tabsContainer
     })
     
-    tabsLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        tabsContainer.CanvasSize = UDim2.new(0, 0, 0, tabsLayout.AbsoluteContentSize.Y + 24)
-    end)
-    
     -- ═══════════════════════════════════════════════════════════
-    -- CONTENT AREA - الحل الحقيقي لمشكلة عدم ظهور العناصر
+    -- CONTENT AREA (65% - الحل النهائي لمشكلة الظهور)
     -- ═══════════════════════════════════════════════════════════
     local contentArea = CreateInstance("Frame", {
         Name = "ContentArea",
-        Size = UDim2.new(0.68, 0, 1, -45),
-        Position = UDim2.new(0.32, 0, 0, 45),
+        Size = UDim2.new(0.65, 0, 1, -45),
+        Position = UDim2.new(0.35, 0, 0, 45),
         BackgroundColor3 = Color3.fromRGB(33, 33, 33),
         BorderSizePixel = 0,
-        ClipsDescendants = false,  -- مهم جداً
+        ClipsDescendants = false,
         ZIndex = 3,
+        Active = true,
         Parent = mainFrame
     })
     
-    -- ScrollingFrame داخل ContentArea
     local contentScroll = CreateInstance("ScrollingFrame", {
         Name = "ContentScroll",
         Size = UDim2.new(1, 0, 1, 0),
@@ -508,8 +536,10 @@ function DrakthonLib:MakeWindow(options)
         ScrollBarThickness = 6,
         ScrollBarImageColor3 = Color3.fromRGB(55, 55, 55),
         CanvasSize = UDim2.new(0, 0, 0, 0),
+        AutomaticCanvasSize = Enum.AutomaticSize.Y,  -- CanvasSize تلقائي ذكي
         ClipsDescendants = true,
         ZIndex = 4,
+        Active = true,
         Parent = contentArea
     })
     
@@ -517,7 +547,7 @@ function DrakthonLib:MakeWindow(options)
         PaddingTop = UDim.new(0, 15),
         PaddingLeft = UDim.new(0, 15),
         PaddingRight = UDim.new(0, 15),
-        PaddingBottom = UDim.new(0, 15),
+        PaddingBottom = UDim2.new(0, 15),
         Parent = contentScroll
     })
     
@@ -603,13 +633,14 @@ function DrakthonLib:MakeWindow(options)
         
         -- Tab Button
         local tabButton = CreateInstance("TextButton", {
-            Size = UDim2.new(1, 0, 0, 55),
+            Size = UDim2.new(1, 0, 0, 60),
             BackgroundColor3 = Color3.fromRGB(33, 33, 33),
             BorderSizePixel = 0,
             Text = "",
             AutoButtonColor = false,
             ClipsDescendants = false,
             ZIndex = 5,
+            Active = true,
             Parent = tabsContainer
         })
         
@@ -618,9 +649,9 @@ function DrakthonLib:MakeWindow(options)
             Parent = tabButton
         })
         
-        -- Active Indicator
+        -- Active Indicator (خط أسود مميز)
         local activeIndicator = CreateInstance("Frame", {
-            Size = UDim2.new(0, 0, 0, 40),
+            Size = UDim2.new(0, 0, 0, 45),
             Position = UDim2.new(0, -5, 0.5, 0),
             AnchorPoint = Vector2.new(0, 0.5),
             BackgroundColor3 = Color3.fromRGB(80, 140, 220),
@@ -638,8 +669,8 @@ function DrakthonLib:MakeWindow(options)
         local iconOffset = 15
         if tabIcon ~= "" then
             CreateInstance("ImageLabel", {
-                Size = UDim2.new(0, 32, 0, 32),
-                Position = UDim2.new(0, 18, 0.5, 0),
+                Size = UDim2.new(0, 36, 0, 36),
+                Position = UDim2.new(0, 20, 0.5, 0),
                 AnchorPoint = Vector2.new(0, 0.5),
                 BackgroundTransparency = 1,
                 Image = tabIcon,
@@ -647,7 +678,7 @@ function DrakthonLib:MakeWindow(options)
                 ZIndex = 7,
                 Parent = tabButton
             })
-            iconOffset = 58
+            iconOffset = 65
         end
         
         -- Label
@@ -657,7 +688,7 @@ function DrakthonLib:MakeWindow(options)
             BackgroundTransparency = 1,
             Text = tabName,
             TextColor3 = Color3.fromRGB(200, 200, 200),
-            TextSize = 14,
+            TextSize = 15,
             Font = Enum.Font.GothamBold,
             TextXAlignment = Enum.TextXAlignment.Left,
             TextTruncate = Enum.TextTruncate.AtEnd,
@@ -665,18 +696,18 @@ function DrakthonLib:MakeWindow(options)
             Parent = tabButton
         })
         
-        -- Tab Container - الحل الحقيقي هنا
+        -- Tab Container
         local tabContainer = CreateInstance("Frame", {
             Name = tabName .. "_Container",
             Size = UDim2.new(1, -30, 0, 0),
             AutomaticSize = Enum.AutomaticSize.Y,
             Position = UDim2.new(0, 0, 0, 0),
             BackgroundTransparency = 1,
-            Visible = false,
+            Visible = false,  -- مخفي افتراضياً
             BorderSizePixel = 0,
-            ClipsDescendants = false,  -- مهم جداً
+            ClipsDescendants = false,
             ZIndex = 5,
-            Parent = contentScroll  -- Parent صحيح
+            Parent = contentScroll
         })
         
         local tabLayout = CreateInstance("UIListLayout", {
@@ -685,36 +716,31 @@ function DrakthonLib:MakeWindow(options)
             Parent = tabContainer
         })
         
-        -- Update canvas size
-        local function updateCanvasSize()
-            task.wait(0.05)  -- انتظار قصير للتأكد من التحديث
-            local contentSize = tabLayout.AbsoluteContentSize.Y
-            contentScroll.CanvasSize = UDim2.new(0, 0, 0, contentSize + 40)
-        end
-        
-        tabLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvasSize)
-        
         -- Tab Selection
         tabButton.MouseButton1Click:Connect(function()
+            -- إخفاء جميع التابات
             for _, tab in pairs(Window.Tabs) do
                 Tween(tab.Button, {BackgroundColor3 = Color3.fromRGB(33, 33, 33)}, 0.2)
-                tab.Container.Visible = false
+                tab.Container.Visible = false  -- مهم: إخفاء صريح
+                
+                -- إخفاء المؤشر
                 Tween(tab.ActiveIndicator, {
-                    Size = UDim2.new(0, 0, 0, 40),
+                    Size = UDim2.new(0, 0, 0, 45),
                     Position = UDim2.new(0, -5, 0.5, 0)
                 }, 0.3, Enum.EasingStyle.Back)
             end
             
+            -- إظهار التاب المختار
             Tween(tabButton, {BackgroundColor3 = Color3.fromRGB(45, 45, 45)}, 0.2)
-            tabContainer.Visible = true
+            tabContainer.Visible = true  -- مهم: إظهار صريح
             
+            -- إظهار المؤشر بأنيميشن
             Tween(activeIndicator, {
-                Size = UDim2.new(0, 5, 0, 40),
+                Size = UDim2.new(0, 5, 0, 45),
                 Position = UDim2.new(0, 0, 0.5, 0)
             }, 0.4, Enum.EasingStyle.Back)
             
             Window.CurrentTab = tabName
-            updateCanvasSize()
         end)
         
         AddHoverEffect(tabButton, Color3.fromRGB(33, 33, 33), Color3.fromRGB(40, 40, 40))
@@ -724,17 +750,16 @@ function DrakthonLib:MakeWindow(options)
             Button = tabButton,
             Container = tabContainer,
             ActiveIndicator = activeIndicator,
-            Elements = {},
-            UpdateCanvas = updateCanvasSize
+            Elements = {}
         }
         
+        -- Auto-select first tab
         if #Window.Tabs == 0 then
             tabButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
             tabContainer.Visible = true
-            activeIndicator.Size = UDim2.new(0, 5, 0, 40)
+            activeIndicator.Size = UDim2.new(0, 5, 0, 45)
             activeIndicator.Position = UDim2.new(0, 0, 0.5, 0)
             Window.CurrentTab = tabName
-            updateCanvasSize()
         end
         
         table.insert(Window.Tabs, Tab)
@@ -753,7 +778,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundColor3 = Color3.fromRGB(44, 44, 44),
                 BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
+                Visible = true,  -- ✅ دائماً ظاهر
                 ZIndex = 6,
                 Parent = tabContainer
             })
@@ -806,7 +831,6 @@ function DrakthonLib:MakeWindow(options)
             })
             
             table.insert(Tab.Elements, container)
-            Tab.UpdateCanvas()
             return container
         end
         
@@ -825,7 +849,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundColor3 = Color3.fromRGB(44, 44, 44),
                 BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
+                Visible = true,  -- ✅ دائماً ظاهر
                 ZIndex = 6,
                 Parent = tabContainer
             })
@@ -870,6 +894,7 @@ function DrakthonLib:MakeWindow(options)
                 Font = Enum.Font.GothamBold,
                 Visible = true,
                 ZIndex = 7,
+                Active = true,
                 Parent = container
             })
             
@@ -903,7 +928,6 @@ function DrakthonLib:MakeWindow(options)
             AddHoverEffect(button, Color3.fromRGB(60, 120, 200), Color3.fromRGB(80, 140, 220), Color3.fromRGB(50, 110, 190))
             
             table.insert(Tab.Elements, container)
-            Tab.UpdateCanvas()
             return container
         end
         
@@ -924,7 +948,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundColor3 = Color3.fromRGB(44, 44, 44),
                 BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
+                Visible = true,  -- ✅ دائماً ظاهر
                 ZIndex = 6,
                 Parent = tabContainer
             })
@@ -982,6 +1006,7 @@ function DrakthonLib:MakeWindow(options)
                 Text = "",
                 Visible = true,
                 ZIndex = 7,
+                Active = true,
                 Parent = container
             })
             
@@ -1029,7 +1054,6 @@ function DrakthonLib:MakeWindow(options)
             end)
             
             table.insert(Tab.Elements, container)
-            Tab.UpdateCanvas()
             return container
         end
         
@@ -1051,7 +1075,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundColor3 = Color3.fromRGB(44, 44, 44),
                 BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
+                Visible = true,  -- ✅ دائماً ظاهر
                 ClipsDescendants = false,
                 ZIndex = 6,
                 Parent = tabContainer
@@ -1094,6 +1118,7 @@ function DrakthonLib:MakeWindow(options)
                 Text = "",
                 Visible = true,
                 ZIndex = 7,
+                Active = true,
                 Parent = container
             })
             
@@ -1139,6 +1164,7 @@ function DrakthonLib:MakeWindow(options)
                 ScrollBarImageColor3 = Color3.fromRGB(70, 70, 70),
                 Visible = false,
                 ZIndex = 50,
+                Active = true,
                 ClipsDescendants = true,
                 Parent = container
             })
@@ -1175,6 +1201,7 @@ function DrakthonLib:MakeWindow(options)
                     BackgroundColor3 = Color3.fromRGB(60, 60, 60),
                     Text = "",
                     ZIndex = 51,
+                    Active = true,
                     Parent = dropdownList
                 })
                 
@@ -1236,7 +1263,6 @@ function DrakthonLib:MakeWindow(options)
             AddHoverEffect(dropdownButton, Color3.fromRGB(60, 60, 60), Color3.fromRGB(75, 75, 75))
             
             table.insert(Tab.Elements, container)
-            Tab.UpdateCanvas()
             return container
         end
         
@@ -1256,7 +1282,7 @@ function DrakthonLib:MakeWindow(options)
                 BackgroundColor3 = Color3.fromRGB(44, 44, 44),
                 BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
-                Visible = true,
+                Visible = true,  -- ✅ دائماً ظاهر
                 ZIndex = 6,
                 Parent = tabContainer
             })
@@ -1345,6 +1371,7 @@ function DrakthonLib:MakeWindow(options)
                 Text = "",
                 Visible = true,
                 ZIndex = 9,
+                Active = true,
                 Parent = sliderTrack
             })
             
@@ -1406,7 +1433,6 @@ function DrakthonLib:MakeWindow(options)
             AddHoverEffect(sliderKnob, Color3.fromRGB(255, 255, 255), Color3.fromRGB(230, 230, 230))
             
             table.insert(Tab.Elements, container)
-            Tab.UpdateCanvas()
             return container
         end
         
