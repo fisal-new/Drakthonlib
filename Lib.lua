@@ -1,16 +1,28 @@
 --[[
-    ╔══════════════════════════════════════════════════════════════╗
-    ║                  DRAKTHON UI LIBRARY V8.0                    ║
-    ║              ULTIMATE COMPLETE - EVERYTHING WORKS             ║
-    ║    ✅ Full Loader + Settings + Theme Changer + Bug Fixed    ║
-    ╚══════════════════════════════════════════════════════════════╝
+    Drakthon UI Library V9.0
+    Professional & Undetectable
+    Anti-Detect + Smooth Edges + No Prints
 ]]
 
 local DrakthonLib = {}
 
--- ═══════════════════════════════════════════════════════════════
--- THEMES - 12 COMPLETE THEMES
--- ═══════════════════════════════════════════════════════════════
+-- Services
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+-- Anti-Detection
+local function SecureConnection()
+    local httpService = game:GetService("HttpService")
+    local randomId = httpService:GenerateGUID(false)
+    return randomId
+end
+
+-- Themes
 local Themes = {
     Default = {
         Background = Color3.fromRGB(20, 20, 25),
@@ -230,20 +242,7 @@ local Themes = {
     },
 }
 
--- ═══════════════════════════════════════════════════════════════
--- SERVICES
--- ═══════════════════════════════════════════════════════════════
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-local Players = game:GetService("Players")
-
-local Player = Players.LocalPlayer
-local PlayerGui = Player:WaitForChild("PlayerGui")
-
--- ═══════════════════════════════════════════════════════════════
--- UTILITY FUNCTIONS
--- ═══════════════════════════════════════════════════════════════
-
+-- Utility Functions
 local function CreateInstance(className, properties)
     local instance = Instance.new(className)
     for property, value in pairs(properties) do
@@ -347,7 +346,6 @@ local function CheckDuplicate(antiDupId)
     
     for _, gui in ipairs(PlayerGui:GetChildren()) do
         if gui:GetAttribute("DrakthonID") == antiDupId then
-            warn("[Drakthon] Duplicate UI detected! ID: " .. antiDupId)
             return true
         end
     end
@@ -355,25 +353,19 @@ local function CheckDuplicate(antiDupId)
     return false
 end
 
--- ═══════════════════════════════════════════════════════════════
--- MAIN WINDOW FUNCTION
--- ═══════════════════════════════════════════════════════════════
-
+-- Main Window Function
 function DrakthonLib:MakeWindow(options)
     options = options or {}
     
-    -- Anti-Duplicate
     local antiDupId = options.AntiDuplicate or ""
     if CheckDuplicate(antiDupId) then
         return nil
     end
     
-    -- Configuration
     local windowName = options.Name or "Drakthon Library"
     local themeName = options.Theme or "Default"
     local windowSize = options.Size or UDim2.new(0, 550, 0, 350)
     
-    -- Loader Settings
     local LoaderConfig = {
         Enabled = options.LoaderEnabled ~= false,
         MainImage = options.LoaderImage or "rbxassetid://11422155687",
@@ -382,17 +374,16 @@ function DrakthonLib:MakeWindow(options)
         Size = options.LoaderSize or UDim2.new(0, 70, 0, 70),
     }
     
-    -- Theme
     local Theme = Themes[themeName] or Themes.Default
     local CurrentThemeName = themeName
     
-    -- ═══════════════════════════════════════════════════════════
-    -- SCREEN GUI
-    -- ═══════════════════════════════════════════════════════════
+    -- Screen GUI (Anti-Detection)
     local screenGui = CreateInstance("ScreenGui", {
-        Name = "DrakthonLib_" .. tick(),
+        Name = SecureConnection():sub(1, 16),
         ResetOnSpawn = false,
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        IgnoreGuiInset = true,
+        DisplayOrder = 999,
         Parent = PlayerGui
     })
     
@@ -400,9 +391,7 @@ function DrakthonLib:MakeWindow(options)
         screenGui:SetAttribute("DrakthonID", antiDupId)
     end
     
-    -- ═══════════════════════════════════════════════════════════
-    -- LOADER WITH SETTINGS
-    -- ═══════════════════════════════════════════════════════════
+    -- Loader Frame
     local loaderFrame = CreateInstance("Frame", {
         Name = "LoaderFrame",
         Size = UDim2.new(0, 280, 0, 350),
@@ -450,7 +439,7 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(1, -80, 1, 0),
         Position = UDim2.new(0, 15, 0, 0),
         BackgroundTransparency = 1,
-        Text = "⚙️ " .. windowName,
+        Text = windowName,
         TextColor3 = Theme.TextPrimary,
         TextSize = 14,
         Font = Enum.Font.GothamBold,
@@ -459,22 +448,25 @@ function DrakthonLib:MakeWindow(options)
         Parent = loaderHeader
     })
     
-    -- Close Loader Button
-    local closeLoaderBtn = CreateInstance("TextButton", {
+    -- Close Loader Button (New Icon)
+    local closeLoaderBtn = CreateInstance("ImageButton", {
         Size = UDim2.new(0, 30, 0, 26),
         Position = UDim2.new(1, -38, 0.5, 0),
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Theme.Error,
-        Text = "✕",
-        TextColor3 = Theme.TextPrimary,
-        TextSize = 14,
-        Font = Enum.Font.GothamBold,
+        Image = "rbxassetid://10152135063",
+        ImageColor3 = Theme.TextPrimary,
         ZIndex = 102,
         Parent = loaderHeader
     })
     
     CreateInstance("UICorner", {
         CornerRadius = UDim.new(0, 6),
+        Parent = closeLoaderBtn
+    })
+    
+    CreateInstance("UIPadding", {
+        PaddingAll = UDim.new(0, 5),
         Parent = closeLoaderBtn
     })
     
@@ -506,7 +498,7 @@ function DrakthonLib:MakeWindow(options)
         loaderContent.CanvasSize = UDim2.new(0, 0, 0, loaderLayout.AbsoluteContentSize.Y + 24)
     end)
     
-    -- Loader Image Display
+    -- Loader Image
     local loaderImageDisplay = CreateInstance("ImageLabel", {
         Size = UDim2.new(1, 0, 0, 120),
         BackgroundColor3 = Theme.ElementBackground,
@@ -527,7 +519,7 @@ function DrakthonLib:MakeWindow(options)
         Parent = loaderImageDisplay
     })
     
-    -- Theme Selector in Loader
+    -- Theme Selector
     local themeFrame = CreateInstance("Frame", {
         Size = UDim2.new(1, 0, 0, 70),
         BackgroundColor3 = Theme.ElementBackground,
@@ -549,7 +541,7 @@ function DrakthonLib:MakeWindow(options)
     CreateInstance("TextLabel", {
         Size = UDim2.new(1, 0, 0, 18),
         BackgroundTransparency = 1,
-        Text = "🎨 Select Theme",
+        Text = "Select Theme",
         TextColor3 = Theme.TextPrimary,
         TextSize = 12,
         Font = Enum.Font.GothamBold,
@@ -629,11 +621,11 @@ function DrakthonLib:MakeWindow(options)
         Parent = themeList
     })
     
-    -- Open UI Button in Loader
+    -- Open UI Button
     local openUIBtn = CreateInstance("TextButton", {
         Size = UDim2.new(1, 0, 0, 45),
         BackgroundColor3 = Theme.Accent,
-        Text = "🚀 Open UI",
+        Text = "Open UI",
         TextColor3 = Theme.TextPrimary,
         TextSize = 14,
         Font = Enum.Font.GothamBold,
@@ -649,7 +641,7 @@ function DrakthonLib:MakeWindow(options)
     
     MakeDraggable(loaderFrame, loaderHeader)
     
-    -- Minimize Icon (Small)
+    -- Minimize Icon (Draggable)
     local minimizeIcon = CreateInstance("ImageButton", {
         Name = "MinimizeIcon",
         Size = LoaderConfig.Size,
@@ -681,9 +673,7 @@ function DrakthonLib:MakeWindow(options)
     
     MakeDraggable(minimizeIcon, minimizeIcon)
     
-    -- ═══════════════════════════════════════════════════════════
-    -- MAIN WINDOW
-    -- ═══════════════════════════════════════════════════════════
+    -- Main Window
     local mainFrame = CreateInstance("Frame", {
         Name = "MainWindow",
         Size = UDim2.new(0, 0, 0, 0),
@@ -706,6 +696,21 @@ function DrakthonLib:MakeWindow(options)
         Color = Theme.ElementBorder,
         Thickness = 1.5,
         Parent = mainFrame
+    })
+    
+    -- Bottom Smooth Corners Fix
+    local bottomCornerFix = CreateInstance("Frame", {
+        Size = UDim2.new(1, 0, 0, 10),
+        Position = UDim2.new(0, 0, 1, -10),
+        BackgroundColor3 = Theme.Background,
+        BorderSizePixel = 0,
+        ZIndex = 2,
+        Parent = mainFrame
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 10),
+        Parent = bottomCornerFix
     })
     
     -- Title Bar
@@ -733,7 +738,7 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(1, -120, 1, 0),
         Position = UDim2.new(0, 15, 0, 0),
         BackgroundTransparency = 1,
-        Text = "🌙 " .. windowName,
+        Text = windowName,
         TextColor3 = Theme.TextPrimary,
         TextSize = 15,
         Font = Enum.Font.GothamBold,
@@ -761,22 +766,25 @@ function DrakthonLib:MakeWindow(options)
         Parent = minimizeBtn
     })
     
-    -- Close Button
-    local closeBtn = CreateInstance("TextButton", {
+    -- Close Button (New Icon)
+    local closeBtn = CreateInstance("ImageButton", {
         Size = UDim2.new(0, 35, 0, 26),
         Position = UDim2.new(1, -42, 0.5, 0),
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundColor3 = Theme.Error,
-        Text = "✕",
-        TextColor3 = Theme.TextPrimary,
-        TextSize = 16,
-        Font = Enum.Font.GothamBold,
+        Image = "rbxassetid://10152135063",
+        ImageColor3 = Theme.TextPrimary,
         ZIndex = 4,
         Parent = titleBar
     })
     
     CreateInstance("UICorner", {
         CornerRadius = UDim.new(0, 6),
+        Parent = closeBtn
+    })
+    
+    CreateInstance("UIPadding", {
+        PaddingAll = UDim.new(0, 5),
         Parent = closeBtn
     })
     
@@ -787,6 +795,21 @@ function DrakthonLib:MakeWindow(options)
         BackgroundColor3 = Theme.Secondary,
         ZIndex = 3,
         Parent = mainFrame
+    })
+    
+    -- Sidebar Bottom Smooth Corner
+    local sidebarBottomCorner = CreateInstance("Frame", {
+        Size = UDim2.new(1, 0, 0, 10),
+        Position = UDim2.new(0, 0, 1, -10),
+        BackgroundColor3 = Theme.Secondary,
+        BorderSizePixel = 0,
+        ZIndex = 3,
+        Parent = sidebar
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 10),
+        Parent = sidebarBottomCorner
     })
     
     local tabsContainer = CreateInstance("ScrollingFrame", {
@@ -824,6 +847,21 @@ function DrakthonLib:MakeWindow(options)
         Parent = mainFrame
     })
     
+    -- Content Area Bottom Smooth Corner
+    local contentBottomCorner = CreateInstance("Frame", {
+        Size = UDim2.new(1, 0, 0, 10),
+        Position = UDim2.new(0, 0, 1, -10),
+        BackgroundColor3 = Theme.Background,
+        BorderSizePixel = 0,
+        ZIndex = 3,
+        Parent = contentArea
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 10),
+        Parent = contentBottomCorner
+    })
+    
     local contentScroll = CreateInstance("ScrollingFrame", {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
@@ -842,9 +880,7 @@ function DrakthonLib:MakeWindow(options)
     
     MakeDraggable(mainFrame, titleBar)
     
-    -- ═══════════════════════════════════════════════════════════
-    -- WINDOW OBJECT
-    -- ═══════════════════════════════════════════════════════════
+    -- Window Object
     local Window = {
         Tabs = {},
         CurrentTab = nil,
@@ -865,26 +901,28 @@ function DrakthonLib:MakeWindow(options)
     function Window:ApplyTheme(newTheme)
         Theme = newTheme
         
-        -- Update all elements
         mainFrame.BackgroundColor3 = Theme.Background
+        bottomCornerFix.BackgroundColor3 = Theme.Background
         titleBar.BackgroundColor3 = Theme.Secondary
         titleLabel.TextColor3 = Theme.TextPrimary
         sidebar.BackgroundColor3 = Theme.Secondary
+        sidebarBottomCorner.BackgroundColor3 = Theme.Secondary
         contentArea.BackgroundColor3 = Theme.Background
+        contentBottomCorner.BackgroundColor3 = Theme.Background
         minimizeBtn.BackgroundColor3 = Theme.ElementBackground
         minimizeBtn.TextColor3 = Theme.TextPrimary
         closeBtn.BackgroundColor3 = Theme.Error
-        closeBtn.TextColor3 = Theme.TextPrimary
+        closeBtn.ImageColor3 = Theme.TextPrimary
         
-        -- Update loader
         loaderFrame.BackgroundColor3 = Theme.Secondary
         loaderHeader.BackgroundColor3 = Theme.Tertiary
         minimizeIcon.BackgroundColor3 = Theme.Secondary
         openUIBtn.BackgroundColor3 = Theme.Accent
         themeFrame.BackgroundColor3 = Theme.ElementBackground
         themeDropdown.BackgroundColor3 = Theme.Tertiary
+        closeLoaderBtn.BackgroundColor3 = Theme.Error
+        closeLoaderBtn.ImageColor3 = Theme.TextPrimary
         
-        -- Update strokes
         for _, obj in pairs(mainFrame:GetDescendants()) do
             if obj:IsA("UIStroke") then
                 if obj.Parent == mainFrame then
@@ -895,24 +933,18 @@ function DrakthonLib:MakeWindow(options)
             end
         end
         
-        -- Update all tabs
         for _, tab in pairs(Window.Tabs) do
             tab.Button.BackgroundColor3 = Theme.ElementBackground
             tab.ActiveIndicator.BackgroundColor3 = Theme.Accent
             
-            -- Update tab elements
             for _, element in pairs(tab.Container:GetDescendants()) do
-                if element:IsA("Frame") and element.Name:find("container") or element.Parent.Name:find("Container") then
+                if element:IsA("Frame") and element.Parent.Name:find("Container") then
                     element.BackgroundColor3 = Theme.ElementBackground
                 elseif element:IsA("TextButton") and element.Parent.Parent.Name:find("Container") then
-                    if element.Name:find("toggle") then
-                        -- Will be handled by toggle logic
-                    else
-                        element.BackgroundColor3 = Theme.Accent
-                        element.TextColor3 = Theme.TextPrimary
-                    end
+                    element.BackgroundColor3 = Theme.Accent
+                    element.TextColor3 = Theme.TextPrimary
                 elseif element:IsA("TextLabel") then
-                    if element.Parent.Name:find("Title") or element.Parent:IsA("Frame") then
+                    if element.Parent:IsA("Frame") then
                         element.TextColor3 = Theme.TextPrimary
                     else
                         element.TextColor3 = Theme.TextSecondary
@@ -928,7 +960,7 @@ function DrakthonLib:MakeWindow(options)
         Window.Theme = Theme
     end
     
-    -- Create Theme List Items
+    -- Theme List Items
     local themeNames = {}
     for name, _ in pairs(Themes) do
         table.insert(themeNames, name)
@@ -1173,7 +1205,7 @@ function DrakthonLib:MakeWindow(options)
         
         table.insert(Window.Tabs, Tab)
         
-        -- ADD ELEMENTS TO TAB
+        -- Tab Elements
         function Tab:AddButton(options)
             options = options or {}
             local title = options.Title or "Button"
@@ -1195,7 +1227,7 @@ function DrakthonLib:MakeWindow(options)
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 20),
                 BackgroundTransparency = 1,
-                Text = "🔘 " .. title,
+                Text = title,
                 TextColor3 = Theme.TextPrimary,
                 TextSize = 14,
                 Font = Enum.Font.GothamBold,
@@ -1252,7 +1284,7 @@ function DrakthonLib:MakeWindow(options)
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, -60, 1, 0),
                 BackgroundTransparency = 1,
-                Text = "🔄 " .. title,
+                Text = title,
                 TextColor3 = Theme.TextPrimary,
                 TextSize = 14,
                 Font = Enum.Font.GothamBold,
@@ -1320,7 +1352,7 @@ function DrakthonLib:MakeWindow(options)
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, -60, 0, 20),
                 BackgroundTransparency = 1,
-                Text = "🎚️ " .. title,
+                Text = title,
                 TextColor3 = Theme.TextPrimary,
                 TextSize = 14,
                 Font = Enum.Font.GothamBold,
@@ -1414,7 +1446,7 @@ function DrakthonLib:MakeWindow(options)
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 20),
                 BackgroundTransparency = 1,
-                Text = "✏️ " .. title,
+                Text = title,
                 TextColor3 = Theme.TextPrimary,
                 TextSize = 14,
                 Font = Enum.Font.GothamBold,
@@ -1478,7 +1510,7 @@ function DrakthonLib:MakeWindow(options)
             CreateInstance("TextLabel", {
                 Size = UDim2.new(1, 0, 0, 20),
                 BackgroundTransparency = 1,
-                Text = "📝 " .. title,
+                Text = title,
                 TextColor3 = Theme.TextPrimary,
                 TextSize = 14,
                 Font = Enum.Font.GothamBold,
@@ -1511,7 +1543,6 @@ function DrakthonLib:MakeWindow(options)
         return Tab
     end
     
-    -- Open UI
     Tween(mainFrame, {Size = windowSize}, 0.5, Enum.EasingStyle.Back)
     
     return Window
