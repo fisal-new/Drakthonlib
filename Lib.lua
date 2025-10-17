@@ -1,8 +1,8 @@
 --[[
     ╔══════════════════════════════════════════════════════════════╗
-    ║                  DRAKTHON UI LIBRARY V9.0                    ║
-    ║              Professional UI Library - Clean Fixed            ║
-    ║         ✅ Original Design + Smooth Corners + Fixed          ║
+    ║                  DRAKTHON UI LIBRARY V10.0                   ║
+    ║              Professional UI Library - Final Fixed            ║
+    ║         ✅ All Issues Fixed + Notifications System           ║
     ╚══════════════════════════════════════════════════════════════╝
 ]]
 
@@ -84,150 +84,6 @@ local Themes = {
         ToggleOn = Color3.fromRGB(34, 197, 94),
         ToggleOff = Color3.fromRGB(69, 26, 26),
     },
-    Emerald = {
-        Background = Color3.fromRGB(6, 25, 15),
-        Secondary = Color3.fromRGB(11, 30, 20),
-        Tertiary = Color3.fromRGB(16, 35, 25),
-        Accent = Color3.fromRGB(16, 185, 129),
-        AccentHover = Color3.fromRGB(36, 205, 149),
-        AccentPressed = Color3.fromRGB(5, 150, 105),
-        TextPrimary = Color3.fromRGB(236, 253, 245),
-        TextSecondary = Color3.fromRGB(167, 243, 208),
-        TextMuted = Color3.fromRGB(110, 231, 183),
-        ElementBackground = Color3.fromRGB(21, 40, 30),
-        ElementBorder = Color3.fromRGB(6, 78, 59),
-        Success = Color3.fromRGB(52, 211, 153),
-        Warning = Color3.fromRGB(251, 191, 36),
-        Error = Color3.fromRGB(248, 113, 113),
-        ToggleOn = Color3.fromRGB(52, 211, 153),
-        ToggleOff = Color3.fromRGB(6, 78, 59),
-    },
-    Sunset = {
-        Background = Color3.fromRGB(30, 20, 10),
-        Secondary = Color3.fromRGB(35, 25, 15),
-        Tertiary = Color3.fromRGB(40, 30, 20),
-        Accent = Color3.fromRGB(249, 115, 22),
-        AccentHover = Color3.fromRGB(255, 135, 42),
-        AccentPressed = Color3.fromRGB(234, 88, 12),
-        TextPrimary = Color3.fromRGB(255, 247, 237),
-        TextSecondary = Color3.fromRGB(254, 215, 170),
-        TextMuted = Color3.fromRGB(253, 186, 116),
-        ElementBackground = Color3.fromRGB(50, 35, 20),
-        ElementBorder = Color3.fromRGB(124, 45, 18),
-        Success = Color3.fromRGB(34, 197, 94),
-        Warning = Color3.fromRGB(234, 179, 8),
-        Error = Color3.fromRGB(239, 68, 68),
-        ToggleOn = Color3.fromRGB(34, 197, 94),
-        ToggleOff = Color3.fromRGB(124, 45, 18),
-    },
-    Midnight = {
-        Background = Color3.fromRGB(10, 10, 10),
-        Secondary = Color3.fromRGB(15, 15, 15),
-        Tertiary = Color3.fromRGB(20, 20, 20),
-        Accent = Color3.fromRGB(100, 100, 100),
-        AccentHover = Color3.fromRGB(120, 120, 120),
-        AccentPressed = Color3.fromRGB(80, 80, 80),
-        TextPrimary = Color3.fromRGB(255, 255, 255),
-        TextSecondary = Color3.fromRGB(180, 180, 180),
-        TextMuted = Color3.fromRGB(120, 120, 120),
-        ElementBackground = Color3.fromRGB(25, 25, 25),
-        ElementBorder = Color3.fromRGB(40, 40, 40),
-        Success = Color3.fromRGB(34, 197, 94),
-        Warning = Color3.fromRGB(234, 179, 8),
-        Error = Color3.fromRGB(239, 68, 68),
-        ToggleOn = Color3.fromRGB(34, 197, 94),
-        ToggleOff = Color3.fromRGB(40, 40, 40),
-    },
-    Rose = {
-        Background = Color3.fromRGB(31, 18, 23),
-        Secondary = Color3.fromRGB(36, 23, 28),
-        Tertiary = Color3.fromRGB(41, 28, 33),
-        Accent = Color3.fromRGB(244, 114, 182),
-        AccentHover = Color3.fromRGB(255, 134, 202),
-        AccentPressed = Color3.fromRGB(236, 72, 153),
-        TextPrimary = Color3.fromRGB(255, 241, 242),
-        TextSecondary = Color3.fromRGB(251, 207, 232),
-        TextMuted = Color3.fromRGB(249, 168, 212),
-        ElementBackground = Color3.fromRGB(51, 33, 38),
-        ElementBorder = Color3.fromRGB(80, 50, 60),
-        Success = Color3.fromRGB(34, 197, 94),
-        Warning = Color3.fromRGB(251, 191, 36),
-        Error = Color3.fromRGB(244, 63, 94),
-        ToggleOn = Color3.fromRGB(34, 197, 94),
-        ToggleOff = Color3.fromRGB(80, 50, 60),
-    },
-    Cyber = {
-        Background = Color3.fromRGB(20, 20, 10),
-        Secondary = Color3.fromRGB(25, 25, 15),
-        Tertiary = Color3.fromRGB(30, 30, 20),
-        Accent = Color3.fromRGB(234, 179, 8),
-        AccentHover = Color3.fromRGB(250, 204, 21),
-        AccentPressed = Color3.fromRGB(202, 138, 4),
-        TextPrimary = Color3.fromRGB(254, 252, 232),
-        TextSecondary = Color3.fromRGB(253, 224, 71),
-        TextMuted = Color3.fromRGB(250, 204, 21),
-        ElementBackground = Color3.fromRGB(35, 35, 25),
-        ElementBorder = Color3.fromRGB(113, 63, 18),
-        Success = Color3.fromRGB(34, 197, 94),
-        Warning = Color3.fromRGB(217, 119, 6),
-        Error = Color3.fromRGB(239, 68, 68),
-        ToggleOn = Color3.fromRGB(34, 197, 94),
-        ToggleOff = Color3.fromRGB(113, 63, 18),
-    },
-    Arctic = {
-        Background = Color3.fromRGB(240, 242, 245),
-        Secondary = Color3.fromRGB(245, 247, 250),
-        Tertiary = Color3.fromRGB(250, 252, 255),
-        Accent = Color3.fromRGB(59, 130, 246),
-        AccentHover = Color3.fromRGB(79, 150, 255),
-        AccentPressed = Color3.fromRGB(37, 99, 235),
-        TextPrimary = Color3.fromRGB(15, 23, 42),
-        TextSecondary = Color3.fromRGB(51, 65, 85),
-        TextMuted = Color3.fromRGB(100, 116, 139),
-        ElementBackground = Color3.fromRGB(255, 255, 255),
-        ElementBorder = Color3.fromRGB(226, 232, 240),
-        Success = Color3.fromRGB(22, 163, 74),
-        Warning = Color3.fromRGB(202, 138, 4),
-        Error = Color3.fromRGB(220, 38, 38),
-        ToggleOn = Color3.fromRGB(22, 163, 74),
-        ToggleOff = Color3.fromRGB(203, 213, 225),
-    },
-    Neon = {
-        Background = Color3.fromRGB(4, 20, 20),
-        Secondary = Color3.fromRGB(9, 25, 25),
-        Tertiary = Color3.fromRGB(14, 30, 30),
-        Accent = Color3.fromRGB(20, 184, 166),
-        AccentHover = Color3.fromRGB(45, 212, 191),
-        AccentPressed = Color3.fromRGB(13, 148, 136),
-        TextPrimary = Color3.fromRGB(240, 253, 250),
-        TextSecondary = Color3.fromRGB(153, 246, 228),
-        TextMuted = Color3.fromRGB(94, 234, 212),
-        ElementBackground = Color3.fromRGB(19, 35, 35),
-        ElementBorder = Color3.fromRGB(15, 118, 110),
-        Success = Color3.fromRGB(52, 211, 153),
-        Warning = Color3.fromRGB(251, 191, 36),
-        Error = Color3.fromRGB(248, 113, 113),
-        ToggleOn = Color3.fromRGB(52, 211, 153),
-        ToggleOff = Color3.fromRGB(15, 118, 110),
-    },
-    Blood = {
-        Background = Color3.fromRGB(25, 5, 5),
-        Secondary = Color3.fromRGB(30, 10, 10),
-        Tertiary = Color3.fromRGB(35, 15, 15),
-        Accent = Color3.fromRGB(185, 28, 28),
-        AccentHover = Color3.fromRGB(220, 38, 38),
-        AccentPressed = Color3.fromRGB(153, 27, 27),
-        TextPrimary = Color3.fromRGB(255, 245, 245),
-        TextSecondary = Color3.fromRGB(254, 202, 202),
-        TextMuted = Color3.fromRGB(252, 165, 165),
-        ElementBackground = Color3.fromRGB(45, 20, 20),
-        ElementBorder = Color3.fromRGB(127, 29, 29),
-        Success = Color3.fromRGB(34, 197, 94),
-        Warning = Color3.fromRGB(251, 191, 36),
-        Error = Color3.fromRGB(239, 68, 68),
-        ToggleOn = Color3.fromRGB(34, 197, 94),
-        ToggleOff = Color3.fromRGB(127, 29, 29),
-    },
 }
 
 -- ═══════════════════════════════════════════════════════════════
@@ -236,6 +92,7 @@ local Themes = {
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
@@ -355,6 +212,23 @@ local function CheckDuplicate(antiDupId)
 end
 
 -- ═══════════════════════════════════════════════════════════════
+-- NOTIFICATION SYSTEM
+-- ═══════════════════════════════════════════════════════════════
+local function SendNotification(title, text, duration, notifType)
+    pcall(function()
+        StarterGui:SetCore("SendNotification", {
+            Title = title or "Notification",
+            Text = text or "",
+            Duration = duration or 5,
+            Icon = notifType == "success" and "rbxassetid://7733964640" or 
+                   notifType == "error" and "rbxassetid://7733993211" or 
+                   notifType == "warning" and "rbxassetid://7733955511" or 
+                   "rbxassetid://7733658504"
+        })
+    end)
+end
+
+-- ═══════════════════════════════════════════════════════════════
 -- MAIN WINDOW FUNCTION
 -- ═══════════════════════════════════════════════════════════════
 
@@ -392,7 +266,7 @@ function DrakthonLib:MakeWindow(options)
         screenGui:SetAttribute("DrakthonID", antiDupId)
     end
     
-    -- Minimize Icon (Simple - Draggable)
+    -- Minimize Icon (Simple - No Stroke)
     local minimizeIcon = CreateInstance("ImageButton", {
         Name = "MinimizeIcon",
         Size = LoaderConfig.Size,
@@ -408,12 +282,6 @@ function DrakthonLib:MakeWindow(options)
     
     CreateInstance("UICorner", {
         CornerRadius = UDim.new(0, 12),
-        Parent = minimizeIcon
-    })
-    
-    CreateInstance("UIStroke", {
-        Color = Theme.Accent,
-        Thickness = 2,
         Parent = minimizeIcon
     })
     
@@ -454,6 +322,7 @@ function DrakthonLib:MakeWindow(options)
     local titleBar = CreateInstance("Frame", {
         Size = UDim2.new(1, 0, 0, 40),
         BackgroundColor3 = Theme.Secondary,
+        BorderSizePixel = 0,
         ZIndex = 3,
         Parent = mainFrame
     })
@@ -467,6 +336,7 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(1, 0, 0, 15),
         Position = UDim2.new(0, 0, 1, -15),
         BackgroundColor3 = Theme.Secondary,
+        BorderSizePixel = 0,
         ZIndex = 3,
         Parent = titleBar
     })
@@ -503,7 +373,7 @@ function DrakthonLib:MakeWindow(options)
         Parent = minimizeBtn
     })
     
-    -- Close Button (New Icon)
+    -- Close Button (Fixed Icon)
     local closeBtn = CreateInstance("ImageButton", {
         Size = UDim2.new(0, 35, 0, 26),
         Position = UDim2.new(1, -42, 0.5, 0),
@@ -511,6 +381,7 @@ function DrakthonLib:MakeWindow(options)
         BackgroundColor3 = Theme.Error,
         Image = "rbxassetid://10152135063",
         ImageColor3 = Theme.TextPrimary,
+        ScaleType = Enum.ScaleType.Fit,
         ZIndex = 4,
         Parent = titleBar
     })
@@ -521,8 +392,102 @@ function DrakthonLib:MakeWindow(options)
     })
     
     CreateInstance("UIPadding", {
-        PaddingAll = UDim.new(0, 5),
+        PaddingAll = UDim.new(0, 6),
         Parent = closeBtn
+    })
+    
+    -- Confirmation Modal
+    local confirmOverlay = CreateInstance("Frame", {
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+        BackgroundTransparency = 0.5,
+        BorderSizePixel = 0,
+        Visible = false,
+        ZIndex = 150,
+        Parent = mainFrame
+    })
+    
+    local confirmModal = CreateInstance("Frame", {
+        Size = UDim2.new(0, 320, 0, 160),
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundColor3 = Theme.Tertiary,
+        BorderSizePixel = 0,
+        ZIndex = 200,
+        Parent = confirmOverlay
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 12),
+        Parent = confirmModal
+    })
+    
+    CreateInstance("UIStroke", {
+        Color = Theme.Error,
+        Thickness = 2,
+        Parent = confirmModal
+    })
+    
+    CreateInstance("TextLabel", {
+        Size = UDim2.new(1, -20, 0, 30),
+        Position = UDim2.new(0, 10, 0, 12),
+        BackgroundTransparency = 1,
+        Text = "⚠️ Warning",
+        TextColor3 = Theme.Warning,
+        TextSize = 18,
+        Font = Enum.Font.GothamBold,
+        TextXAlignment = Enum.TextXAlignment.Center,
+        ZIndex = 201,
+        Parent = confirmModal
+    })
+    
+    CreateInstance("TextLabel", {
+        Size = UDim2.new(1, -30, 0, 45),
+        Position = UDim2.new(0, 15, 0, 48),
+        BackgroundTransparency = 1,
+        Text = "Are you sure you want to close?",
+        TextColor3 = Theme.TextSecondary,
+        TextSize = 13,
+        Font = Enum.Font.Gotham,
+        TextWrapped = true,
+        TextXAlignment = Enum.TextXAlignment.Center,
+        TextYAlignment = Enum.TextYAlignment.Top,
+        ZIndex = 201,
+        Parent = confirmModal
+    })
+    
+    local confirmYesBtn = CreateInstance("TextButton", {
+        Size = UDim2.new(0, 130, 0, 36),
+        Position = UDim2.new(0.5, -138, 1, -45),
+        BackgroundColor3 = Theme.Error,
+        Text = "✓ Yes",
+        TextColor3 = Theme.TextPrimary,
+        TextSize = 14,
+        Font = Enum.Font.GothamBold,
+        ZIndex = 201,
+        Parent = confirmModal
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 8),
+        Parent = confirmYesBtn
+    })
+    
+    local confirmNoBtn = CreateInstance("TextButton", {
+        Size = UDim2.new(0, 130, 0, 36),
+        Position = UDim2.new(0.5, 8, 1, -45),
+        BackgroundColor3 = Theme.ElementBackground,
+        Text = "✕ No",
+        TextColor3 = Theme.TextPrimary,
+        TextSize = 14,
+        Font = Enum.Font.GothamBold,
+        ZIndex = 201,
+        Parent = confirmModal
+    })
+    
+    CreateInstance("UICorner", {
+        CornerRadius = UDim.new(0, 8),
+        Parent = confirmNoBtn
     })
     
     -- Sidebar
@@ -530,11 +495,11 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(0, 165, 1, -40),
         Position = UDim2.new(0, 0, 0, 40),
         BackgroundColor3 = Theme.Secondary,
+        BorderSizePixel = 0,
         ZIndex = 3,
         Parent = mainFrame
     })
     
-    -- Bottom Left Smooth Corner
     CreateInstance("UICorner", {
         CornerRadius = UDim.new(0, 10),
         Parent = sidebar
@@ -561,6 +526,7 @@ function DrakthonLib:MakeWindow(options)
     local tabsContainer = CreateInstance("ScrollingFrame", {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
+        BorderSizePixel = 0,
         ScrollBarThickness = 4,
         ScrollBarImageColor3 = Theme.ElementBorder,
         CanvasSize = UDim2.new(0, 0, 0, 0),
@@ -588,12 +554,12 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(1, -165, 1, -40),
         Position = UDim2.new(0, 165, 0, 40),
         BackgroundColor3 = Theme.Background,
+        BorderSizePixel = 0,
         ZIndex = 3,
         ClipsDescendants = true,
         Parent = mainFrame
     })
     
-    -- Bottom Right Smooth Corner
     CreateInstance("UICorner", {
         CornerRadius = UDim.new(0, 10),
         Parent = contentArea
@@ -620,6 +586,7 @@ function DrakthonLib:MakeWindow(options)
     local contentScroll = CreateInstance("ScrollingFrame", {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundTransparency = 1,
+        BorderSizePixel = 0,
         ScrollBarThickness = 5,
         ScrollBarImageColor3 = Theme.ElementBorder,
         CanvasSize = UDim2.new(0, 0, 0, 0),
@@ -641,12 +608,15 @@ function DrakthonLib:MakeWindow(options)
         CurrentTab = nil,
         Theme = Theme,
         ThemeName = themeName,
+        Notify = SendNotification,
     }
     
     -- Button Interactions
     AddHoverEffect(minimizeBtn, Theme.ElementBackground, Theme.Tertiary)
     AddHoverEffect(closeBtn, Theme.Error, Color3.fromRGB(255, 91, 91))
     AddHoverEffect(minimizeIcon, Theme.Secondary, Theme.Tertiary)
+    AddHoverEffect(confirmYesBtn, Theme.Error, Color3.fromRGB(255, 91, 91))
+    AddHoverEffect(confirmNoBtn, Theme.ElementBackground, Theme.Tertiary)
     
     minimizeBtn.MouseButton1Click:Connect(function()
         Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
@@ -665,9 +635,23 @@ function DrakthonLib:MakeWindow(options)
     end)
     
     closeBtn.MouseButton1Click:Connect(function()
+        confirmOverlay.Visible = true
+        confirmModal.Size = UDim2.new(0, 0, 0, 0)
+        Tween(confirmModal, {Size = UDim2.new(0, 320, 0, 160)}, 0.4, Enum.EasingStyle.Back)
+    end)
+    
+    confirmYesBtn.MouseButton1Click:Connect(function()
+        Tween(confirmModal, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+        wait(0.3)
         Tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
         wait(0.3)
         screenGui:Destroy()
+    end)
+    
+    confirmNoBtn.MouseButton1Click:Connect(function()
+        Tween(confirmModal, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back)
+        wait(0.3)
+        confirmOverlay.Visible = false
     end)
     
     -- Make Tab Function
@@ -679,6 +663,7 @@ function DrakthonLib:MakeWindow(options)
         local tabButton = CreateInstance("TextButton", {
             Size = UDim2.new(1, 0, 0, 48),
             BackgroundColor3 = Theme.ElementBackground,
+            BorderSizePixel = 0,
             Text = "",
             AutoButtonColor = false,
             ZIndex = 5,
@@ -695,6 +680,7 @@ function DrakthonLib:MakeWindow(options)
             Position = UDim2.new(0, -5, 0.5, 0),
             AnchorPoint = Vector2.new(0, 0.5),
             BackgroundColor3 = Theme.Accent,
+            BorderSizePixel = 0,
             ZIndex = 6,
             Parent = tabButton
         })
@@ -738,6 +724,7 @@ function DrakthonLib:MakeWindow(options)
             Size = UDim2.new(1, -24, 0, 0),
             AutomaticSize = Enum.AutomaticSize.Y,
             BackgroundTransparency = 1,
+            BorderSizePixel = 0,
             Visible = false,
             ClipsDescendants = false,
             ZIndex = 5,
@@ -809,6 +796,7 @@ function DrakthonLib:MakeWindow(options)
                 Size = UDim2.new(1, 0, 0, 0),
                 AutomaticSize = Enum.AutomaticSize.Y,
                 BackgroundColor3 = Theme.ElementBackground,
+                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
                 ZIndex = 6,
                 Parent = tabContainer
@@ -860,6 +848,7 @@ function DrakthonLib:MakeWindow(options)
             local container = CreateInstance("Frame", {
                 Size = UDim2.new(1, 0, 0, 80),
                 BackgroundColor3 = Theme.ElementBackground,
+                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
                 ZIndex = 6,
                 Parent = tabContainer
@@ -921,6 +910,7 @@ function DrakthonLib:MakeWindow(options)
             local container = CreateInstance("Frame", {
                 Size = UDim2.new(1, 0, 0, 72),
                 BackgroundColor3 = Theme.ElementBackground,
+                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
                 ZIndex = 6,
                 Parent = tabContainer
@@ -973,6 +963,7 @@ function DrakthonLib:MakeWindow(options)
                 Position = toggled and UDim2.new(1, -23, 0.5, 0) or UDim2.new(0, 3, 0.5, 0),
                 AnchorPoint = Vector2.new(0, 0.5),
                 BackgroundColor3 = Theme.TextPrimary,
+                BorderSizePixel = 0,
                 ZIndex = 8,
                 Parent = toggleBtn
             })
@@ -989,7 +980,17 @@ function DrakthonLib:MakeWindow(options)
             
             table.insert(Tab.Elements, container)
             Tab.UpdateCanvas()
-            return container
+            
+            return {
+                SetValue = function(value)
+                    toggled = value
+                    Tween(toggleBtn, {BackgroundColor3 = toggled and Theme.ToggleOn or Theme.ToggleOff}, 0.3)
+                    Tween(knob, {Position = toggled and UDim2.new(1, -23, 0.5, 0) or UDim2.new(0, 3, 0.5, 0)}, 0.3)
+                end,
+                GetValue = function()
+                    return toggled
+                end
+            }
         end
         
         function Tab:AddSlider(options)
@@ -1003,6 +1004,7 @@ function DrakthonLib:MakeWindow(options)
             local container = CreateInstance("Frame", {
                 Size = UDim2.new(1, 0, 0, 85),
                 BackgroundColor3 = Theme.ElementBackground,
+                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
                 ZIndex = 6,
                 Parent = tabContainer
@@ -1042,6 +1044,7 @@ function DrakthonLib:MakeWindow(options)
                 Size = UDim2.new(1, 0, 0, 7),
                 Position = UDim2.new(0, 0, 0, 45),
                 BackgroundColor3 = Theme.Tertiary,
+                BorderSizePixel = 0,
                 ZIndex = 7,
                 Parent = container
             })
@@ -1051,6 +1054,7 @@ function DrakthonLib:MakeWindow(options)
             local fill = CreateInstance("Frame", {
                 Size = UDim2.new((default - min) / (max - min), 0, 1, 0),
                 BackgroundColor3 = Theme.Accent,
+                BorderSizePixel = 0,
                 ZIndex = 8,
                 Parent = track
             })
@@ -1061,6 +1065,7 @@ function DrakthonLib:MakeWindow(options)
                 Size = UDim2.new(0, 18, 0, 18),
                 Position = UDim2.new((default - min) / (max - min), -9, 0.5, -9),
                 BackgroundColor3 = Theme.TextPrimary,
+                BorderSizePixel = 0,
                 Text = "",
                 ZIndex = 9,
                 Parent = track
@@ -1118,6 +1123,7 @@ function DrakthonLib:MakeWindow(options)
             local container = CreateInstance("Frame", {
                 Size = UDim2.new(1, 0, 0, 80),
                 BackgroundColor3 = Theme.ElementBackground,
+                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
                 ZIndex = 6,
                 Parent = tabContainer
@@ -1186,6 +1192,7 @@ function DrakthonLib:MakeWindow(options)
             local container = CreateInstance("Frame", {
                 Size = UDim2.new(1, 0, 0, 80),
                 BackgroundColor3 = Theme.ElementBackground,
+                BorderSizePixel = 0,
                 LayoutOrder = #Tab.Elements + 1,
                 ClipsDescendants = false,
                 ZIndex = 6,
@@ -1212,6 +1219,7 @@ function DrakthonLib:MakeWindow(options)
                 Size = UDim2.new(1, 0, 0, 36),
                 Position = UDim2.new(0, 0, 0, 32),
                 BackgroundColor3 = Theme.Tertiary,
+                BorderSizePixel = 0,
                 Text = "",
                 ZIndex = 7,
                 Parent = container
@@ -1248,6 +1256,7 @@ function DrakthonLib:MakeWindow(options)
                 Size = UDim2.new(1, 0, 0, 0),
                 Position = UDim2.new(0, 0, 0, 73),
                 BackgroundColor3 = Theme.Tertiary,
+                BorderSizePixel = 0,
                 ScrollBarThickness = 4,
                 ScrollBarImageColor3 = Theme.ElementBorder,
                 Visible = false,
@@ -1275,6 +1284,7 @@ function DrakthonLib:MakeWindow(options)
                 local itemButton = CreateInstance("TextButton", {
                     Size = UDim2.new(1, -8, 0, 32),
                     BackgroundColor3 = Theme.ElementBackground,
+                    BorderSizePixel = 0,
                     Text = "",
                     ZIndex = 101,
                     Parent = dropdownList
