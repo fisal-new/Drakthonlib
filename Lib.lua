@@ -1,38 +1,256 @@
 --[[
     ╔══════════════════════════════════════════════════════════════╗
-    ║                  DRAKTHON UI LIBRARY V5.0                    ║
-    ║           مكتبة واجهات احترافية - حجم مثالي                  ║
-    ║        ✅ إصلاح التحريك + فتح تلقائي + Loader مخصص         ║
+    ║                  DRAKTHON UI LIBRARY V6.0                    ║
+    ║          Professional UI Library - Multi-Theme Edition        ║
+    ║    ✅ Anti-Duplicate + 12 Themes + Full Customization       ║
     ╚══════════════════════════════════════════════════════════════╝
 ]]
 
 local DrakthonLib = {}
 
 -- ═══════════════════════════════════════════════════════════════
--- THEME SYSTEM
+-- PREDEFINED THEMES
 -- ═══════════════════════════════════════════════════════════════
-local Theme = {
-    Background = Color3.fromRGB(20, 20, 25),
-    Secondary = Color3.fromRGB(25, 25, 30),
-    Tertiary = Color3.fromRGB(30, 30, 35),
+local Themes = {
+    -- Default Dark Theme (Discord-like)
+    Default = {
+        Background = Color3.fromRGB(20, 20, 25),
+        Secondary = Color3.fromRGB(25, 25, 30),
+        Tertiary = Color3.fromRGB(30, 30, 35),
+        Accent = Color3.fromRGB(88, 101, 242),
+        AccentHover = Color3.fromRGB(108, 121, 255),
+        AccentPressed = Color3.fromRGB(68, 81, 222),
+        TextPrimary = Color3.fromRGB(255, 255, 255),
+        TextSecondary = Color3.fromRGB(180, 180, 190),
+        TextMuted = Color3.fromRGB(140, 140, 150),
+        ElementBackground = Color3.fromRGB(35, 35, 40),
+        ElementBorder = Color3.fromRGB(45, 45, 50),
+        Success = Color3.fromRGB(67, 181, 129),
+        Warning = Color3.fromRGB(250, 166, 26),
+        Error = Color3.fromRGB(240, 71, 71),
+        ToggleOn = Color3.fromRGB(67, 181, 129),
+        ToggleOff = Color3.fromRGB(50, 50, 55),
+    },
     
-    Accent = Color3.fromRGB(88, 101, 242),
-    AccentHover = Color3.fromRGB(108, 121, 255),
-    AccentPressed = Color3.fromRGB(68, 81, 222),
+    -- Ocean Blue Theme
+    Ocean = {
+        Background = Color3.fromRGB(15, 23, 42),
+        Secondary = Color3.fromRGB(20, 28, 47),
+        Tertiary = Color3.fromRGB(25, 33, 52),
+        Accent = Color3.fromRGB(56, 189, 248),
+        AccentHover = Color3.fromRGB(76, 209, 255),
+        AccentPressed = Color3.fromRGB(36, 169, 228),
+        TextPrimary = Color3.fromRGB(248, 250, 252),
+        TextSecondary = Color3.fromRGB(203, 213, 225),
+        TextMuted = Color3.fromRGB(148, 163, 184),
+        ElementBackground = Color3.fromRGB(30, 41, 59),
+        ElementBorder = Color3.fromRGB(51, 65, 85),
+        Success = Color3.fromRGB(34, 197, 94),
+        Warning = Color3.fromRGB(234, 179, 8),
+        Error = Color3.fromRGB(239, 68, 68),
+        ToggleOn = Color3.fromRGB(34, 197, 94),
+        ToggleOff = Color3.fromRGB(51, 65, 85),
+    },
     
-    TextPrimary = Color3.fromRGB(255, 255, 255),
-    TextSecondary = Color3.fromRGB(180, 180, 190),
-    TextMuted = Color3.fromRGB(140, 140, 150),
+    -- Purple Dream Theme
+    Purple = {
+        Background = Color3.fromRGB(24, 15, 35),
+        Secondary = Color3.fromRGB(29, 20, 40),
+        Tertiary = Color3.fromRGB(34, 25, 45),
+        Accent = Color3.fromRGB(168, 85, 247),
+        AccentHover = Color3.fromRGB(188, 105, 255),
+        AccentPressed = Color3.fromRGB(148, 65, 227),
+        TextPrimary = Color3.fromRGB(250, 245, 255),
+        TextSecondary = Color3.fromRGB(216, 180, 254),
+        TextMuted = Color3.fromRGB(192, 132, 252),
+        ElementBackground = Color3.fromRGB(44, 30, 60),
+        ElementBorder = Color3.fromRGB(59, 45, 75),
+        Success = Color3.fromRGB(134, 239, 172),
+        Warning = Color3.fromRGB(253, 224, 71),
+        Error = Color3.fromRGB(252, 165, 165),
+        ToggleOn = Color3.fromRGB(134, 239, 172),
+        ToggleOff = Color3.fromRGB(59, 45, 75),
+    },
     
-    ElementBackground = Color3.fromRGB(35, 35, 40),
-    ElementBorder = Color3.fromRGB(45, 45, 50),
+    -- Crimson Red Theme
+    Crimson = {
+        Background = Color3.fromRGB(30, 15, 15),
+        Secondary = Color3.fromRGB(35, 20, 20),
+        Tertiary = Color3.fromRGB(40, 25, 25),
+        Accent = Color3.fromRGB(239, 68, 68),
+        AccentHover = Color3.fromRGB(255, 88, 88),
+        AccentPressed = Color3.fromRGB(219, 48, 48),
+        TextPrimary = Color3.fromRGB(254, 242, 242),
+        TextSecondary = Color3.fromRGB(252, 165, 165),
+        TextMuted = Color3.fromRGB(239, 68, 68),
+        ElementBackground = Color3.fromRGB(50, 30, 30),
+        ElementBorder = Color3.fromRGB(69, 26, 26),
+        Success = Color3.fromRGB(34, 197, 94),
+        Warning = Color3.fromRGB(251, 191, 36),
+        Error = Color3.fromRGB(220, 38, 38),
+        ToggleOn = Color3.fromRGB(34, 197, 94),
+        ToggleOff = Color3.fromRGB(69, 26, 26),
+    },
     
-    Success = Color3.fromRGB(67, 181, 129),
-    Warning = Color3.fromRGB(250, 166, 26),
-    Error = Color3.fromRGB(240, 71, 71),
+    -- Emerald Green Theme
+    Emerald = {
+        Background = Color3.fromRGB(6, 25, 15),
+        Secondary = Color3.fromRGB(11, 30, 20),
+        Tertiary = Color3.fromRGB(16, 35, 25),
+        Accent = Color3.fromRGB(16, 185, 129),
+        AccentHover = Color3.fromRGB(36, 205, 149),
+        AccentPressed = Color3.fromRGB(5, 150, 105),
+        TextPrimary = Color3.fromRGB(236, 253, 245),
+        TextSecondary = Color3.fromRGB(167, 243, 208),
+        TextMuted = Color3.fromRGB(110, 231, 183),
+        ElementBackground = Color3.fromRGB(21, 40, 30),
+        ElementBorder = Color3.fromRGB(6, 78, 59),
+        Success = Color3.fromRGB(52, 211, 153),
+        Warning = Color3.fromRGB(251, 191, 36),
+        Error = Color3.fromRGB(248, 113, 113),
+        ToggleOn = Color3.fromRGB(52, 211, 153),
+        ToggleOff = Color3.fromRGB(6, 78, 59),
+    },
     
-    ToggleOn = Color3.fromRGB(67, 181, 129),
-    ToggleOff = Color3.fromRGB(50, 50, 55),
+    -- Sunset Orange Theme
+    Sunset = {
+        Background = Color3.fromRGB(30, 20, 10),
+        Secondary = Color3.fromRGB(35, 25, 15),
+        Tertiary = Color3.fromRGB(40, 30, 20),
+        Accent = Color3.fromRGB(249, 115, 22),
+        AccentHover = Color3.fromRGB(255, 135, 42),
+        AccentPressed = Color3.fromRGB(234, 88, 12),
+        TextPrimary = Color3.fromRGB(255, 247, 237),
+        TextSecondary = Color3.fromRGB(254, 215, 170),
+        TextMuted = Color3.fromRGB(253, 186, 116),
+        ElementBackground = Color3.fromRGB(50, 35, 20),
+        ElementBorder = Color3.fromRGB(124, 45, 18),
+        Success = Color3.fromRGB(34, 197, 94),
+        Warning = Color3.fromRGB(234, 179, 8),
+        Error = Color3.fromRGB(239, 68, 68),
+        ToggleOn = Color3.fromRGB(34, 197, 94),
+        ToggleOff = Color3.fromRGB(124, 45, 18),
+    },
+    
+    -- Midnight Black Theme
+    Midnight = {
+        Background = Color3.fromRGB(10, 10, 10),
+        Secondary = Color3.fromRGB(15, 15, 15),
+        Tertiary = Color3.fromRGB(20, 20, 20),
+        Accent = Color3.fromRGB(100, 100, 100),
+        AccentHover = Color3.fromRGB(120, 120, 120),
+        AccentPressed = Color3.fromRGB(80, 80, 80),
+        TextPrimary = Color3.fromRGB(255, 255, 255),
+        TextSecondary = Color3.fromRGB(180, 180, 180),
+        TextMuted = Color3.fromRGB(120, 120, 120),
+        ElementBackground = Color3.fromRGB(25, 25, 25),
+        ElementBorder = Color3.fromRGB(40, 40, 40),
+        Success = Color3.fromRGB(34, 197, 94),
+        Warning = Color3.fromRGB(234, 179, 8),
+        Error = Color3.fromRGB(239, 68, 68),
+        ToggleOn = Color3.fromRGB(34, 197, 94),
+        ToggleOff = Color3.fromRGB(40, 40, 40),
+    },
+    
+    -- Rose Pink Theme
+    Rose = {
+        Background = Color3.fromRGB(31, 18, 23),
+        Secondary = Color3.fromRGB(36, 23, 28),
+        Tertiary = Color3.fromRGB(41, 28, 33),
+        Accent = Color3.fromRGB(244, 114, 182),
+        AccentHover = Color3.fromRGB(255, 134, 202),
+        AccentPressed = Color3.fromRGB(236, 72, 153),
+        TextPrimary = Color3.fromRGB(255, 241, 242),
+        TextSecondary = Color3.fromRGB(251, 207, 232),
+        TextMuted = Color3.fromRGB(249, 168, 212),
+        ElementBackground = Color3.fromRGB(51, 33, 38),
+        ElementBorder = Color3.fromRGB(80, 50, 60),
+        Success = Color3.fromRGB(34, 197, 94),
+        Warning = Color3.fromRGB(251, 191, 36),
+        Error = Color3.fromRGB(244, 63, 94),
+        ToggleOn = Color3.fromRGB(34, 197, 94),
+        ToggleOff = Color3.fromRGB(80, 50, 60),
+    },
+    
+    -- Cyber Yellow Theme
+    Cyber = {
+        Background = Color3.fromRGB(20, 20, 10),
+        Secondary = Color3.fromRGB(25, 25, 15),
+        Tertiary = Color3.fromRGB(30, 30, 20),
+        Accent = Color3.fromRGB(234, 179, 8),
+        AccentHover = Color3.fromRGB(250, 204, 21),
+        AccentPressed = Color3.fromRGB(202, 138, 4),
+        TextPrimary = Color3.fromRGB(254, 252, 232),
+        TextSecondary = Color3.fromRGB(253, 224, 71),
+        TextMuted = Color3.fromRGB(250, 204, 21),
+        ElementBackground = Color3.fromRGB(35, 35, 25),
+        ElementBorder = Color3.fromRGB(113, 63, 18),
+        Success = Color3.fromRGB(34, 197, 94),
+        Warning = Color3.fromRGB(217, 119, 6),
+        Error = Color3.fromRGB(239, 68, 68),
+        ToggleOn = Color3.fromRGB(34, 197, 94),
+        ToggleOff = Color3.fromRGB(113, 63, 18),
+    },
+    
+    -- Arctic White Theme
+    Arctic = {
+        Background = Color3.fromRGB(240, 242, 245),
+        Secondary = Color3.fromRGB(245, 247, 250),
+        Tertiary = Color3.fromRGB(250, 252, 255),
+        Accent = Color3.fromRGB(59, 130, 246),
+        AccentHover = Color3.fromRGB(79, 150, 255),
+        AccentPressed = Color3.fromRGB(37, 99, 235),
+        TextPrimary = Color3.fromRGB(15, 23, 42),
+        TextSecondary = Color3.fromRGB(51, 65, 85),
+        TextMuted = Color3.fromRGB(100, 116, 139),
+        ElementBackground = Color3.fromRGB(255, 255, 255),
+        ElementBorder = Color3.fromRGB(226, 232, 240),
+        Success = Color3.fromRGB(22, 163, 74),
+        Warning = Color3.fromRGB(202, 138, 4),
+        Error = Color3.fromRGB(220, 38, 38),
+        ToggleOn = Color3.fromRGB(22, 163, 74),
+        ToggleOff = Color3.fromRGB(203, 213, 225),
+    },
+    
+    -- Neon Teal Theme
+    Neon = {
+        Background = Color3.fromRGB(4, 20, 20),
+        Secondary = Color3.fromRGB(9, 25, 25),
+        Tertiary = Color3.fromRGB(14, 30, 30),
+        Accent = Color3.fromRGB(20, 184, 166),
+        AccentHover = Color3.fromRGB(45, 212, 191),
+        AccentPressed = Color3.fromRGB(13, 148, 136),
+        TextPrimary = Color3.fromRGB(240, 253, 250),
+        TextSecondary = Color3.fromRGB(153, 246, 228),
+        TextMuted = Color3.fromRGB(94, 234, 212),
+        ElementBackground = Color3.fromRGB(19, 35, 35),
+        ElementBorder = Color3.fromRGB(15, 118, 110),
+        Success = Color3.fromRGB(52, 211, 153),
+        Warning = Color3.fromRGB(251, 191, 36),
+        Error = Color3.fromRGB(248, 113, 113),
+        ToggleOn = Color3.fromRGB(52, 211, 153),
+        ToggleOff = Color3.fromRGB(15, 118, 110),
+    },
+    
+    -- Blood Red Theme
+    Blood = {
+        Background = Color3.fromRGB(25, 5, 5),
+        Secondary = Color3.fromRGB(30, 10, 10),
+        Tertiary = Color3.fromRGB(35, 15, 15),
+        Accent = Color3.fromRGB(185, 28, 28),
+        AccentHover = Color3.fromRGB(220, 38, 38),
+        AccentPressed = Color3.fromRGB(153, 27, 27),
+        TextPrimary = Color3.fromRGB(255, 245, 245),
+        TextSecondary = Color3.fromRGB(254, 202, 202),
+        TextMuted = Color3.fromRGB(252, 165, 165),
+        ElementBackground = Color3.fromRGB(45, 20, 20),
+        ElementBorder = Color3.fromRGB(127, 29, 29),
+        Success = Color3.fromRGB(34, 197, 94),
+        Warning = Color3.fromRGB(251, 191, 36),
+        Error = Color3.fromRGB(239, 68, 68),
+        ToggleOn = Color3.fromRGB(34, 197, 94),
+        ToggleOff = Color3.fromRGB(127, 29, 29),
+    },
 }
 
 -- ═══════════════════════════════════════════════════════════════
@@ -44,6 +262,25 @@ local Players = game:GetService("Players")
 
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
+
+-- ═══════════════════════════════════════════════════════════════
+-- ANTI-DUPLICATE SYSTEM
+-- ═══════════════════════════════════════════════════════════════
+local function CheckDuplicate(antiDupId)
+    if not antiDupId or antiDupId == "" then
+        return false -- No anti-dup, allow
+    end
+    
+    -- Check if UI with same ID already exists
+    for _, gui in ipairs(PlayerGui:GetChildren()) do
+        if gui:GetAttribute("DrakthonID") == antiDupId then
+            warn("[Drakthon] UI with ID '" .. antiDupId .. "' already exists! Ignoring duplicate...")
+            return true -- Duplicate found
+        end
+    end
+    
+    return false -- No duplicate
+end
 
 -- ═══════════════════════════════════════════════════════════════
 -- UTILITY FUNCTIONS
@@ -75,7 +312,6 @@ local function Tween(object, properties, duration, easingStyle, easingDirection)
     return tween
 end
 
--- إصلاح دالة السحب - منع "الطيران"
 local function MakeDraggable(frame, dragHandle)
     local dragging = false
     local dragInput
@@ -150,12 +386,45 @@ end
 
 function DrakthonLib:MakeWindow(options)
     options = options or {}
+    
+    -- Anti-Duplicate Check
+    local antiDupId = options.AntiDuplicate or ""
+    if CheckDuplicate(antiDupId) then
+        return nil -- Return nothing if duplicate
+    end
+    
+    -- Configuration
     local windowName = options.Name or "Drakthon Library"
     local loaderImage = options.LoaderImage or "rbxassetid://11422155687"
-    local loaderImage2 = options.LoaderImage2 or "rbxassetid://679392" -- الصورة الثانية
+    local loaderImage2 = options.LoaderImage2 or "rbxassetid://679392"
+    local themeName = options.Theme or "Default"
+    local customTheme = options.CustomTheme or nil
+    local windowSize = options.Size or UDim2.new(0, 550, 0, 350)
+    local loaderPosition = options.LoaderPosition or UDim2.new(0, 20, 1, -90)
+    local loaderSize = options.LoaderSize or UDim2.new(0, 70, 0, 70)
+    local closeConfirmation = options.CloseConfirmation ~= false -- Default true
+    local closeConfirmText = options.CloseConfirmText or "Are you sure you want to close?"
+    local accentColor = options.AccentColor or nil
+    local titleBarHeight = options.TitleBarHeight or 40
+    local sidebarWidth = options.SidebarWidth or 165
     
-    -- حجم مثالي مثل السكربتات العالمية
-    local defaultSize = UDim2.new(0, 550, 0, 350)
+    -- Select Theme
+    local Theme = customTheme or Themes[themeName] or Themes.Default
+    
+    -- Apply custom accent if provided
+    if accentColor then
+        Theme.Accent = accentColor
+        Theme.AccentHover = Color3.new(
+            math.min(accentColor.R + 0.1, 1),
+            math.min(accentColor.G + 0.1, 1),
+            math.min(accentColor.B + 0.1, 1)
+        )
+        Theme.AccentPressed = Color3.new(
+            math.max(accentColor.R - 0.1, 0),
+            math.max(accentColor.G - 0.1, 0),
+            math.max(accentColor.B - 0.1, 0)
+        )
+    end
     
     -- ═══════════════════════════════════════════════════════════
     -- CREATE SCREEN GUI
@@ -168,13 +437,18 @@ function DrakthonLib:MakeWindow(options)
         Parent = PlayerGui
     })
     
+    -- Set Anti-Duplicate ID
+    if antiDupId ~= "" then
+        screenGui:SetAttribute("DrakthonID", antiDupId)
+    end
+    
     -- ═══════════════════════════════════════════════════════════
-    -- LOADER ICON - صورة فقط بدون نص
+    -- LOADER ICON
     -- ═══════════════════════════════════════════════════════════
     local loaderIcon = CreateInstance("ImageButton", {
         Name = "LoaderIcon",
-        Size = UDim2.new(0, 70, 0, 70),
-        Position = UDim2.new(0, 20, 1, -90),
+        Size = loaderSize,
+        Position = loaderPosition,
         AnchorPoint = Vector2.new(0, 1),
         BackgroundColor3 = Theme.Secondary,
         Image = loaderImage,
@@ -236,7 +510,7 @@ function DrakthonLib:MakeWindow(options)
     -- ═══════════════════════════════════════════════════════════
     local titleBar = CreateInstance("Frame", {
         Name = "TitleBar",
-        Size = UDim2.new(1, 0, 0, 40),
+        Size = UDim2.new(1, 0, 0, titleBarHeight),
         BackgroundColor3 = Theme.Secondary,
         BorderSizePixel = 0,
         ZIndex = 3,
@@ -257,7 +531,6 @@ function DrakthonLib:MakeWindow(options)
         Parent = titleBar
     })
     
-    -- عنوان الواجهة
     CreateInstance("TextLabel", {
         Size = UDim2.new(1, -120, 1, 0),
         Position = UDim2.new(0, 15, 0, 0),
@@ -271,17 +544,24 @@ function DrakthonLib:MakeWindow(options)
         Parent = titleBar
     })
     
-    -- صورة مخصصة في التايتل بار
-    CreateInstance("ImageLabel", {
-        Size = UDim2.new(0, 30, 0, 30),
-        Position = UDim2.new(1, -150, 0.5, 0),
-        AnchorPoint = Vector2.new(0, 0.5),
-        BackgroundTransparency = 1,
-        Image = "rbxassetid://" .. loaderImage2,
-        ScaleType = Enum.ScaleType.Fit,
-        ZIndex = 4,
-        Parent = titleBar
-    })
+    -- Custom Image in Title Bar
+    if loaderImage2 and loaderImage2 ~= "" then
+        local imageId = loaderImage2
+        if not string.find(imageId, "rbxassetid://") then
+            imageId = "rbxassetid://" .. imageId
+        end
+        
+        CreateInstance("ImageLabel", {
+            Size = UDim2.new(0, 30, 0, 30),
+            Position = UDim2.new(1, -150, 0.5, 0),
+            AnchorPoint = Vector2.new(0, 0.5),
+            BackgroundTransparency = 1,
+            Image = imageId,
+            ScaleType = Enum.ScaleType.Fit,
+            ZIndex = 4,
+            Parent = titleBar
+        })
+    end
     
     -- ═══════════════════════════════════════════════════════════
     -- CONTROL BUTTONS
@@ -360,7 +640,7 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(1, -20, 0, 30),
         Position = UDim2.new(0, 10, 0, 12),
         BackgroundTransparency = 1,
-        Text = "⚠️ تحذير",
+        Text = "⚠️ Warning",
         TextColor3 = Theme.Warning,
         TextSize = 18,
         Font = Enum.Font.GothamBold,
@@ -373,7 +653,7 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(1, -30, 0, 45),
         Position = UDim2.new(0, 15, 0, 48),
         BackgroundTransparency = 1,
-        Text = "هل أنت متأكد أنك تريد إغلاق الواجهة؟",
+        Text = closeConfirmText,
         TextColor3 = Theme.TextSecondary,
         TextSize = 13,
         Font = Enum.Font.Gotham,
@@ -388,7 +668,7 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(0, 130, 0, 36),
         Position = UDim2.new(0.5, -138, 1, -45),
         BackgroundColor3 = Theme.Error,
-        Text = "✓ نعم",
+        Text = "✓ Yes",
         TextColor3 = Theme.TextPrimary,
         TextSize = 14,
         Font = Enum.Font.GothamBold,
@@ -405,7 +685,7 @@ function DrakthonLib:MakeWindow(options)
         Size = UDim2.new(0, 130, 0, 36),
         Position = UDim2.new(0.5, 8, 1, -45),
         BackgroundColor3 = Theme.ElementBackground,
-        Text = "✕ لا",
+        Text = "✕ No",
         TextColor3 = Theme.TextPrimary,
         TextSize = 14,
         Font = Enum.Font.GothamBold,
@@ -422,8 +702,8 @@ function DrakthonLib:MakeWindow(options)
     -- SIDEBAR
     -- ═══════════════════════════════════════════════════════════
     local sidebar = CreateInstance("Frame", {
-        Size = UDim2.new(0, 165, 1, -40),
-        Position = UDim2.new(0, 0, 0, 40),
+        Size = UDim2.new(0, sidebarWidth, 1, -titleBarHeight),
+        Position = UDim2.new(0, 0, 0, titleBarHeight),
         BackgroundColor3 = Theme.Secondary,
         BorderSizePixel = 0,
         ZIndex = 3,
@@ -464,8 +744,8 @@ function DrakthonLib:MakeWindow(options)
     -- ═══════════════════════════════════════════════════════════
     local contentArea = CreateInstance("Frame", {
         Name = "ContentArea",
-        Size = UDim2.new(1, -165, 1, -40),
-        Position = UDim2.new(0, 165, 0, 40),
+        Size = UDim2.new(1, -sidebarWidth, 1, -titleBarHeight),
+        Position = UDim2.new(0, sidebarWidth, 0, titleBarHeight),
         BackgroundColor3 = Theme.Background,
         BorderSizePixel = 0,
         ClipsDescendants = true,
@@ -505,9 +785,13 @@ function DrakthonLib:MakeWindow(options)
     AddHoverEffect(loaderIcon, Theme.Secondary, Theme.Tertiary)
     
     closeBtn.MouseButton1Click:Connect(function()
-        confirmOverlay.Visible = true
-        confirmModal.Size = UDim2.new(0, 0, 0, 0)
-        Tween(confirmModal, {Size = UDim2.new(0, 320, 0, 160)}, 0.4, Enum.EasingStyle.Back)
+        if closeConfirmation then
+            confirmOverlay.Visible = true
+            confirmModal.Size = UDim2.new(0, 0, 0, 0)
+            Tween(confirmModal, {Size = UDim2.new(0, 320, 0, 160)}, 0.4, Enum.EasingStyle.Back)
+        else
+            screenGui:Destroy()
+        end
     end)
     
     confirmYesBtn.MouseButton1Click:Connect(function()
@@ -527,7 +811,7 @@ function DrakthonLib:MakeWindow(options)
         wait(0.3)
         mainFrame.Visible = false
         loaderIcon.Visible = true
-        Tween(loaderIcon, {Size = UDim2.new(0, 70, 0, 70)}, 0.3, Enum.EasingStyle.Back)
+        Tween(loaderIcon, {Size = loaderSize}, 0.3, Enum.EasingStyle.Back)
     end)
     
     loaderIcon.MouseButton1Click:Connect(function()
@@ -536,7 +820,7 @@ function DrakthonLib:MakeWindow(options)
         loaderIcon.Visible = false
         mainFrame.Visible = true
         mainFrame.Size = UDim2.new(0, 0, 0, 0)
-        Tween(mainFrame, {Size = defaultSize}, 0.4, Enum.EasingStyle.Back)
+        Tween(mainFrame, {Size = windowSize}, 0.4, Enum.EasingStyle.Back)
     end)
     
     MakeDraggable(mainFrame, titleBar)
@@ -549,7 +833,8 @@ function DrakthonLib:MakeWindow(options)
         CurrentTab = nil,
         ScreenGui = screenGui,
         MainFrame = mainFrame,
-        ContentScroll = contentScroll
+        ContentScroll = contentScroll,
+        Theme = Theme
     }
     
     -- ═══════════════════════════════════════════════════════════
@@ -1148,7 +1433,7 @@ function DrakthonLib:MakeWindow(options)
         function Tab:AddTextBox(options)
             options = options or {}
             local title = options.Title or "TextBox"
-            local placeholder = options.Placeholder or "اكتب هنا..."
+            local placeholder = options.Placeholder or "Type here..."
             local default = options.Default or ""
             local callback = options.Callback or function() end
             
@@ -1254,7 +1539,7 @@ function DrakthonLib:MakeWindow(options)
         function Tab:AddDropdown(options)
             options = options or {}
             local title = options.Title or "Dropdown"
-            local text = options.Text or "اختر خياراً"
+            local text = options.Text or "Select Option"
             local items = options.Items or {"Option 1", "Option 2", "Option 3"}
             local callback = options.Callback or function() end
             
@@ -1470,8 +1755,8 @@ function DrakthonLib:MakeWindow(options)
         return Tab
     end
     
-    -- فتح الواجهة مباشرة
-    Tween(mainFrame, {Size = defaultSize}, 0.5, Enum.EasingStyle.Back)
+    -- Open window automatically
+    Tween(mainFrame, {Size = windowSize}, 0.5, Enum.EasingStyle.Back)
     
     return Window
 end
