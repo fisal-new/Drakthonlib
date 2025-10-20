@@ -1,16 +1,26 @@
 --[[
-    DRAKTHON UI LIBRARY v3.5.0 ULTIMATE
-    ✨ Perfect Responsive Design
-    📱 Full Mobile & Tablet Support
-    🎨 Enhanced Visuals & Animations
-    ⚡ Optimized Performance
+    ╔══════════════════════════════════════════════════════════════╗
+    ║        DRAKTHON UI LIBRARY v3.6.0 ULTIMATE EDITION         ║
+    ║                                                              ║
+    ║  ✨ Auto-Size Based on Content                              ║
+    ║  📱 Full Mobile, Tablet & Desktop Support                   ║
+    ║  🎨 Beautiful Animations & Transitions                      ║
+    ║  ⚡ Optimized Performance                                   ║
+    ║  💾 Config System Built-in                                  ║
+    ║  🎯 Smart Responsive Design                                 ║
+    ║                                                              ║
+    ║  Created by: Drakthon Team                                  ║
+    ║  Version: 3.6.0 - Ultimate Edition                          ║
+    ╚══════════════════════════════════════════════════════════════╝
 ]]
 
 local Drakthon = {
-    Version = "3.5.0",
-    ConfigFolder = "DrakthonConfigs"
+    Version = "3.6.0",
+    ConfigFolder = "DrakthonConfigs",
+    Author = "Drakthon Team"
 }
 
+-- Services
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
@@ -20,7 +30,7 @@ local HttpService = game:GetService("HttpService")
 
 local Player = Players.LocalPlayer
 
--- Enhanced Theme with Better Colors
+-- Enhanced Color Theme
 local Theme = {
     Background = Color3.fromRGB(15, 15, 20),
     Secondary = Color3.fromRGB(20, 20, 27),
@@ -39,6 +49,7 @@ local Theme = {
     Shadow = Color3.fromRGB(0, 0, 0)
 }
 
+-- Icon Library
 local Icons = {
     Home = "rbxassetid://10734921088",
     Settings = "rbxassetid://10734950309",
@@ -56,7 +67,7 @@ local Icons = {
     DrakthonLogo = "rbxassetid://97332515981061"
 }
 
--- Enhanced Tween Function with Safety Check
+-- Utility Functions
 local function Tween(object, properties, duration, style, direction)
     if not object or not object.Parent then return end
     style = style or Enum.EasingStyle.Quart
@@ -66,7 +77,6 @@ local function Tween(object, properties, duration, style, direction)
     return tween
 end
 
--- Enhanced Device Detection
 local function GetScreenSize()
     return workspace.CurrentCamera.ViewportSize
 end
@@ -94,50 +104,66 @@ local function GetDeviceType()
     return "Desktop"
 end
 
--- Enhanced Responsive Size System
-local function GetResponsiveSize()
+-- Enhanced Responsive Size with Auto-Height Support
+local function GetResponsiveSize(autoSize, contentHeight)
     local screenSize = GetScreenSize()
     local deviceType = GetDeviceType()
     local screenWidth = screenSize.X
     local screenHeight = screenSize.Y
     
+    -- Calculate width based on device
+    local width
     if deviceType == "Mobile" then
-        -- Small phones
         if screenWidth < 375 then
-            return UDim2.new(0.98, 0, 0.97, 0)
-        -- Medium phones
+            width = screenWidth * 0.98
         elseif screenWidth < 480 then
-            return UDim2.new(0.96, 0, 0.95, 0)
-        -- Large phones
+            width = screenWidth * 0.96
         else
-            return UDim2.new(0.94, 0, 0.93, 0)
+            width = screenWidth * 0.94
         end
     elseif deviceType == "Tablet" then
-        -- Portrait tablets
-        if screenHeight > screenWidth then
-            return UDim2.new(0.92, 0, 0.90, 0)
-        -- Landscape tablets
-        else
-            return UDim2.new(0.88, 0, 0.92, 0)
-        end
+        width = screenWidth * 0.92
     elseif deviceType == "TabletLarge" then
-        return UDim2.new(0.85, 0, 0.88, 0)
+        width = screenWidth * 0.85
     else
-        -- Desktop scaling
         if screenWidth < 1280 then
-            local width = math.clamp(screenWidth * 0.55, 580, 780)
-            local height = math.clamp(screenHeight * 0.75, 460, 650)
-            return UDim2.fromOffset(width, height)
+            width = math.clamp(screenWidth * 0.55, 580, 780)
         elseif screenWidth < 1920 then
-            local width = math.clamp(screenWidth * 0.45, 650, 850)
-            local height = math.clamp(screenHeight * 0.7, 500, 680)
-            return UDim2.fromOffset(width, height)
+            width = math.clamp(screenWidth * 0.45, 650, 850)
         else
-            local width = math.clamp(screenWidth * 0.35, 700, 900)
-            local height = math.clamp(screenHeight * 0.65, 520, 720)
-            return UDim2.fromOffset(width, height)
+            width = math.clamp(screenWidth * 0.35, 700, 900)
         end
     end
+    
+    -- Calculate height
+    local height
+    if autoSize and contentHeight then
+        local minHeight = deviceType == "Mobile" and 300 or 400
+        local maxHeight = screenHeight * (deviceType == "Mobile" and 0.95 or 0.85)
+        
+        -- Add padding for topbar (56px) + margins (30px)
+        local totalHeight = contentHeight + 56 + 30
+        height = math.clamp(totalHeight, minHeight, maxHeight)
+    else
+        -- Default height based on device
+        if deviceType == "Mobile" then
+            height = screenHeight * 0.95
+        elseif deviceType == "Tablet" then
+            height = screenHeight * 0.90
+        elseif deviceType == "TabletLarge" then
+            height = screenHeight * 0.88
+        else
+            if screenWidth < 1280 then
+                height = math.clamp(screenHeight * 0.75, 460, 650)
+            elseif screenWidth < 1920 then
+                height = math.clamp(screenHeight * 0.7, 500, 680)
+            else
+                height = math.clamp(screenHeight * 0.65, 520, 720)
+            end
+        end
+    end
+    
+    return UDim2.fromOffset(width, height)
 end
 
 -- Enhanced Draggable with Multi-Touch Support
@@ -187,7 +213,7 @@ local function MakeDraggable(frame, dragFrame)
     end)
 end
 
--- UI Helper Functions
+-- UI Component Creators
 local function CreateUICorner(radius)
     local corner = Instance.new("UICorner")
     corner.CornerRadius = UDim.new(0, radius or 12)
@@ -386,7 +412,7 @@ local function CreateConfirmationDialog(title, message, onConfirm, onCancel)
     local Overlay = Instance.new("Frame")
     Overlay.Parent = DialogGui
     Overlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    Overlay.BackgroundTransparency = 0.4
+    Overlay.BackgroundTransparency = 1
     Overlay.Size = UDim2.fromScale(1, 1)
     Overlay.BorderSizePixel = 0
     Overlay.ZIndex = 9
@@ -396,7 +422,7 @@ local function CreateConfirmationDialog(title, message, onConfirm, onCancel)
     Dialog.AnchorPoint = Vector2.new(0.5, 0.5)
     Dialog.BackgroundColor3 = Theme.Secondary
     Dialog.Position = UDim2.fromScale(0.5, 0.5)
-    Dialog.Size = UDim2.fromOffset(370, 185)
+    Dialog.Size = UDim2.fromOffset(0, 0)
     Dialog.BorderSizePixel = 0
     Dialog.ZIndex = 10
     
@@ -483,18 +509,22 @@ local function CreateConfirmationDialog(title, message, onConfirm, onCancel)
     end)
     
     ConfirmButton.MouseButton1Click:Connect(function()
+        Tween(Overlay, {BackgroundTransparency = 1}, 0.3)
+        Tween(Dialog, {Size = UDim2.fromOffset(0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        task.wait(0.3)
         DialogGui:Destroy()
         if onConfirm then onConfirm() end
     end)
     
     CancelButton.MouseButton1Click:Connect(function()
+        Tween(Overlay, {BackgroundTransparency = 1}, 0.3)
+        Tween(Dialog, {Size = UDim2.fromOffset(0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        task.wait(0.3)
         DialogGui:Destroy()
         if onCancel then onCancel() end
     end)
     
-    Overlay.BackgroundTransparency = 1
     Tween(Overlay, {BackgroundTransparency = 0.4}, 0.3)
-    Dialog.Size = UDim2.fromOffset(0, 0)
     Tween(Dialog, {Size = UDim2.fromOffset(370, 185)}, 0.4, Enum.EasingStyle.Back)
 end
 
@@ -568,7 +598,7 @@ local function CreateLoadingScreen(scriptName)
     return LoadingSystem
 end
 
--- Main Window Creation
+-- Main Window Creation Function
 function Drakthon:CreateWindow(options)
     options = options or {}
     local Title = options.Title or "Drakthon"
@@ -577,6 +607,9 @@ function Drakthon:CreateWindow(options)
     local LoadingEnabled = options.LoadingEnabled ~= false
     local ConfigName = options.ConfigName or "DefaultConfig"
     local AutoResponsive = options.AutoResponsive ~= false
+    local AutoSize = options.AutoSize ~= false
+    local MinHeight = options.MinHeight or 400
+    local MaxHeight = options.MaxHeight or 800
     local Width = options.Width
     local Height = options.Height
     
@@ -590,7 +623,7 @@ function Drakthon:CreateWindow(options)
     local responsiveSize
     
     if AutoResponsive then
-        responsiveSize = GetResponsiveSize()
+        responsiveSize = GetResponsiveSize(AutoSize, nil)
     else
         if Width and Height then
             responsiveSize = UDim2.fromOffset(Width, Height)
@@ -632,7 +665,7 @@ function Drakthon:CreateWindow(options)
     if AutoResponsive then
         workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
             if Main.Visible then
-                Tween(Main, {Size = GetResponsiveSize()}, 0.3)
+                Tween(Main, {Size = GetResponsiveSize(AutoSize, nil)}, 0.3)
             end
         end)
     end
@@ -654,7 +687,7 @@ function Drakthon:CreateWindow(options)
     NotificationContainer.BorderSizePixel = 0
     NotificationContainer.ZIndex = 100
     
-    -- Minimized Container with Image Fix
+    -- Minimized Container
     local MinimizedContainer = Instance.new("TextButton")
     MinimizedContainer.Name = "MinimizedContainer"
     MinimizedContainer.Parent = ScreenGui
@@ -707,7 +740,7 @@ function Drakthon:CreateWindow(options)
             Main.Visible = true
             Main.Size = UDim2.fromOffset(0, 0)
             if AutoResponsive then
-                Tween(Main, {Size = GetResponsiveSize()}, 0.4, Enum.EasingStyle.Back)
+                Tween(Main, {Size = GetResponsiveSize(AutoSize, nil)}, 0.4, Enum.EasingStyle.Back)
             else
                 Tween(Main, {Size = responsiveSize}, 0.4, Enum.EasingStyle.Back)
             end
@@ -735,7 +768,7 @@ function Drakthon:CreateWindow(options)
     TopBarCover.BorderSizePixel = 0
     TopBarCover.ZIndex = 2
     
-    -- Menu Button
+    -- Menu Button (Hamburger)
     local MenuButton = Instance.new("TextButton")
     MenuButton.Name = "MenuButton"
     MenuButton.Parent = TopBar
@@ -828,6 +861,7 @@ function Drakthon:CreateWindow(options)
     SubTitleLabel.TextXAlignment = Enum.TextXAlignment.Left
     SubTitleLabel.ZIndex = 3
     
+    -- Close Button
     local CloseButton = Instance.new("TextButton")
     CloseButton.Parent = TopBar
     CloseButton.AnchorPoint = Vector2.new(1, 0)
@@ -881,6 +915,7 @@ function Drakthon:CreateWindow(options)
         )
     end)
     
+    -- Minimize Button
     local MinimizeButton = Instance.new("TextButton")
     MinimizeButton.Parent = TopBar
     MinimizeButton.AnchorPoint = Vector2.new(1, 0)
@@ -917,7 +952,7 @@ function Drakthon:CreateWindow(options)
         end
     end)
     
-    -- Sidebar with Enhanced Scrolling
+    -- Sidebar
     local Sidebar = Instance.new("ScrollingFrame")
     Sidebar.Name = "Sidebar"
     Sidebar.Parent = Main
@@ -949,6 +984,7 @@ function Drakthon:CreateWindow(options)
     
     local isSidebarOpen = false
     
+    -- Content Container
     local ContentContainer = Instance.new("Frame")
     ContentContainer.Name = "ContentContainer"
     ContentContainer.Parent = Main
@@ -966,7 +1002,12 @@ function Drakthon:CreateWindow(options)
         SavedData = {},
         ScriptIcon = ScriptIcon,
         AutoResponsive = AutoResponsive,
-        DeviceType = deviceType
+        AutoSize = AutoSize,
+        MinHeight = MinHeight,
+        MaxHeight = MaxHeight,
+        DeviceType = deviceType,
+        Main = Main,
+        ContentContainer = ContentContainer
     }
     
     MenuButton.MouseEnter:Connect(function()
@@ -997,6 +1038,33 @@ function Drakthon:CreateWindow(options)
         end
     end)
     
+    -- Auto-Size Update Function
+    function Window:UpdateSize()
+        if not self.AutoSize then return end
+        
+        local currentTab = self.CurrentTab
+        if not currentTab then return end
+        
+        local contentHeight = 0
+        
+        -- Calculate total content height
+        for _, element in ipairs(currentTab.Content:GetChildren()) do
+            if element:IsA("Frame") or element:IsA("TextLabel") then
+                contentHeight = contentHeight + element.AbsoluteSize.Y + 8
+            end
+        end
+        
+        -- Add extra padding
+        contentHeight = contentHeight + 30
+        
+        -- Get new responsive size with content height
+        local newSize = GetResponsiveSize(true, contentHeight)
+        
+        -- Animate to new size
+        Tween(Main, {Size = newSize}, 0.3)
+    end
+    
+    -- Create Tab Function
     function Window:CreateTab(options)
         options = options or {}
         local Name = options.Name or "Tab"
@@ -1065,6 +1133,11 @@ function Drakthon:CreateWindow(options)
             local contentHeight = ContentList.AbsoluteContentSize.Y
             local paddingTotal = 13 + 17
             TabContent.CanvasSize = UDim2.fromOffset(0, contentHeight + paddingTotal)
+            
+            -- Update window size when content changes
+            if Window.CurrentTab == Tab then
+                Window:UpdateSize()
+            end
         end)
         
         local function SelectTab()
@@ -1085,6 +1158,9 @@ function Drakthon:CreateWindow(options)
             
             TabContent.Visible = true
             Window.CurrentTab = Tab
+            
+            -- Update size when tab is selected
+            Window:UpdateSize()
             
             if isSidebarOpen and deviceType == "Mobile" then
                 task.wait(0.2)
@@ -1121,6 +1197,7 @@ function Drakthon:CreateWindow(options)
             SelectTab()
         end
         
+        -- Add Button Element
         function Tab:AddButton(options)
             options = options or {}
             local Title = options.Title or "Button"
@@ -1223,6 +1300,7 @@ function Drakthon:CreateWindow(options)
             return {Frame = ButtonFrame, Icon = ButtonIcon}
         end
         
+        -- Add Toggle Element
         function Tab:AddToggle(options)
             options = options or {}
             local Title = options.Title or "Toggle"
@@ -1325,6 +1403,7 @@ function Drakthon:CreateWindow(options)
             }
         end
         
+        -- Add Slider Element
         function Tab:AddSlider(options)
             options = options or {}
             local Title = options.Title or "Slider"
@@ -1474,6 +1553,7 @@ function Drakthon:CreateWindow(options)
             }
         end
         
+        -- Add Input Element
         function Tab:AddInput(options)
             options = options or {}
             local Title = options.Title or "Input"
@@ -1562,6 +1642,7 @@ function Drakthon:CreateWindow(options)
             }
         end
         
+        -- Add Dropdown Element
         function Tab:AddDropdown(options)
             options = options or {}
             local Title = options.Title or "Dropdown"
@@ -1680,7 +1761,7 @@ function Drakthon:CreateWindow(options)
             local function CloseDropdown()
                 IsOpen = false
                 Tween(DropList, {Size = UDim2.new(1, -30, 0, 0)}, 0.3, Enum.EasingStyle.Back)
-                Tween(DropIcon, {Rotation = 0}, 0.3)
+                Tween(DropIcon, {Rotation = 0, ImageColor3 = Theme.TextSecondary}, 0.3)
                 local stroke = DropButton:FindFirstChildOfClass("UIStroke")
                 if stroke then Tween(stroke, {Color = Theme.Border, Transparency = 0.6}, 0.2) end
                 task.wait(0.3)
@@ -1692,7 +1773,7 @@ function Drakthon:CreateWindow(options)
                 DropList.Visible = true
                 local targetHeight = math.min(#CurrentOptions * 33 + 13, 165)
                 Tween(DropList, {Size = UDim2.new(1, -30, 0, targetHeight)}, 0.3, Enum.EasingStyle.Back)
-                Tween(DropIcon, {Rotation = 180}, 0.3)
+                Tween(DropIcon, {Rotation = 180, ImageColor3 = Theme.Accent}, 0.3)
                 local stroke = DropButton:FindFirstChildOfClass("UIStroke")
                 if stroke then Tween(stroke, {Color = Theme.Accent, Transparency = 0.3}, 0.2) end
             end
@@ -1813,7 +1894,7 @@ function Drakthon:CreateWindow(options)
             }
         end
         
-        -- Enhanced Paragraph with Beautiful Accent Bar
+        -- Add Paragraph Element (Enhanced with Beautiful Rounded Bar)
         function Tab:AddParagraph(options)
             options = options or {}
             local Title = options.Title or "Paragraph"
@@ -1830,7 +1911,7 @@ function Drakthon:CreateWindow(options)
             CreateUICorner(10).Parent = ParaFrame
             CreateStroke(Theme.Accent, 1, 0.7).Parent = ParaFrame
             
-            -- Enhanced Rounded Accent Line
+            -- Enhanced Rounded Accent Bar (Square with rounded corners)
             local AccentLine = Instance.new("Frame")
             AccentLine.Parent = ParaFrame
             AccentLine.BackgroundColor3 = Theme.Accent
@@ -1840,7 +1921,7 @@ function Drakthon:CreateWindow(options)
             AccentLine.ZIndex = 5
             CreateUICorner(3).Parent = AccentLine
             
-            -- Gradient on Accent Line
+            -- Beautiful Gradient on Accent Line
             CreateGradient(90, {
                 Theme.Accent,
                 Theme.AccentHover,
@@ -1888,6 +1969,7 @@ function Drakthon:CreateWindow(options)
             }
         end
         
+        -- Add Divider Element
         function Tab:AddDivider(text)
             local Divider = Instance.new("Frame")
             Divider.Parent = TabContent
@@ -1925,6 +2007,7 @@ function Drakthon:CreateWindow(options)
         return Tab
     end
     
+    -- Window Functions
     function Window:SaveConfig()
         local success = SaveConfig(self.ConfigName, self.SavedData)
         if success then
@@ -1959,6 +2042,10 @@ function Drakthon:CreateWindow(options)
         )
     end
     
+    function Window:Notify(title, description, duration, notifType)
+        CreateNotification(title, description, duration, notifType)
+    end
+    
     if options.AutoLoad ~= false then
         task.spawn(function()
             task.wait(1)
@@ -1968,7 +2055,7 @@ function Drakthon:CreateWindow(options)
     
     Main.Size = UDim2.fromOffset(0, 0)
     if AutoResponsive then
-        Tween(Main, {Size = GetResponsiveSize()}, 0.5, Enum.EasingStyle.Back)
+        Tween(Main, {Size = GetResponsiveSize(AutoSize, nil)}, 0.5, Enum.EasingStyle.Back)
     else
         Tween(Main, {Size = responsiveSize}, 0.5, Enum.EasingStyle.Back)
     end
