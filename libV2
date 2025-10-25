@@ -5,8 +5,9 @@
    | |_| || | | (_| |   <| |_| | | | (_) | | | | 
    |____/ |_|  \__,_|_|\_\\__|_| |_|\___/|_| |_| 
                                                   
-   🐉 Drakthon UI Library V3
+   🐉 Drakthon UI Library V3 - Enhanced
    Auto-Resize & Responsive Design
+   Version: 3.0.1
 ]]
 
 local Drakthon = {}
@@ -55,28 +56,54 @@ local function AddCorner(parent, radius)
     return Create("UICorner", {Parent = parent, CornerRadius = UDim.new(0, radius or 8)})
 end
 
-local function MakeDraggable(frame, handle)
-    local dragging, dragInput, mousePos, framePos
-    handle.InputBegan:Connect(function(input)
+local function MakeDraggable(frame, dragHandle)
+    local dragging = false
+    local dragInput
+    local dragStart
+    local startPos
+    
+    local function update(input)
+        local delta = input.Position - dragStart
+        Tween(frame, {
+            Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
+        }, 0.1, Enum.EasingStyle.Linear)
+    end
+    
+    dragHandle.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
             dragging = true
-            mousePos = input.Position
-            framePos = frame.Position
+            dragStart = input.Position
+            startPos = frame.Position
+            
             input.Changed:Connect(function()
-                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
             end)
         end
     end)
+    
+    dragHandle.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+    
     UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - mousePos
-            frame.Position = UDim2.new(framePos.X.Scale, framePos.X.Offset + delta.X, framePos.Y.Scale, framePos.Y.Offset + delta.Y)
+        if input == dragInput and dragging then
+            update(input)
         end
     end)
 end
 
 -- Notification Queue
 local NotificationQueue = {}
+local ProcessingNotification = false
 
 function Drakthon:Notify(config)
     config = config or {}
@@ -86,15 +113,28 @@ function Drakthon:Notify(config)
     local Type = config.Type or "Default"
     
     local Color = Theme.Accent
-    if Type == "Success" then Color = Theme.Success
-    elseif Type == "Warning" then Color = Theme.Warning
-    elseif Type == "Error" then Color = Theme.Error
-    elseif Type == "Info" then Color = Theme.Info end
+    if Type == "Success" then 
+        Color = Theme.Success
+    elseif Type == "Warning" then 
+        Color = Theme.Warning
+    elseif Type == "Error" then 
+        Color = Theme.Error
+    elseif Type == "Info" then 
+        Color = Theme.Info 
+    end
     
-    table.insert(NotificationQueue, {Title = Title, Content = Content, Duration = Duration, Color = Color})
+    table.insert(NotificationQueue, {
+        Title = Title, 
+        Content = Content, 
+        Duration = Duration, 
+        Color = Color
+    })
     
-    if #NotificationQueue == 1 then
-        spawn(function() self:ProcessNotification() end)
+    if not ProcessingNotification then
+        ProcessingNotification = true
+        spawn(function() 
+            self:ProcessNotification() 
+        end)
     end
 end
 
@@ -103,22 +143,43 @@ function Drakthon:ProcessNotification()
         local notif = NotificationQueue[1]
         local ScreenGui = self.NotificationHolder
         
+        if not ScreenGui then 
+            table.remove(NotificationQueue, 1)
+            continue 
+        end
+        
         local NotifFrame = Create("Frame", {
             Parent = ScreenGui,
             BackgroundColor3 = Theme.Secondary,
             BorderSizePixel = 0,
-            Position = UDim2.new(1, 20, 1, -20),
+            Position = UDim2.new(1, 20, 1, -100),
             Size = UDim2.new(0, 0, 0, 80),
-            AnchorPoint = Vector2.new(1, 1)
+            AnchorPoint = Vector2.new(1, 1),
+            ZIndex = 1000
         })
         
         AddCorner(NotifFrame, 10)
+        
+        -- Shadow
+        Create("ImageLabel", {
+            Parent = NotifFrame,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, -10, 0, -10),
+            Size = UDim2.new(1, 20, 1, 20),
+            ZIndex = 999,
+            Image = "rbxassetid://5554236805",
+            ImageColor3 = Color3.fromRGB(0, 0, 0),
+            ImageTransparency = 0.7,
+            ScaleType = Enum.ScaleType.Slice,
+            SliceCenter = Rect.new(23, 23, 277, 277)
+        })
         
         local Accent = Create("Frame", {
             Parent = NotifFrame,
             BackgroundColor3 = notif.Color,
             BorderSizePixel = 0,
-            Size = UDim2.new(0, 4, 1, 0)
+            Size = UDim2.new(0, 4, 1, 0),
+            ZIndex = 1001
         })
         
         local TitleLabel = Create("TextLabel", {
@@ -130,7 +191,8 @@ function Drakthon:ProcessNotification()
             Text = notif.Title,
             TextColor3 = Theme.Text,
             TextSize = 14,
-            TextXAlignment = Enum.TextXAlignment.Left
+            TextXAlignment = Enum.TextXAlignment.Left,
+            ZIndex = 1001
         })
         
         local ContentLabel = Create("TextLabel", {
@@ -144,17 +206,50 @@ function Drakthon:ProcessNotification()
             TextSize = 12,
             TextXAlignment = Enum.TextXAlignment.Left,
             TextWrapped = true,
-            TextYAlignment = Enum.TextYAlignment.Top
+            TextYAlignment = Enum.TextYAlignment.Top,
+            ZIndex = 1001
         })
         
-        Tween(NotifFrame, {Size = UDim2.new(0, 320, 0, 80), Position = UDim2.new(1, -20, 1, -20)}, 0.4)
-        wait(notif.Duration)
-        Tween(NotifFrame, {Position = UDim2.new(1, 20, 1, -20), Size = UDim2.new(0, 0, 0, 80)}, 0.3, nil, nil, function()
-            NotifFrame:Destroy()
-            table.remove(NotificationQueue, 1)
-        end)
+        -- Progress Bar
+        local ProgressBG = Create("Frame", {
+            Parent = NotifFrame,
+            BackgroundColor3 = Theme.Tertiary,
+            BorderSizePixel = 0,
+            Position = UDim2.new(0, 0, 1, -3),
+            Size = UDim2.new(1, 0, 0, 3),
+            ZIndex = 1001
+        })
+        
+        local Progress = Create("Frame", {
+            Parent = ProgressBG,
+            BackgroundColor3 = notif.Color,
+            BorderSizePixel = 0,
+            Size = UDim2.new(1, 0, 1, 0),
+            ZIndex = 1002
+        })
+        
+        Tween(NotifFrame, {
+            Size = UDim2.new(0, 320, 0, 80), 
+            Position = UDim2.new(1, -340, 1, -100)
+        }, 0.4, Enum.EasingStyle.Back)
+        
         wait(0.4)
+        
+        Tween(Progress, {Size = UDim2.new(0, 0, 1, 0)}, notif.Duration, Enum.EasingStyle.Linear)
+        
+        wait(notif.Duration)
+        
+        Tween(NotifFrame, {
+            Position = UDim2.new(1, 20, 1, -100), 
+            Size = UDim2.new(0, 0, 0, 80)
+        }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In, function()
+            NotifFrame:Destroy()
+        end)
+        
+        wait(0.4)
+        table.remove(NotificationQueue, 1)
     end
+    ProcessingNotification = false
 end
 
 -- Create Window
@@ -164,11 +259,23 @@ function Drakthon:CreateWindow(config)
     local Icon = config.Icon or "rbxassetid://7733955511"
     local IntroEnabled = config.IntroEnabled ~= false
     local Keybind = config.Keybind or Enum.KeyCode.RightControl
+    local Size = config.Size or {600, 400}
     
     -- ScreenGui
     local ScreenGui = Create("ScreenGui", {
-        Name = "DrakthonUI",
-        Parent = gethui and gethui() or (RunService:IsStudio() and Players.LocalPlayer.PlayerGui or CoreGui),
+        Name = "DrakthonUI_" .. HttpService:GenerateGUID(false):sub(1, 8),
+        Parent = (function()
+            if gethui then 
+                return gethui() 
+            elseif syn and syn.protect_gui then
+                local sg = Instance.new("ScreenGui")
+                syn.protect_gui(sg)
+                sg.Parent = CoreGui
+                return CoreGui
+            else
+                return RunService:IsStudio() and Players.LocalPlayer.PlayerGui or CoreGui
+            end
+        end)(),
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         ResetOnSpawn = false
     })
@@ -180,41 +287,71 @@ function Drakthon:CreateWindow(config)
         ZIndex = 1000
     })
     
-    -- Main Frame
+    -- Main Frame (Centered)
     local Main = Create("Frame", {
         Parent = ScreenGui,
         BackgroundColor3 = Theme.Background,
         BorderSizePixel = 0,
-        Position = UDim2.new(0.5, -300, 0.5, -250),
+        Position = UDim2.new(0.5, -Size[1]/2, 0.5, -Size[2]/2),
         Size = UDim2.new(0, 0, 0, 0),
-        ClipsDescendants = true
+        AnchorPoint = Vector2.new(0, 0),
+        ClipsDescendants = false
     })
     
     AddCorner(Main, 12)
+    
+    -- Shadow/Glow
+    Create("ImageLabel", {
+        Parent = Main,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, -15, 0, -15),
+        Size = UDim2.new(1, 30, 1, 30),
+        ZIndex = 0,
+        Image = "rbxassetid://5554236805",
+        ImageColor3 = Theme.Accent,
+        ImageTransparency = 0.8,
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(23, 23, 277, 277)
+    })
     
     -- Header
     local Header = Create("Frame", {
         Parent = Main,
         BackgroundColor3 = Theme.Secondary,
         BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 0, 50)
+        Size = UDim2.new(1, 0, 0, 50),
+        ZIndex = 1
     })
     
     AddCorner(Header, 12)
+    
+    -- Header Bottom Fix
+    Create("Frame", {
+        Parent = Header,
+        BackgroundColor3 = Theme.Secondary,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 0, 1, -12),
+        Size = UDim2.new(1, 0, 0, 12),
+        ZIndex = 1
+    })
     
     local HeaderGradient = Create("Frame", {
         Parent = Header,
         BackgroundColor3 = Theme.Accent,
         BackgroundTransparency = 0.85,
         BorderSizePixel = 0,
-        Size = UDim2.new(1, 0, 1, 0)
+        Size = UDim2.new(1, 0, 1, 0),
+        ZIndex = 2
     })
     
     AddCorner(HeaderGradient, 12)
     
     Create("UIGradient", {
         Parent = HeaderGradient,
-        Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Theme.Accent), ColorSequenceKeypoint.new(1, Theme.AccentGradient)},
+        Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Theme.Accent), 
+            ColorSequenceKeypoint.new(1, Theme.AccentGradient)
+        },
         Rotation = 45
     })
     
@@ -224,7 +361,9 @@ function Drakthon:CreateWindow(config)
         Position = UDim2.new(0, 15, 0.5, 0),
         Size = UDim2.new(0, 28, 0, 28),
         AnchorPoint = Vector2.new(0, 0.5),
-        Image = Icon
+        Image = Icon,
+        ImageColor3 = Theme.Text,
+        ZIndex = 3
     })
     
     AddCorner(IconLabel, 8)
@@ -233,13 +372,31 @@ function Drakthon:CreateWindow(config)
         Parent = Header,
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 53, 0, 0),
-        Size = UDim2.new(1, -120, 1, 0),
+        Size = UDim2.new(1, -140, 1, 0),
         Font = Enum.Font.GothamBold,
         Text = WindowName,
         TextColor3 = Theme.Text,
         TextSize = 16,
-        TextXAlignment = Enum.TextXAlignment.Left
+        TextXAlignment = Enum.TextXAlignment.Left,
+        ZIndex = 3
     })
+    
+    -- Control Buttons
+    local MinimizeBtn = Create("TextButton", {
+        Parent = Header,
+        BackgroundColor3 = Theme.Tertiary,
+        Position = UDim2.new(1, -70, 0.5, 0),
+        Size = UDim2.new(0, 25, 0, 25),
+        AnchorPoint = Vector2.new(0, 0.5),
+        Font = Enum.Font.GothamBold,
+        Text = "_",
+        TextColor3 = Theme.Text,
+        TextSize = 16,
+        AutoButtonColor = false,
+        ZIndex = 3
+    })
+    
+    AddCorner(MinimizeBtn, 6)
     
     local CloseBtn = Create("TextButton", {
         Parent = Header,
@@ -251,13 +408,46 @@ function Drakthon:CreateWindow(config)
         Text = "×",
         TextColor3 = Theme.Text,
         TextSize = 18,
-        AutoButtonColor = false
+        AutoButtonColor = false,
+        ZIndex = 3
     })
     
     AddCorner(CloseBtn, 6)
     
+    -- Minimize Functionality
+    local minimized = false
+    MinimizeBtn.MouseButton1Click:Connect(function()
+        minimized = not minimized
+        if minimized then
+            Tween(Main, {Size = UDim2.new(0, Size[1], 0, 50)}, 0.3)
+            MinimizeBtn.Text = "□"
+        else
+            Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.3)
+            MinimizeBtn.Text = "_"
+        end
+    end)
+    
+    MinimizeBtn.MouseEnter:Connect(function()
+        Tween(MinimizeBtn, {BackgroundColor3 = Theme.Accent}, 0.2)
+    end)
+    
+    MinimizeBtn.MouseLeave:Connect(function()
+        Tween(MinimizeBtn, {BackgroundColor3 = Theme.Tertiary}, 0.2)
+    end)
+    
+    -- Close Functionality
     CloseBtn.MouseButton1Click:Connect(function()
-        Tween(Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, nil, nil, function() ScreenGui:Destroy() end)
+        Tween(Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In, function()
+            ScreenGui:Destroy()
+        end)
+    end)
+    
+    CloseBtn.MouseEnter:Connect(function()
+        Tween(CloseBtn, {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}, 0.2)
+    end)
+    
+    CloseBtn.MouseLeave:Connect(function()
+        Tween(CloseBtn, {BackgroundColor3 = Theme.Error}, 0.2)
     end)
     
     -- Navigation
@@ -266,7 +456,8 @@ function Drakthon:CreateWindow(config)
         BackgroundColor3 = Theme.Secondary,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 50),
-        Size = UDim2.new(0, 160, 1, -50)
+        Size = UDim2.new(0, 160, 1, -50),
+        ZIndex = 1
     })
     
     Create("UIListLayout", {
@@ -289,12 +480,14 @@ function Drakthon:CreateWindow(config)
         BackgroundColor3 = Theme.Tertiary,
         BorderSizePixel = 0,
         Position = UDim2.new(0, 160, 0, 50),
-        Size = UDim2.new(1, -160, 1, -50)
+        Size = UDim2.new(1, -160, 1, -50),
+        ZIndex = 1
     })
     
+    -- Make Draggable
     MakeDraggable(Main, Header)
     
-    -- Intro
+    -- Intro Animation
     if IntroEnabled then
         local Intro = Create("Frame", {
             Parent = Main,
@@ -312,8 +505,11 @@ function Drakthon:CreateWindow(config)
             Size = UDim2.new(0, 60, 0, 60),
             AnchorPoint = Vector2.new(0.5, 0.5),
             Image = Icon,
-            ImageColor3 = Theme.Accent
+            ImageColor3 = Theme.Accent,
+            ZIndex = 101
         })
+        
+        AddCorner(Logo, 12)
         
         local LoadText = Create("TextLabel", {
             Parent = Intro,
@@ -322,9 +518,10 @@ function Drakthon:CreateWindow(config)
             Size = UDim2.new(0, 200, 0, 20),
             AnchorPoint = Vector2.new(0.5, 0.5),
             Font = Enum.Font.GothamBold,
-            Text = "Loading...",
+            Text = "Loading Drakthon...",
             TextColor3 = Theme.Text,
-            TextSize = 14
+            TextSize = 14,
+            ZIndex = 101
         })
         
         local Bar = Create("Frame", {
@@ -332,7 +529,8 @@ function Drakthon:CreateWindow(config)
             BackgroundColor3 = Theme.Secondary,
             Position = UDim2.new(0.5, 0, 0.62, 0),
             Size = UDim2.new(0, 250, 0, 6),
-            AnchorPoint = Vector2.new(0.5, 0.5)
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            ZIndex = 101
         })
         
         AddCorner(Bar, 999)
@@ -340,15 +538,24 @@ function Drakthon:CreateWindow(config)
         local Fill = Create("Frame", {
             Parent = Bar,
             BackgroundColor3 = Theme.Accent,
-            Size = UDim2.new(0, 0, 1, 0)
+            Size = UDim2.new(0, 0, 1, 0),
+            ZIndex = 102
         })
         
         AddCorner(Fill, 999)
         
-        Tween(Main, {Size = UDim2.new(0, 600, 0, 400)}, 0.5)
+        Create("UIGradient", {
+            Parent = Fill,
+            Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0, Theme.Accent), 
+                ColorSequenceKeypoint.new(1, Theme.AccentGradient)
+            }
+        })
+        
+        Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.5, Enum.EasingStyle.Back)
         wait(0.5)
-        Tween(Fill, {Size = UDim2.new(1, 0, 1, 0)}, 1)
-        wait(1)
+        Tween(Fill, {Size = UDim2.new(1, 0, 1, 0)}, 1.2)
+        wait(1.2)
         Tween(Intro, {BackgroundTransparency = 1}, 0.3)
         Tween(Logo, {ImageTransparency = 1}, 0.3)
         Tween(LoadText, {TextTransparency = 1}, 0.3)
@@ -357,10 +564,10 @@ function Drakthon:CreateWindow(config)
         wait(0.3)
         Intro:Destroy()
     else
-        Tween(Main, {Size = UDim2.new(0, 600, 0, 400)}, 0.5)
+        Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.5, Enum.EasingStyle.Back)
     end
     
-    -- Keybind
+    -- Keybind Toggle
     UserInputService.InputBegan:Connect(function(input, gpe)
         if not gpe and input.KeyCode == Keybind then
             Main.Visible = not Main.Visible
@@ -381,7 +588,8 @@ function Drakthon:CreateWindow(config)
             Size = UDim2.new(1, 0, 0, 38),
             Font = Enum.Font.GothamSemibold,
             Text = "",
-            AutoButtonColor = false
+            AutoButtonColor = false,
+            ZIndex = 2
         })
         
         AddCorner(TabBtn, 8)
@@ -393,7 +601,8 @@ function Drakthon:CreateWindow(config)
             Size = UDim2.new(0, 20, 0, 20),
             AnchorPoint = Vector2.new(0, 0.5),
             Image = TabIcon,
-            ImageColor3 = Theme.TextDark
+            ImageColor3 = Theme.TextDark,
+            ZIndex = 3
         })
         
         local TabLabel = Create("TextLabel", {
@@ -405,7 +614,8 @@ function Drakthon:CreateWindow(config)
             Text = TabName,
             TextColor3 = Theme.TextDark,
             TextSize = 13,
-            TextXAlignment = Enum.TextXAlignment.Left
+            TextXAlignment = Enum.TextXAlignment.Left,
+            ZIndex = 3
         })
         
         local TabContent = Create("ScrollingFrame", {
@@ -416,7 +626,9 @@ function Drakthon:CreateWindow(config)
             ScrollBarThickness = 4,
             ScrollBarImageColor3 = Theme.Accent,
             CanvasSize = UDim2.new(0, 0, 0, 0),
-            AutomaticCanvasSize = Enum.AutomaticSize.Y
+            AutomaticCanvasSize = Enum.AutomaticSize.Y,
+            BorderSizePixel = 0,
+            ZIndex = 2
         })
         
         Create("UIPadding", {
@@ -434,12 +646,26 @@ function Drakthon:CreateWindow(config)
         })
         
         TabBtn.MouseButton1Click:Connect(function()
-            for _, tab in pairs(Window.Tabs) do tab:Deselect() end
+            for _, tab in pairs(Window.Tabs) do 
+                tab:Deselect() 
+            end
             Window.CurrentTab = TabName
             TabContent.Visible = true
             Tween(TabBtn, {BackgroundColor3 = Theme.Accent}, 0.2)
             Tween(TabLabel, {TextColor3 = Theme.Text}, 0.2)
             Tween(TabIconLabel, {ImageColor3 = Theme.Text}, 0.2)
+        end)
+        
+        TabBtn.MouseEnter:Connect(function()
+            if Window.CurrentTab ~= TabName then
+                Tween(TabBtn, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, 0.2)
+            end
+        end)
+        
+        TabBtn.MouseLeave:Connect(function()
+            if Window.CurrentTab ~= TabName then
+                Tween(TabBtn, {BackgroundColor3 = Theme.Tertiary}, 0.2)
+            end
         end)
         
         local Tab = {}
@@ -464,7 +690,8 @@ function Drakthon:CreateWindow(config)
                 Text = Name,
                 TextColor3 = Theme.Text,
                 TextSize = 13,
-                AutoButtonColor = false
+                AutoButtonColor = false,
+                ZIndex = 3
             })
             
             AddCorner(Btn, 8)
@@ -473,8 +700,13 @@ function Drakthon:CreateWindow(config)
                 spawn(Callback)
             end)
             
-            Btn.MouseEnter:Connect(function() Tween(Btn, {BackgroundColor3 = Theme.Tertiary}, 0.2) end)
-            Btn.MouseLeave:Connect(function() Tween(Btn, {BackgroundColor3 = Theme.Secondary}, 0.2) end)
+            Btn.MouseEnter:Connect(function() 
+                Tween(Btn, {BackgroundColor3 = Theme.Tertiary}, 0.2) 
+            end)
+            
+            Btn.MouseLeave:Connect(function() 
+                Tween(Btn, {BackgroundColor3 = Theme.Secondary}, 0.2) 
+            end)
         end
         
         function Tab:CreateToggle(config)
@@ -486,7 +718,8 @@ function Drakthon:CreateWindow(config)
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.Secondary,
-                Size = UDim2.new(1, 0, 0, 38)
+                Size = UDim2.new(1, 0, 0, 38),
+                ZIndex = 3
             })
             
             AddCorner(Frame, 8)
@@ -500,7 +733,8 @@ function Drakthon:CreateWindow(config)
                 Text = Name,
                 TextColor3 = Theme.Text,
                 TextSize = 13,
-                TextXAlignment = Enum.TextXAlignment.Left
+                TextXAlignment = Enum.TextXAlignment.Left,
+                ZIndex = 4
             })
             
             local ToggleBtn = Create("TextButton", {
@@ -510,7 +744,8 @@ function Drakthon:CreateWindow(config)
                 Size = UDim2.new(0, 42, 0, 22),
                 AnchorPoint = Vector2.new(0, 0.5),
                 Text = "",
-                AutoButtonColor = false
+                AutoButtonColor = false,
+                ZIndex = 4
             })
             
             AddCorner(ToggleBtn, 999)
@@ -520,7 +755,8 @@ function Drakthon:CreateWindow(config)
                 BackgroundColor3 = Theme.Text,
                 Position = Default and UDim2.new(1, -20, 0.5, 0) or UDim2.new(0, 2, 0.5, 0),
                 Size = UDim2.new(0, 18, 0, 18),
-                AnchorPoint = Vector2.new(0, 0.5)
+                AnchorPoint = Vector2.new(0, 0.5),
+                ZIndex = 5
             })
             
             AddCorner(Indicator, 999)
@@ -556,7 +792,8 @@ function Drakthon:CreateWindow(config)
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.Secondary,
-                Size = UDim2.new(1, 0, 0, 50)
+                Size = UDim2.new(1, 0, 0, 50),
+                ZIndex = 3
             })
             
             AddCorner(Frame, 8)
@@ -570,7 +807,8 @@ function Drakthon:CreateWindow(config)
                 Text = Name,
                 TextColor3 = Theme.Text,
                 TextSize = 13,
-                TextXAlignment = Enum.TextXAlignment.Left
+                TextXAlignment = Enum.TextXAlignment.Left,
+                ZIndex = 4
             })
             
             local Value = Create("TextLabel", {
@@ -582,14 +820,16 @@ function Drakthon:CreateWindow(config)
                 Text = tostring(Default),
                 TextColor3 = Theme.Accent,
                 TextSize = 13,
-                TextXAlignment = Enum.TextXAlignment.Right
+                TextXAlignment = Enum.TextXAlignment.Right,
+                ZIndex = 4
             })
             
             local Track = Create("Frame", {
                 Parent = Frame,
                 BackgroundColor3 = Theme.Tertiary,
                 Position = UDim2.new(0, 15, 1, -15),
-                Size = UDim2.new(1, -30, 0, 4)
+                Size = UDim2.new(1, -30, 0, 4),
+                ZIndex = 4
             })
             
             AddCorner(Track, 999)
@@ -597,7 +837,8 @@ function Drakthon:CreateWindow(config)
             local Fill = Create("Frame", {
                 Parent = Track,
                 BackgroundColor3 = Theme.Accent,
-                Size = UDim2.new(0, 0, 1, 0)
+                Size = UDim2.new(0, 0, 1, 0),
+                ZIndex = 5
             })
             
             AddCorner(Fill, 999)
@@ -607,7 +848,8 @@ function Drakthon:CreateWindow(config)
                 BackgroundColor3 = Theme.Text,
                 Position = UDim2.new(0, 0, 0.5, 0),
                 Size = UDim2.new(0, 10, 0, 10),
-                AnchorPoint = Vector2.new(0.5, 0.5)
+                AnchorPoint = Vector2.new(0.5, 0.5),
+                ZIndex = 6
             })
             
             AddCorner(Dot, 999)
@@ -647,7 +889,11 @@ function Drakthon:CreateWindow(config)
                 end
             end)
             
-            return {Set = function(_, val) Update(val) end}
+            return {
+                Set = function(_, val) 
+                    Update(val) 
+                end
+            }
         end
         
         function Tab:CreateDropdown(config)
@@ -661,7 +907,8 @@ function Drakthon:CreateWindow(config)
                 Parent = TabContent,
                 BackgroundColor3 = Theme.Secondary,
                 Size = UDim2.new(1, 0, 0, 38),
-                ClipsDescendants = true
+                ClipsDescendants = true,
+                ZIndex = 3
             })
             
             AddCorner(Frame, 8)
@@ -671,7 +918,8 @@ function Drakthon:CreateWindow(config)
                 BackgroundTransparency = 1,
                 Size = UDim2.new(1, 0, 0, 38),
                 Text = "",
-                AutoButtonColor = false
+                AutoButtonColor = false,
+                ZIndex = 4
             })
             
             local Label = Create("TextLabel", {
@@ -683,7 +931,8 @@ function Drakthon:CreateWindow(config)
                 Text = Name,
                 TextColor3 = Theme.Text,
                 TextSize = 13,
-                TextXAlignment = Enum.TextXAlignment.Left
+                TextXAlignment = Enum.TextXAlignment.Left,
+                ZIndex = 5
             })
             
             local Selected = Create("TextLabel", {
@@ -695,7 +944,8 @@ function Drakthon:CreateWindow(config)
                 Text = Default or "...",
                 TextColor3 = Theme.Accent,
                 TextSize = 12,
-                TextXAlignment = Enum.TextXAlignment.Right
+                TextXAlignment = Enum.TextXAlignment.Right,
+                ZIndex = 5
             })
             
             local Arrow = Create("TextLabel", {
@@ -706,7 +956,8 @@ function Drakthon:CreateWindow(config)
                 Font = Enum.Font.GothamBold,
                 Text = "▼",
                 TextColor3 = Theme.TextDark,
-                TextSize = 10
+                TextSize = 10,
+                ZIndex = 5
             })
             
             local OptionsContainer = Create("Frame", {
@@ -714,7 +965,8 @@ function Drakthon:CreateWindow(config)
                 BackgroundTransparency = 1,
                 Position = UDim2.new(0, 0, 0, 38),
                 Size = UDim2.new(1, 0, 0, 0),
-                AutomaticSize = Enum.AutomaticSize.Y
+                AutomaticSize = Enum.AutomaticSize.Y,
+                ZIndex = 4
             })
             
             Create("UIListLayout", {
@@ -735,7 +987,8 @@ function Drakthon:CreateWindow(config)
                     Text = opt,
                     TextColor3 = Theme.Text,
                     TextSize = 12,
-                    AutoButtonColor = false
+                    AutoButtonColor = false,
+                    ZIndex = 5
                 })
                 
                 AddCorner(OptBtn, 6)
@@ -749,8 +1002,13 @@ function Drakthon:CreateWindow(config)
                     spawn(Callback, opt)
                 end)
                 
-                OptBtn.MouseEnter:Connect(function() Tween(OptBtn, {BackgroundColor3 = Theme.Accent}, 0.2) end)
-                OptBtn.MouseLeave:Connect(function() Tween(OptBtn, {BackgroundColor3 = Theme.Tertiary}, 0.2) end)
+                OptBtn.MouseEnter:Connect(function() 
+                    Tween(OptBtn, {BackgroundColor3 = Theme.Accent}, 0.2) 
+                end)
+                
+                OptBtn.MouseLeave:Connect(function() 
+                    Tween(OptBtn, {BackgroundColor3 = Theme.Tertiary}, 0.2) 
+                end)
             end
             
             Btn.MouseButton1Click:Connect(function()
@@ -764,7 +1022,13 @@ function Drakthon:CreateWindow(config)
                 end
             end)
             
-            return {Set = function(_, opt) selected = opt Selected.Text = opt spawn(Callback, opt) end}
+            return {
+                Set = function(_, opt) 
+                    selected = opt 
+                    Selected.Text = opt 
+                    spawn(Callback, opt) 
+                end
+            }
         end
         
         function Tab:CreateInput(config)
@@ -777,7 +1041,8 @@ function Drakthon:CreateWindow(config)
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.Secondary,
-                Size = UDim2.new(1, 0, 0, 65)
+                Size = UDim2.new(1, 0, 0, 65),
+                ZIndex = 3
             })
             
             AddCorner(Frame, 8)
@@ -791,7 +1056,8 @@ function Drakthon:CreateWindow(config)
                 Text = Name,
                 TextColor3 = Theme.Text,
                 TextSize = 13,
-                TextXAlignment = Enum.TextXAlignment.Left
+                TextXAlignment = Enum.TextXAlignment.Left,
+                ZIndex = 4
             })
             
             local Input = Create("TextBox", {
@@ -805,7 +1071,8 @@ function Drakthon:CreateWindow(config)
                 Text = Default,
                 TextColor3 = Theme.Text,
                 TextSize = 12,
-                ClearTextOnFocus = false
+                ClearTextOnFocus = false,
+                ZIndex = 4
             })
             
             AddCorner(Input, 6)
@@ -816,9 +1083,20 @@ function Drakthon:CreateWindow(config)
                 PaddingRight = UDim.new(0, 10)
             })
             
-            Input.FocusLost:Connect(function() spawn(Callback, Input.Text) end)
+            Input.Focused:Connect(function()
+                Tween(Input, {BackgroundColor3 = Color3.fromRGB(35, 35, 45)}, 0.2)
+            end)
             
-            return {Set = function(_, txt) Input.Text = txt end}
+            Input.FocusLost:Connect(function() 
+                Tween(Input, {BackgroundColor3 = Theme.Tertiary}, 0.2)
+                spawn(Callback, Input.Text) 
+            end)
+            
+            return {
+                Set = function(_, txt) 
+                    Input.Text = txt 
+                end
+            }
         end
         
         function Tab:CreateLabel(text)
@@ -830,19 +1108,31 @@ function Drakthon:CreateWindow(config)
                 Text = text,
                 TextColor3 = Theme.TextDark,
                 TextSize = 13,
-                TextWrapped = true
+                TextWrapped = true,
+                ZIndex = 3
             })
             
             AddCorner(Label, 8)
             
-            return {Set = function(_, txt) Label.Text = txt end}
+            Create("UIPadding", {
+                Parent = Label,
+                PaddingLeft = UDim.new(0, 15),
+                PaddingRight = UDim.new(0, 15)
+            })
+            
+            return {
+                Set = function(_, txt) 
+                    Label.Text = txt 
+                end
+            }
         end
         
         function Tab:CreateSection(name)
             local Section = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.Secondary,
-                Size = UDim2.new(1, 0, 0, 35)
+                Size = UDim2.new(1, 0, 0, 35),
+                ZIndex = 3
             })
             
             AddCorner(Section, 8)
@@ -856,7 +1146,8 @@ function Drakthon:CreateWindow(config)
                 Text = name,
                 TextColor3 = Theme.Accent,
                 TextSize = 14,
-                TextXAlignment = Enum.TextXAlignment.Left
+                TextXAlignment = Enum.TextXAlignment.Left,
+                ZIndex = 4
             })
         end
         
@@ -869,7 +1160,8 @@ function Drakthon:CreateWindow(config)
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.Secondary,
-                Size = UDim2.new(1, 0, 0, 38)
+                Size = UDim2.new(1, 0, 0, 38),
+                ZIndex = 3
             })
             
             AddCorner(Frame, 8)
@@ -883,7 +1175,8 @@ function Drakthon:CreateWindow(config)
                 Text = Name,
                 TextColor3 = Theme.Text,
                 TextSize = 13,
-                TextXAlignment = Enum.TextXAlignment.Left
+                TextXAlignment = Enum.TextXAlignment.Left,
+                ZIndex = 4
             })
             
             local ColorBox = Create("TextButton", {
@@ -893,7 +1186,8 @@ function Drakthon:CreateWindow(config)
                 Size = UDim2.new(0, 40, 0, 24),
                 AnchorPoint = Vector2.new(0, 0.5),
                 Text = "",
-                AutoButtonColor = false
+                AutoButtonColor = false,
+                ZIndex = 4
             })
             
             AddCorner(ColorBox, 6)
@@ -922,7 +1216,8 @@ function Drakthon:CreateWindow(config)
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.Secondary,
-                Size = UDim2.new(1, 0, 0, 38)
+                Size = UDim2.new(1, 0, 0, 38),
+                ZIndex = 3
             })
             
             AddCorner(Frame, 8)
@@ -936,7 +1231,8 @@ function Drakthon:CreateWindow(config)
                 Text = Name,
                 TextColor3 = Theme.Text,
                 TextSize = 13,
-                TextXAlignment = Enum.TextXAlignment.Left
+                TextXAlignment = Enum.TextXAlignment.Left,
+                ZIndex = 4
             })
             
             local KeyBtn = Create("TextButton", {
@@ -949,7 +1245,8 @@ function Drakthon:CreateWindow(config)
                 Text = Default.Name,
                 TextColor3 = Theme.Text,
                 TextSize = 11,
-                AutoButtonColor = false
+                AutoButtonColor = false,
+                ZIndex = 4
             })
             
             AddCorner(KeyBtn, 6)
@@ -975,13 +1272,18 @@ function Drakthon:CreateWindow(config)
                 end
             end)
             
-            return {Set = function(_, key) currentKey = key KeyBtn.Text = key.Name end}
+            return {
+                Set = function(_, key) 
+                    currentKey = key 
+                    KeyBtn.Text = key.Name 
+                end
+            }
         end
         
         table.insert(Window.Tabs, Tab)
         
         if #Window.Tabs == 1 then
-            wait()
+            task.wait()
             TabBtn.MouseButton1Click:Fire()
         end
         
@@ -989,8 +1291,13 @@ function Drakthon:CreateWindow(config)
     end
     
     if IntroEnabled then
-        wait(0.5)
-        self:Notify({Title = "Drakthon UI", Content = "Loaded successfully!", Type = "Success", Duration = 3})
+        task.wait(0.5)
+        self:Notify({
+            Title = "Welcome!", 
+            Content = "Drakthon UI loaded successfully!", 
+            Type = "Success", 
+            Duration = 3
+        })
     end
     
     return Window
