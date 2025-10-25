@@ -5,8 +5,8 @@
    | |_| || | | (_| |   <| |_| | | | (_) | | | | 
    |____/ |_|  \__,_|_|\_\\__|_| |_|\___/|_| |_| 
                                                   
-   🐉 Drakthon UI Library V3.1 - FIXED
-   ✅ No Errors | ✅ Smooth Dragging | ✅ Optimized
+   🐉 Drakthon UI Library V3.2 - Final
+   ✅ Responsive Design | ✅ Auto-Resize | ✅ Enhanced Intro
 ]]
 
 local Drakthon = {}
@@ -18,6 +18,9 @@ local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
+
+-- Camera
+local camera = workspace.CurrentCamera
 
 -- Theme
 local Theme = {
@@ -32,6 +35,17 @@ local Theme = {
     Error = Color3.fromRGB(231, 76, 60),
     Warning = Color3.fromRGB(241, 196, 15),
     Info = Color3.fromRGB(52, 152, 219)
+}
+
+-- Responsive Config
+local RESPONSIVE_CONFIG = {
+    MinWidth = 400,
+    MinHeight = 300,
+    MaxWidth = 1200,
+    MaxHeight = 800,
+    DefaultWidth = 650,
+    DefaultHeight = 450,
+    Padding = 20
 }
 
 -- Utilities
@@ -61,6 +75,22 @@ local function AddCorner(parent, radius)
         Parent = parent, 
         CornerRadius = UDim.new(0, radius or 8)
     })
+end
+
+-- Responsive Size Calculator
+local function GetResponsiveSize()
+    local viewportSize = camera.ViewportSize
+    local width = math.clamp(
+        viewportSize.X * 0.6, 
+        RESPONSIVE_CONFIG.MinWidth, 
+        RESPONSIVE_CONFIG.MaxWidth
+    )
+    local height = math.clamp(
+        viewportSize.Y * 0.7, 
+        RESPONSIVE_CONFIG.MinHeight, 
+        RESPONSIVE_CONFIG.MaxHeight
+    )
+    return {width, height}
 end
 
 -- Enhanced Dragging System
@@ -240,8 +270,9 @@ function Drakthon:CreateWindow(config)
     local WindowName = config.Name or "Drakthon UI"
     local Icon = config.Icon or "rbxassetid://7733955511"
     local IntroEnabled = config.IntroEnabled ~= false
+    local IntroText = config.IntroText or WindowName
     local Keybind = config.Keybind or Enum.KeyCode.RightControl
-    local Size = config.Size or {650, 450}
+    local Size = config.Size or GetResponsiveSize()
     
     -- Get proper parent
     local function getParent()
@@ -263,7 +294,8 @@ function Drakthon:CreateWindow(config)
         Parent = getParent(),
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         ResetOnSpawn = false,
-        DisplayOrder = 999
+        DisplayOrder = 999,
+        IgnoreGuiInset = true
     })
     
     self.NotificationHolder = Create("Frame", {
@@ -282,6 +314,7 @@ function Drakthon:CreateWindow(config)
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, -Size[1]/2, 0.5, -Size[2]/2),
         Size = UDim2.new(0, 0, 0, 0),
+        AnchorPoint = Vector2.new(0, 0),
         ClipsDescendants = false
     })
     
@@ -481,97 +514,208 @@ function Drakthon:CreateWindow(config)
     -- Make Draggable
     MakeDraggable(Main, Header)
     
-    -- Intro Animation
+    -- Enhanced Intro Animation (Logo Style)
     if IntroEnabled then
         local Intro = Create("Frame", {
             Name = "Intro",
             Parent = Main,
             BackgroundColor3 = Theme.Background,
             Size = UDim2.new(1, 0, 1, 0),
-            ZIndex = 100
+            ZIndex = 200
         })
         
         AddCorner(Intro, 12)
         
-        local Logo = Create("ImageLabel", {
-            Name = "Logo",
+        -- Animated Background Gradient
+        local BGGradient = Create("Frame", {
+            Name = "BGGradient",
             Parent = Intro,
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0.5, 0, 0.4, 0),
-            Size = UDim2.new(0, 60, 0, 60),
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            Image = Icon,
-            ImageColor3 = Theme.Accent,
-            ZIndex = 101
-        })
-        
-        local LoadText = Create("TextLabel", {
-            Name = "LoadText",
-            Parent = Intro,
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0.5, 0, 0.55, 0),
-            Size = UDim2.new(0, 200, 0, 20),
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            Font = Enum.Font.GothamBold,
-            Text = "Loading Drakthon...",
-            TextColor3 = Theme.Text,
-            TextSize = 14,
-            ZIndex = 101
-        })
-        
-        local Bar = Create("Frame", {
-            Name = "Bar",
-            Parent = Intro,
-            BackgroundColor3 = Theme.Secondary,
-            Position = UDim2.new(0.5, 0, 0.62, 0),
-            Size = UDim2.new(0, 250, 0, 6),
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            ZIndex = 101
-        })
-        
-        AddCorner(Bar, 999)
-        
-        local Fill = Create("Frame", {
-            Name = "Fill",
-            Parent = Bar,
             BackgroundColor3 = Theme.Accent,
-            Size = UDim2.new(0, 0, 1, 0),
-            ZIndex = 102
+            BackgroundTransparency = 0.95,
+            Size = UDim2.new(1, 0, 1, 0),
+            ZIndex = 201
         })
         
-        AddCorner(Fill, 999)
+        AddCorner(BGGradient, 12)
         
         Create("UIGradient", {
-            Parent = Fill,
+            Parent = BGGradient,
             Color = ColorSequence.new{
                 ColorSequenceKeypoint.new(0, Theme.Accent), 
                 ColorSequenceKeypoint.new(1, Theme.AccentGradient)
-            }
+            },
+            Rotation = 45
         })
         
-        Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.5, Enum.EasingStyle.Back)
-        task.wait(0.5)
-        Tween(Fill, {Size = UDim2.new(1, 0, 1, 0)}, 1.2)
-        task.wait(1.2)
+        -- Logo Container
+        local LogoContainer = Create("Frame", {
+            Name = "LogoContainer",
+            Parent = Intro,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0.5, 0, 0.5, -40),
+            Size = UDim2.new(0, 350, 0, 120),
+            AnchorPoint = Vector2.new(0.5, 0.5),
+            ZIndex = 202
+        })
         
-        for _, obj in ipairs({Intro, Logo, LoadText, Bar, Fill}) do
-            pcall(function()
-                for _, prop in ipairs({"BackgroundTransparency", "ImageTransparency", "TextTransparency"}) do
-                    if obj[prop] then
-                        Tween(obj, {[prop] = 1}, 0.3)
-                    end
+        -- Large Logo Icon
+        local Logo = Create("ImageLabel", {
+            Name = "Logo",
+            Parent = LogoContainer,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 0, 0, 0),
+            Size = UDim2.new(0, 100, 0, 100),
+            Image = Icon,
+            ImageColor3 = Theme.Accent,
+            ZIndex = 203
+        })
+        
+        AddCorner(Logo, 16)
+        
+        -- Logo Glow Effect
+        Create("ImageLabel", {
+            Name = "Glow",
+            Parent = Logo,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, -15, 0, -15),
+            Size = UDim2.new(1, 30, 1, 30),
+            ZIndex = 202,
+            Image = "rbxassetid://5554236805",
+            ImageColor3 = Theme.Accent,
+            ImageTransparency = 0.6,
+            ScaleType = Enum.ScaleType.Slice,
+            SliceCenter = Rect.new(23, 23, 277, 277)
+        })
+        
+        -- Script Name
+        local ScriptName = Create("TextLabel", {
+            Name = "ScriptName",
+            Parent = LogoContainer,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 115, 0, 10),
+            Size = UDim2.new(0, 235, 0, 50),
+            Font = Enum.Font.GothamBold,
+            Text = IntroText,
+            TextColor3 = Theme.Text,
+            TextSize = 28,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            TextYAlignment = Enum.TextYAlignment.Top,
+            ZIndex = 203
+        })
+        
+        -- Powered By Text
+        local PoweredBy = Create("TextLabel", {
+            Name = "PoweredBy",
+            Parent = LogoContainer,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 115, 0, 65),
+            Size = UDim2.new(0, 235, 0, 25),
+            Font = Enum.Font.Gotham,
+            Text = "Powered by Drakthon Lib",
+            TextColor3 = Theme.Accent,
+            TextSize = 14,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            ZIndex = 203
+        })
+        
+        -- Animated Line Under Text
+        local Line = Create("Frame", {
+            Name = "Line",
+            Parent = LogoContainer,
+            BackgroundColor3 = Theme.Accent,
+            Position = UDim2.new(0, 115, 0, 95),
+            Size = UDim2.new(0, 0, 0, 3),
+            BorderSizePixel = 0,
+            ZIndex = 203
+        })
+        
+        AddCorner(Line, 999)
+        
+        -- Particles Effect (Optional)
+        for i = 1, 5 do
+            local Particle = Create("Frame", {
+                Parent = Intro,
+                BackgroundColor3 = Theme.Accent,
+                BackgroundTransparency = 0.8,
+                Position = UDim2.new(math.random(0, 100) / 100, 0, math.random(0, 100) / 100, 0),
+                Size = UDim2.new(0, math.random(3, 8), 0, math.random(3, 8)),
+                ZIndex = 201
+            })
+            AddCorner(Particle, 999)
+            
+            -- Floating animation
+            task.spawn(function()
+                while Particle.Parent do
+                    Tween(Particle, {
+                        Position = UDim2.new(
+                            math.random(0, 100) / 100, 
+                            0, 
+                            math.random(0, 100) / 100, 
+                            0
+                        ),
+                        BackgroundTransparency = math.random(60, 95) / 100
+                    }, math.random(2, 4))
+                    task.wait(math.random(2, 4))
                 end
             end)
         end
         
+        -- Animation Sequence
+        Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.6, Enum.EasingStyle.Back)
+        
+        -- Logo entrance
+        Logo.ImageTransparency = 1
+        ScriptName.TextTransparency = 1
+        PoweredBy.TextTransparency = 1
+        
         task.wait(0.3)
+        
+        -- Fade in logo
+        Tween(Logo, {ImageTransparency = 0}, 0.5)
+        task.wait(0.2)
+        
+        -- Fade in text
+        Tween(ScriptName, {TextTransparency = 0}, 0.4)
+        task.wait(0.1)
+        Tween(PoweredBy, {TextTransparency = 0}, 0.4)
+        
+        -- Animate line
+        task.wait(0.2)
+        Tween(Line, {Size = UDim2.new(0, 200, 0, 3)}, 0.6)
+        
+        -- Wait before closing
+        task.wait(1.5)
+        
+        -- Fade out everything
+        Tween(Intro, {BackgroundTransparency = 1}, 0.4)
+        Tween(BGGradient, {BackgroundTransparency = 1}, 0.4)
+        Tween(Logo, {ImageTransparency = 1}, 0.4)
+        Tween(ScriptName, {TextTransparency = 1}, 0.4)
+        Tween(PoweredBy, {TextTransparency = 1}, 0.4)
+        Tween(Line, {BackgroundTransparency = 1}, 0.4)
+        
+        task.wait(0.4)
         pcall(function() Intro:Destroy() end)
     else
         Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.5, Enum.EasingStyle.Back)
     end
     
+    -- Responsive Resize Handler
+    local resizeConnection
+    resizeConnection = camera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
+        task.wait(0.1) -- Debounce
+        local newSize = GetResponsiveSize()
+        if not minimized then
+            Tween(Main, {
+                Size = UDim2.new(0, newSize[1], 0, newSize[2]),
+                Position = UDim2.new(0.5, -newSize[1]/2, 0.5, -newSize[2]/2)
+            }, 0.3)
+        end
+        Size = newSize
+    end)
+    
     -- Keybind Toggle
-    local connection = UserInputService.InputBegan:Connect(function(input, gpe)
+    local keybindConnection = UserInputService.InputBegan:Connect(function(input, gpe)
         if not gpe and input.KeyCode == Keybind then
             Main.Visible = not Main.Visible
         end
@@ -579,7 +723,8 @@ function Drakthon:CreateWindow(config)
     
     -- Cleanup on destroy
     ScreenGui.Destroying:Connect(function()
-        connection:Disconnect()
+        if resizeConnection then resizeConnection:Disconnect() end
+        if keybindConnection then keybindConnection:Disconnect() end
     end)
     
     -- Window Object
@@ -587,7 +732,8 @@ function Drakthon:CreateWindow(config)
         Tabs = {}, 
         CurrentTab = nil,
         ScreenGui = ScreenGui,
-        MainFrame = Main
+        MainFrame = Main,
+        Size = Size
     }
     
     function Window:CreateTab(config)
@@ -1378,10 +1524,10 @@ function Drakthon:CreateWindow(config)
     
     -- Welcome notification
     if IntroEnabled then
-        task.delay(0.5, function()
+        task.delay(2.5, function()
             self:Notify({
                 Title = "Welcome!", 
-                Content = "Drakthon UI V3.1 loaded successfully!", 
+                Content = WindowName .. " loaded successfully!", 
                 Type = "Success", 
                 Duration = 3
             })
