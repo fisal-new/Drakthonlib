@@ -5,8 +5,8 @@
    | |_| || | | (_| |   <| |_| | | | (_) | | | | 
    |____/ |_|  \__,_|_|\_\\__|_| |_|\___/|_| |_| 
                                                   
-   🐉 Drakthon UI Library V3.2 - Final
-   ✅ Responsive Design | ✅ Auto-Resize | ✅ Enhanced Intro
+   🐉 Drakthon UI Library V3.3 - Perfect
+   ✅ Custom Intro | ✅ Icon Minimize | ✅ Responsive
 ]]
 
 local Drakthon = {}
@@ -335,6 +335,78 @@ function Drakthon:CreateWindow(config)
         SliceCenter = Rect.new(23, 23, 277, 277)
     })
     
+    -- Minimize Icon (Hidden by default)
+    local MinimizeIcon = Create("ImageButton", {
+        Name = "MinimizeIcon",
+        Parent = ScreenGui,
+        BackgroundColor3 = Theme.Secondary,
+        BorderSizePixel = 0,
+        Position = UDim2.new(0, 20, 0, 20),
+        Size = UDim2.new(0, 70, 0, 70),
+        Visible = false,
+        Image = Icon,
+        ImageColor3 = Theme.Text,
+        ScaleType = Enum.ScaleType.Fit,
+        AutoButtonColor = false,
+        ZIndex = 500
+    })
+    
+    AddCorner(MinimizeIcon, 12)
+    
+    -- Minimize Icon Shadow
+    Create("ImageLabel", {
+        Name = "Shadow",
+        Parent = MinimizeIcon,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, -10, 0, -10),
+        Size = UDim2.new(1, 20, 1, 20),
+        ZIndex = 499,
+        Image = "rbxassetid://5554236805",
+        ImageColor3 = Color3.fromRGB(0, 0, 0),
+        ImageTransparency = 0.5,
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(23, 23, 277, 277)
+    })
+    
+    -- Minimize Icon Glow
+    local IconGlow = Create("ImageLabel", {
+        Name = "Glow",
+        Parent = MinimizeIcon,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, -8, 0, -8),
+        Size = UDim2.new(1, 16, 1, 16),
+        ZIndex = 498,
+        Image = "rbxassetid://5554236805",
+        ImageColor3 = Theme.Accent,
+        ImageTransparency = 0.7,
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(23, 23, 277, 277)
+    })
+    
+    -- Pulsing animation for icon
+    task.spawn(function()
+        while MinimizeIcon.Parent do
+            Tween(IconGlow, {ImageTransparency = 0.4}, 1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+            task.wait(1)
+            Tween(IconGlow, {ImageTransparency = 0.8}, 1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
+            task.wait(1)
+        end
+    end)
+    
+    -- Make minimize icon draggable
+    MakeDraggable(MinimizeIcon, MinimizeIcon)
+    
+    -- Minimize icon hover effect
+    MinimizeIcon.MouseEnter:Connect(function()
+        Tween(MinimizeIcon, {Size = UDim2.new(0, 80, 0, 80)}, 0.2, Enum.EasingStyle.Back)
+        Tween(MinimizeIcon, {BackgroundColor3 = Theme.Tertiary}, 0.2)
+    end)
+    
+    MinimizeIcon.MouseLeave:Connect(function()
+        Tween(MinimizeIcon, {Size = UDim2.new(0, 70, 0, 70)}, 0.2, Enum.EasingStyle.Back)
+        Tween(MinimizeIcon, {BackgroundColor3 = Theme.Secondary}, 0.2)
+    end)
+    
     -- Header
     local Header = Create("Frame", {
         Name = "Header",
@@ -445,12 +517,39 @@ function Drakthon:CreateWindow(config)
     MinimizeBtn.MouseButton1Click:Connect(function()
         minimized = not minimized
         if minimized then
-            Tween(Main, {Size = UDim2.new(0, Size[1], 0, 50)}, 0.3)
-            MinimizeBtn.Text = "□"
+            -- Hide main window
+            Tween(Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+            task.wait(0.3)
+            Main.Visible = false
+            
+            -- Show minimize icon
+            MinimizeIcon.Visible = true
+            MinimizeIcon.Size = UDim2.new(0, 0, 0, 0)
+            Tween(MinimizeIcon, {Size = UDim2.new(0, 70, 0, 70)}, 0.4, Enum.EasingStyle.Back)
         else
-            Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.3)
-            MinimizeBtn.Text = "_"
+            -- Hide minimize icon
+            Tween(MinimizeIcon, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+            task.wait(0.3)
+            MinimizeIcon.Visible = false
+            
+            -- Show main window
+            Main.Visible = true
+            Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.4, Enum.EasingStyle.Back)
         end
+    end)
+    
+    -- Minimize icon click to restore
+    MinimizeIcon.MouseButton1Click:Connect(function()
+        minimized = false
+        
+        -- Hide minimize icon
+        Tween(MinimizeIcon, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        task.wait(0.3)
+        MinimizeIcon.Visible = false
+        
+        -- Show main window
+        Main.Visible = true
+        Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.4, Enum.EasingStyle.Back)
     end)
     
     MinimizeBtn.MouseEnter:Connect(function()
@@ -463,6 +562,9 @@ function Drakthon:CreateWindow(config)
     
     CloseBtn.MouseButton1Click:Connect(function()
         Tween(Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        if MinimizeIcon.Visible then
+            Tween(MinimizeIcon, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        end
         task.wait(0.3)
         ScreenGui:Destroy()
     end)
@@ -553,20 +655,20 @@ function Drakthon:CreateWindow(config)
             Parent = Intro,
             BackgroundTransparency = 1,
             Position = UDim2.new(0.5, 0, 0.5, -40),
-            Size = UDim2.new(0, 350, 0, 120),
+            Size = UDim2.new(0, 400, 0, 120),
             AnchorPoint = Vector2.new(0.5, 0.5),
             ZIndex = 202
         })
         
-        -- Large Logo Icon
+        -- DRAKTHON LOGO (Fixed Image ID)
         local Logo = Create("ImageLabel", {
             Name = "Logo",
             Parent = LogoContainer,
             BackgroundTransparency = 1,
             Position = UDim2.new(0, 0, 0, 0),
             Size = UDim2.new(0, 100, 0, 100),
-            Image = Icon,
-            ImageColor3 = Theme.Accent,
+            Image = "rbxassetid://94120590558360",
+            ScaleType = Enum.ScaleType.Fit,
             ZIndex = 203
         })
         
@@ -582,7 +684,7 @@ function Drakthon:CreateWindow(config)
             ZIndex = 202,
             Image = "rbxassetid://5554236805",
             ImageColor3 = Theme.Accent,
-            ImageTransparency = 0.6,
+            ImageTransparency = 0.5,
             ScaleType = Enum.ScaleType.Slice,
             SliceCenter = Rect.new(23, 23, 277, 277)
         })
@@ -593,7 +695,7 @@ function Drakthon:CreateWindow(config)
             Parent = LogoContainer,
             BackgroundTransparency = 1,
             Position = UDim2.new(0, 115, 0, 10),
-            Size = UDim2.new(0, 235, 0, 50),
+            Size = UDim2.new(0, 285, 0, 50),
             Font = Enum.Font.GothamBold,
             Text = IntroText,
             TextColor3 = Theme.Text,
@@ -609,7 +711,7 @@ function Drakthon:CreateWindow(config)
             Parent = LogoContainer,
             BackgroundTransparency = 1,
             Position = UDim2.new(0, 115, 0, 65),
-            Size = UDim2.new(0, 235, 0, 25),
+            Size = UDim2.new(0, 285, 0, 25),
             Font = Enum.Font.Gotham,
             Text = "Powered by Drakthon Lib",
             TextColor3 = Theme.Accent,
@@ -631,14 +733,14 @@ function Drakthon:CreateWindow(config)
         
         AddCorner(Line, 999)
         
-        -- Particles Effect (Optional)
-        for i = 1, 5 do
+        -- Particles Effect
+        for i = 1, 8 do
             local Particle = Create("Frame", {
                 Parent = Intro,
                 BackgroundColor3 = Theme.Accent,
                 BackgroundTransparency = 0.8,
                 Position = UDim2.new(math.random(0, 100) / 100, 0, math.random(0, 100) / 100, 0),
-                Size = UDim2.new(0, math.random(3, 8), 0, math.random(3, 8)),
+                Size = UDim2.new(0, math.random(4, 10), 0, math.random(4, 10)),
                 ZIndex = 201
             })
             AddCorner(Particle, 999)
@@ -654,8 +756,8 @@ function Drakthon:CreateWindow(config)
                             0
                         ),
                         BackgroundTransparency = math.random(60, 95) / 100
-                    }, math.random(2, 4))
-                    task.wait(math.random(2, 4))
+                    }, math.random(3, 5))
+                    task.wait(math.random(3, 5))
                 end
             end)
         end
@@ -663,38 +765,39 @@ function Drakthon:CreateWindow(config)
         -- Animation Sequence
         Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.6, Enum.EasingStyle.Back)
         
-        -- Logo entrance
+        -- Set initial transparency
         Logo.ImageTransparency = 1
         ScriptName.TextTransparency = 1
         PoweredBy.TextTransparency = 1
         
+        task.wait(0.4)
+        
+        -- Fade in logo with scale
+        Logo.Size = UDim2.new(0, 80, 0, 80)
+        Tween(Logo, {ImageTransparency = 0, Size = UDim2.new(0, 100, 0, 100)}, 0.6, Enum.EasingStyle.Back)
         task.wait(0.3)
         
-        -- Fade in logo
-        Tween(Logo, {ImageTransparency = 0}, 0.5)
-        task.wait(0.2)
-        
         -- Fade in text
-        Tween(ScriptName, {TextTransparency = 0}, 0.4)
-        task.wait(0.1)
-        Tween(PoweredBy, {TextTransparency = 0}, 0.4)
+        Tween(ScriptName, {TextTransparency = 0}, 0.5)
+        task.wait(0.2)
+        Tween(PoweredBy, {TextTransparency = 0}, 0.5)
         
         -- Animate line
-        task.wait(0.2)
-        Tween(Line, {Size = UDim2.new(0, 200, 0, 3)}, 0.6)
+        task.wait(0.3)
+        Tween(Line, {Size = UDim2.new(0, 220, 0, 3)}, 0.7, Enum.EasingStyle.Quad)
         
         -- Wait before closing
-        task.wait(1.5)
+        task.wait(2)
         
         -- Fade out everything
-        Tween(Intro, {BackgroundTransparency = 1}, 0.4)
-        Tween(BGGradient, {BackgroundTransparency = 1}, 0.4)
-        Tween(Logo, {ImageTransparency = 1}, 0.4)
-        Tween(ScriptName, {TextTransparency = 1}, 0.4)
-        Tween(PoweredBy, {TextTransparency = 1}, 0.4)
-        Tween(Line, {BackgroundTransparency = 1}, 0.4)
+        Tween(Intro, {BackgroundTransparency = 1}, 0.5)
+        Tween(BGGradient, {BackgroundTransparency = 1}, 0.5)
+        Tween(Logo, {ImageTransparency = 1}, 0.5)
+        Tween(ScriptName, {TextTransparency = 1}, 0.5)
+        Tween(PoweredBy, {TextTransparency = 1}, 0.5)
+        Tween(Line, {BackgroundTransparency = 1}, 0.5)
         
-        task.wait(0.4)
+        task.wait(0.5)
         pcall(function() Intro:Destroy() end)
     else
         Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.5, Enum.EasingStyle.Back)
@@ -703,9 +806,9 @@ function Drakthon:CreateWindow(config)
     -- Responsive Resize Handler
     local resizeConnection
     resizeConnection = camera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
-        task.wait(0.1) -- Debounce
+        task.wait(0.1)
         local newSize = GetResponsiveSize()
-        if not minimized then
+        if not minimized and Main.Visible then
             Tween(Main, {
                 Size = UDim2.new(0, newSize[1], 0, newSize[2]),
                 Position = UDim2.new(0.5, -newSize[1]/2, 0.5, -newSize[2]/2)
@@ -717,7 +820,12 @@ function Drakthon:CreateWindow(config)
     -- Keybind Toggle
     local keybindConnection = UserInputService.InputBegan:Connect(function(input, gpe)
         if not gpe and input.KeyCode == Keybind then
-            Main.Visible = not Main.Visible
+            if minimized then
+                -- Open from minimized state
+                MinimizeBtn.MouseButton1Click:Fire()
+            else
+                Main.Visible = not Main.Visible
+            end
         end
     end)
     
@@ -733,6 +841,7 @@ function Drakthon:CreateWindow(config)
         CurrentTab = nil,
         ScreenGui = ScreenGui,
         MainFrame = Main,
+        MinimizeIcon = MinimizeIcon,
         Size = Size
     }
     
@@ -1524,7 +1633,7 @@ function Drakthon:CreateWindow(config)
     
     -- Welcome notification
     if IntroEnabled then
-        task.delay(2.5, function()
+        task.delay(3, function()
             self:Notify({
                 Title = "Welcome!", 
                 Content = WindowName .. " loaded successfully!", 
