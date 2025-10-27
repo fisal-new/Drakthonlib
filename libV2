@@ -5,8 +5,8 @@
    | |_| || | | (_| |   <| |_| | | | (_) | | | | 
    |____/ |_|  \__,_|_|\_\\__|_| |_|\___/|_| |_| 
                                                   
-   🐉 Drakthon UI Library V3.3 - Perfect
-   ✅ Custom Intro | ✅ Icon Minimize | ✅ Responsive
+   🐉 Drakthon UI Library V3.4 - Perfect
+   ✅ Enhanced Slider | ✅ Simple Intro | ✅ Smooth Animations
 ]]
 
 local Drakthon = {}
@@ -517,39 +517,82 @@ function Drakthon:CreateWindow(config)
     MinimizeBtn.MouseButton1Click:Connect(function()
         minimized = not minimized
         if minimized then
-            -- Hide main window
-            Tween(Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-            task.wait(0.3)
+            -- Enhanced minimize animation
+            Tween(Main, {
+                Size = UDim2.new(0, Size[1], 0, 0)
+            }, 0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+            
+            task.wait(0.25)
+            
+            Tween(Main, {
+                Size = UDim2.new(0, 0, 0, 0)
+            }, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
+            
+            task.wait(0.2)
             Main.Visible = false
             
-            -- Show minimize icon
+            -- Show minimize icon with bounce
             MinimizeIcon.Visible = true
             MinimizeIcon.Size = UDim2.new(0, 0, 0, 0)
-            Tween(MinimizeIcon, {Size = UDim2.new(0, 70, 0, 70)}, 0.4, Enum.EasingStyle.Back)
+            MinimizeIcon.Rotation = -90
+            Tween(MinimizeIcon, {
+                Size = UDim2.new(0, 70, 0, 70),
+                Rotation = 0
+            }, 0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
         else
-            -- Hide minimize icon
-            Tween(MinimizeIcon, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+            -- Enhanced maximize animation
+            Tween(MinimizeIcon, {
+                Size = UDim2.new(0, 0, 0, 0),
+                Rotation = 90
+            }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+            
             task.wait(0.3)
             MinimizeIcon.Visible = false
             
-            -- Show main window
+            -- Show main window with bounce
             Main.Visible = true
-            Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.4, Enum.EasingStyle.Back)
+            Main.Size = UDim2.new(0, 0, 0, 0)
+            
+            Tween(Main, {
+                Size = UDim2.new(0, Size[1], 0, 50)
+            }, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+            
+            task.wait(0.2)
+            
+            Tween(Main, {
+                Size = UDim2.new(0, Size[1], 0, Size[2])
+            }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
         end
     end)
     
     -- Minimize icon click to restore
     MinimizeIcon.MouseButton1Click:Connect(function()
-        minimized = false
-        
-        -- Hide minimize icon
-        Tween(MinimizeIcon, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-        task.wait(0.3)
-        MinimizeIcon.Visible = false
-        
-        -- Show main window
-        Main.Visible = true
-        Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.4, Enum.EasingStyle.Back)
+        if minimized then
+            minimized = false
+            
+            -- Enhanced maximize animation
+            Tween(MinimizeIcon, {
+                Size = UDim2.new(0, 0, 0, 0),
+                Rotation = 90
+            }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+            
+            task.wait(0.3)
+            MinimizeIcon.Visible = false
+            
+            -- Show main window
+            Main.Visible = true
+            Main.Size = UDim2.new(0, 0, 0, 0)
+            
+            Tween(Main, {
+                Size = UDim2.new(0, Size[1], 0, 50)
+            }, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+            
+            task.wait(0.2)
+            
+            Tween(Main, {
+                Size = UDim2.new(0, Size[1], 0, Size[2])
+            }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        end
     end)
     
     MinimizeBtn.MouseEnter:Connect(function()
@@ -616,40 +659,17 @@ function Drakthon:CreateWindow(config)
     -- Make Draggable
     MakeDraggable(Main, Header)
     
-    -- Enhanced Intro Animation (Logo Style)
+    -- Simple & Clean Intro Animation
     if IntroEnabled then
         local Intro = Create("Frame", {
             Name = "Intro",
             Parent = Main,
-            BackgroundColor3 = Theme.Background,
+            BackgroundTransparency = 1, -- No background!
             Size = UDim2.new(1, 0, 1, 0),
             ZIndex = 200
         })
         
-        AddCorner(Intro, 12)
-        
-        -- Animated Background Gradient
-        local BGGradient = Create("Frame", {
-            Name = "BGGradient",
-            Parent = Intro,
-            BackgroundColor3 = Theme.Accent,
-            BackgroundTransparency = 0.95,
-            Size = UDim2.new(1, 0, 1, 0),
-            ZIndex = 201
-        })
-        
-        AddCorner(BGGradient, 12)
-        
-        Create("UIGradient", {
-            Parent = BGGradient,
-            Color = ColorSequence.new{
-                ColorSequenceKeypoint.new(0, Theme.Accent), 
-                ColorSequenceKeypoint.new(1, Theme.AccentGradient)
-            },
-            Rotation = 45
-        })
-        
-        -- Logo Container
+        -- Logo Container (Centered)
         local LogoContainer = Create("Frame", {
             Name = "LogoContainer",
             Parent = Intro,
@@ -660,7 +680,7 @@ function Drakthon:CreateWindow(config)
             ZIndex = 202
         })
         
-        -- DRAKTHON LOGO (Fixed Image ID)
+        -- DRAKTHON LOGO
         local Logo = Create("ImageLabel", {
             Name = "Logo",
             Parent = LogoContainer,
@@ -672,34 +692,17 @@ function Drakthon:CreateWindow(config)
             ZIndex = 203
         })
         
-        AddCorner(Logo, 16)
-        
-        -- Logo Glow Effect
-        Create("ImageLabel", {
-            Name = "Glow",
-            Parent = Logo,
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, -15, 0, -15),
-            Size = UDim2.new(1, 30, 1, 30),
-            ZIndex = 202,
-            Image = "rbxassetid://5554236805",
-            ImageColor3 = Theme.Accent,
-            ImageTransparency = 0.5,
-            ScaleType = Enum.ScaleType.Slice,
-            SliceCenter = Rect.new(23, 23, 277, 277)
-        })
-        
         -- Script Name
         local ScriptName = Create("TextLabel", {
             Name = "ScriptName",
             Parent = LogoContainer,
             BackgroundTransparency = 1,
-            Position = UDim2.new(0, 115, 0, 10),
-            Size = UDim2.new(0, 285, 0, 50),
+            Position = UDim2.new(0, 115, 0, 20),
+            Size = UDim2.new(0, 285, 0, 40),
             Font = Enum.Font.GothamBold,
             Text = IntroText,
             TextColor3 = Theme.Text,
-            TextSize = 28,
+            TextSize = 26,
             TextXAlignment = Enum.TextXAlignment.Left,
             TextYAlignment = Enum.TextYAlignment.Top,
             ZIndex = 203
@@ -720,48 +723,6 @@ function Drakthon:CreateWindow(config)
             ZIndex = 203
         })
         
-        -- Animated Line Under Text
-        local Line = Create("Frame", {
-            Name = "Line",
-            Parent = LogoContainer,
-            BackgroundColor3 = Theme.Accent,
-            Position = UDim2.new(0, 115, 0, 95),
-            Size = UDim2.new(0, 0, 0, 3),
-            BorderSizePixel = 0,
-            ZIndex = 203
-        })
-        
-        AddCorner(Line, 999)
-        
-        -- Particles Effect
-        for i = 1, 8 do
-            local Particle = Create("Frame", {
-                Parent = Intro,
-                BackgroundColor3 = Theme.Accent,
-                BackgroundTransparency = 0.8,
-                Position = UDim2.new(math.random(0, 100) / 100, 0, math.random(0, 100) / 100, 0),
-                Size = UDim2.new(0, math.random(4, 10), 0, math.random(4, 10)),
-                ZIndex = 201
-            })
-            AddCorner(Particle, 999)
-            
-            -- Floating animation
-            task.spawn(function()
-                while Particle.Parent do
-                    Tween(Particle, {
-                        Position = UDim2.new(
-                            math.random(0, 100) / 100, 
-                            0, 
-                            math.random(0, 100) / 100, 
-                            0
-                        ),
-                        BackgroundTransparency = math.random(60, 95) / 100
-                    }, math.random(3, 5))
-                    task.wait(math.random(3, 5))
-                end
-            end)
-        end
-        
         -- Animation Sequence
         Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.6, Enum.EasingStyle.Back)
         
@@ -770,34 +731,26 @@ function Drakthon:CreateWindow(config)
         ScriptName.TextTransparency = 1
         PoweredBy.TextTransparency = 1
         
-        task.wait(0.4)
+        task.wait(0.5)
         
-        -- Fade in logo with scale
-        Logo.Size = UDim2.new(0, 80, 0, 80)
-        Tween(Logo, {ImageTransparency = 0, Size = UDim2.new(0, 100, 0, 100)}, 0.6, Enum.EasingStyle.Back)
-        task.wait(0.3)
+        -- Fade in logo
+        Tween(Logo, {ImageTransparency = 0}, 0.5)
+        task.wait(0.2)
         
         -- Fade in text
-        Tween(ScriptName, {TextTransparency = 0}, 0.5)
-        task.wait(0.2)
-        Tween(PoweredBy, {TextTransparency = 0}, 0.5)
-        
-        -- Animate line
-        task.wait(0.3)
-        Tween(Line, {Size = UDim2.new(0, 220, 0, 3)}, 0.7, Enum.EasingStyle.Quad)
+        Tween(ScriptName, {TextTransparency = 0}, 0.4)
+        task.wait(0.1)
+        Tween(PoweredBy, {TextTransparency = 0}, 0.4)
         
         -- Wait before closing
-        task.wait(2)
+        task.wait(1.8)
         
         -- Fade out everything
-        Tween(Intro, {BackgroundTransparency = 1}, 0.5)
-        Tween(BGGradient, {BackgroundTransparency = 1}, 0.5)
-        Tween(Logo, {ImageTransparency = 1}, 0.5)
-        Tween(ScriptName, {TextTransparency = 1}, 0.5)
-        Tween(PoweredBy, {TextTransparency = 1}, 0.5)
-        Tween(Line, {BackgroundTransparency = 1}, 0.5)
+        Tween(Logo, {ImageTransparency = 1}, 0.4)
+        Tween(ScriptName, {TextTransparency = 1}, 0.4)
+        Tween(PoweredBy, {TextTransparency = 1}, 0.4)
         
-        task.wait(0.5)
+        task.wait(0.4)
         pcall(function() Intro:Destroy() end)
     else
         Tween(Main, {Size = UDim2.new(0, Size[1], 0, Size[2])}, 0.5, Enum.EasingStyle.Back)
@@ -821,8 +774,7 @@ function Drakthon:CreateWindow(config)
     local keybindConnection = UserInputService.InputBegan:Connect(function(input, gpe)
         if not gpe and input.KeyCode == Keybind then
             if minimized then
-                -- Open from minimized state
-                MinimizeBtn.MouseButton1Click:Fire()
+                MinimizeIcon.MouseButton1Click:Fire()
             else
                 Main.Visible = not Main.Visible
             end
@@ -1069,6 +1021,7 @@ function Drakthon:CreateWindow(config)
             }
         end
         
+        -- ENHANCED SLIDER with Editable TextBox
         function Tab:CreateSlider(config)
             config = config or {}
             local Name = config.Name or "Slider"
@@ -1082,7 +1035,7 @@ function Drakthon:CreateWindow(config)
                 Name = "Slider",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.Secondary,
-                Size = UDim2.new(1, 0, 0, 50),
+                Size = UDim2.new(1, 0, 0, 60),
                 ZIndex = 3
             })
             
@@ -1102,26 +1055,30 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 4
             })
             
-            local ValueLabel = Create("TextLabel", {
-                Name = "Value",
+            -- Editable Value TextBox
+            local ValueBox = Create("TextBox", {
+                Name = "ValueBox",
                 Parent = Frame,
-                BackgroundTransparency = 1,
-                Position = UDim2.new(1, -15, 0, 5),
-                Size = UDim2.new(0, 0, 0, 20),
+                BackgroundColor3 = Theme.Tertiary,
+                Position = UDim2.new(1, -65, 0, 5),
+                Size = UDim2.new(0, 50, 0, 22),
                 Font = Enum.Font.GothamBold,
                 Text = tostring(Default),
                 TextColor3 = Theme.Accent,
                 TextSize = 13,
-                TextXAlignment = Enum.TextXAlignment.Right,
+                TextXAlignment = Enum.TextXAlignment.Center,
+                ClearTextOnFocus = false,
                 ZIndex = 4
             })
+            
+            AddCorner(ValueBox, 6)
             
             local Track = Create("Frame", {
                 Name = "Track",
                 Parent = Frame,
                 BackgroundColor3 = Theme.Tertiary,
-                Position = UDim2.new(0, 15, 1, -15),
-                Size = UDim2.new(1, -30, 0, 4),
+                Position = UDim2.new(0, 15, 1, -20),
+                Size = UDim2.new(1, -30, 0, 5),
                 ZIndex = 4
             })
             
@@ -1142,7 +1099,7 @@ function Drakthon:CreateWindow(config)
                 Parent = Track,
                 BackgroundColor3 = Theme.Text,
                 Position = UDim2.new(0, 0, 0.5, 0),
-                Size = UDim2.new(0, 10, 0, 10),
+                Size = UDim2.new(0, 14, 0, 14),
                 AnchorPoint = Vector2.new(0.5, 0.5),
                 ZIndex = 6
             })
@@ -1155,7 +1112,7 @@ function Drakthon:CreateWindow(config)
             local function Update(val)
                 value = math.clamp(math.floor((val / Increment) + 0.5) * Increment, Min, Max)
                 local percent = (value - Min) / (Max - Min)
-                ValueLabel.Text = tostring(value)
+                ValueBox.Text = tostring(value)
                 Fill.Size = UDim2.new(percent, 0, 1, 0)
                 Dot.Position = UDim2.new(percent, 0, 0.5, 0)
                 task.spawn(Callback, value)
@@ -1163,10 +1120,11 @@ function Drakthon:CreateWindow(config)
             
             Update(Default)
             
+            -- Mouse/Touch Dragging Support
             Track.InputBegan:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                     dragging = true
-                    Tween(Dot, {Size = UDim2.new(0, 14, 0, 14)}, 0.1)
+                    Tween(Dot, {Size = UDim2.new(0, 18, 0, 18)}, 0.1)
                     
                     local percent = math.clamp((input.Position.X - Track.AbsolutePosition.X) / Track.AbsoluteSize.X, 0, 1)
                     Update(Min + (percent * (Max - Min)))
@@ -1174,17 +1132,35 @@ function Drakthon:CreateWindow(config)
             end)
             
             Track.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                     dragging = false
-                    Tween(Dot, {Size = UDim2.new(0, 10, 0, 10)}, 0.1)
+                    Tween(Dot, {Size = UDim2.new(0, 14, 0, 14)}, 0.1)
                 end
             end)
             
             Track.InputChanged:Connect(function(input)
-                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
                     local percent = math.clamp((input.Position.X - Track.AbsolutePosition.X) / Track.AbsoluteSize.X, 0, 1)
                     Update(Min + (percent * (Max - Min)))
                 end
+            end)
+            
+            -- TextBox Manual Input
+            ValueBox.FocusLost:Connect(function()
+                local inputValue = tonumber(ValueBox.Text)
+                if inputValue then
+                    Update(inputValue)
+                else
+                    ValueBox.Text = tostring(value)
+                end
+            end)
+            
+            ValueBox.Focused:Connect(function()
+                Tween(ValueBox, {BackgroundColor3 = Color3.fromRGB(35, 35, 45)}, 0.2)
+            end)
+            
+            ValueBox.FocusLost:Connect(function()
+                Tween(ValueBox, {BackgroundColor3 = Theme.Tertiary}, 0.2)
             end)
             
             return {
