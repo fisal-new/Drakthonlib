@@ -1,301 +1,415 @@
 --[[
-    ╔══════════════════════════════════════════════════════════════╗
-    ║                  DRAKTHON HUB - THEME SYSTEM                ║
-    ║              Professional Color Themes Library               ║
-    ╚══════════════════════════════════════════════════════════════╝
+    🎨 Drakthon Theme System V2
+    Simple, Clean, Powerful
 ]]
 
-local Themes = {}
+local ThemeSystem = {}
 
--- ═══════════════════════════════════════════════════════════════
--- 🌙 DARK PURPLE (Default)
--- ═══════════════════════════════════════════════════════════════
-Themes.DarkPurple = {
-    Name = "Dark Purple",
-    BG = Color3.fromRGB(16, 16, 20),
-    Top = Color3.fromRGB(20, 20, 26),
-    Sur = Color3.fromRGB(24, 24, 30),
-    Ele = Color3.fromRGB(30, 30, 38),
-    Hov = Color3.fromRGB(38, 38, 48),
-    Pri = Color3.fromRGB(147, 51, 234),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(160, 160, 170),
+-- 🎨 Built-in Themes
+local Themes = {
+    Default = {
+        BG = Color3.fromRGB(15, 15, 20),
+        BG2 = Color3.fromRGB(20, 20, 28),
+        BG3 = Color3.fromRGB(25, 25, 35),
+        Accent = Color3.fromRGB(138, 43, 226),
+        Accent2 = Color3.fromRGB(75, 0, 130),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 180, 190),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Ocean = {
+        BG = Color3.fromRGB(10, 15, 25),
+        BG2 = Color3.fromRGB(15, 20, 30),
+        BG3 = Color3.fromRGB(20, 25, 35),
+        Accent = Color3.fromRGB(0, 149, 255),
+        Accent2 = Color3.fromRGB(0, 100, 200),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 190, 200),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Crimson = {
+        BG = Color3.fromRGB(20, 10, 10),
+        BG2 = Color3.fromRGB(28, 15, 15),
+        BG3 = Color3.fromRGB(35, 20, 20),
+        Accent = Color3.fromRGB(220, 20, 60),
+        Accent2 = Color3.fromRGB(150, 10, 40),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(200, 180, 180),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Emerald = {
+        BG = Color3.fromRGB(10, 20, 15),
+        BG2 = Color3.fromRGB(15, 25, 20),
+        BG3 = Color3.fromRGB(20, 30, 25),
+        Accent = Color3.fromRGB(46, 204, 113),
+        Accent2 = Color3.fromRGB(30, 150, 80),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 200, 190),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Dark = {
+        BG = Color3.fromRGB(10, 10, 10),
+        BG2 = Color3.fromRGB(18, 18, 18),
+        BG3 = Color3.fromRGB(25, 25, 25),
+        Accent = Color3.fromRGB(255, 255, 255),
+        Accent2 = Color3.fromRGB(200, 200, 200),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(150, 150, 150),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Light = {
+        BG = Color3.fromRGB(245, 245, 250),
+        BG2 = Color3.fromRGB(235, 235, 240),
+        BG3 = Color3.fromRGB(225, 225, 230),
+        Accent = Color3.fromRGB(138, 43, 226),
+        Accent2 = Color3.fromRGB(75, 0, 130),
+        Text = Color3.fromRGB(30, 30, 35),
+        Text2 = Color3.fromRGB(100, 100, 110),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Cherry = {
+        BG = Color3.fromRGB(25, 15, 20),
+        BG2 = Color3.fromRGB(30, 20, 25),
+        BG3 = Color3.fromRGB(35, 25, 30),
+        Accent = Color3.fromRGB(255, 105, 180),
+        Accent2 = Color3.fromRGB(219, 39, 119),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(200, 180, 190),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Sunset = {
+        BG = Color3.fromRGB(20, 15, 10),
+        BG2 = Color3.fromRGB(25, 20, 15),
+        BG3 = Color3.fromRGB(30, 25, 20),
+        Accent = Color3.fromRGB(255, 140, 0),
+        Accent2 = Color3.fromRGB(255, 69, 0),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(200, 190, 180),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Aqua = {
+        BG = Color3.fromRGB(10, 20, 20),
+        BG2 = Color3.fromRGB(15, 25, 25),
+        BG3 = Color3.fromRGB(20, 30, 30),
+        Accent = Color3.fromRGB(0, 255, 255),
+        Accent2 = Color3.fromRGB(0, 150, 150),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 200, 200),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Midnight = {
+        BG = Color3.fromRGB(12, 8, 20),
+        BG2 = Color3.fromRGB(18, 12, 28),
+        BG3 = Color3.fromRGB(24, 16, 35),
+        Accent = Color3.fromRGB(147, 51, 234),
+        Accent2 = Color3.fromRGB(88, 28, 135),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(190, 180, 200),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Fire = {
+        BG = Color3.fromRGB(20, 10, 5),
+        BG2 = Color3.fromRGB(28, 15, 10),
+        BG3 = Color3.fromRGB(35, 20, 15),
+        Accent = Color3.fromRGB(255, 69, 0),
+        Accent2 = Color3.fromRGB(220, 20, 60),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(200, 180, 170),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Matrix = {
+        BG = Color3.fromRGB(5, 10, 5),
+        BG2 = Color3.fromRGB(10, 15, 10),
+        BG3 = Color3.fromRGB(15, 20, 15),
+        Accent = Color3.fromRGB(0, 255, 65),
+        Accent2 = Color3.fromRGB(0, 180, 45),
+        Text = Color3.fromRGB(0, 255, 65),
+        Text2 = Color3.fromRGB(0, 180, 45),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Rainbow = {
+        BG = Color3.fromRGB(15, 15, 20),
+        BG2 = Color3.fromRGB(20, 20, 28),
+        BG3 = Color3.fromRGB(25, 25, 35),
+        Accent = Color3.fromRGB(255, 0, 255),
+        Accent2 = Color3.fromRGB(0, 255, 255),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 180, 190),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Galaxy = {
+        BG = Color3.fromRGB(8, 5, 15),
+        BG2 = Color3.fromRGB(15, 10, 25),
+        BG3 = Color3.fromRGB(20, 15, 30),
+        Accent = Color3.fromRGB(138, 43, 226),
+        Accent2 = Color3.fromRGB(75, 0, 130),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 180, 200),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(138, 43, 226)
+    },
+    
+    Grape = {
+        BG = Color3.fromRGB(18, 10, 25),
+        BG2 = Color3.fromRGB(25, 15, 35),
+        BG3 = Color3.fromRGB(30, 20, 40),
+        Accent = Color3.fromRGB(147, 51, 234),
+        Accent2 = Color3.fromRGB(109, 40, 217),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(190, 180, 200),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(147, 51, 234)
+    },
+    
+    Gold = {
+        BG = Color3.fromRGB(20, 18, 10),
+        BG2 = Color3.fromRGB(28, 25, 15),
+        BG3 = Color3.fromRGB(35, 30, 20),
+        Accent = Color3.fromRGB(255, 215, 0),
+        Accent2 = Color3.fromRGB(218, 165, 32),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(200, 190, 180),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Rose = {
+        BG = Color3.fromRGB(22, 12, 15),
+        BG2 = Color3.fromRGB(30, 18, 22),
+        BG3 = Color3.fromRGB(38, 24, 28),
+        Accent = Color3.fromRGB(255, 20, 147),
+        Accent2 = Color3.fromRGB(199, 21, 133),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(200, 180, 190),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Neon = {
+        BG = Color3.fromRGB(8, 8, 12),
+        BG2 = Color3.fromRGB(15, 15, 20),
+        BG3 = Color3.fromRGB(22, 22, 28),
+        Accent = Color3.fromRGB(0, 255, 127),
+        Accent2 = Color3.fromRGB(57, 255, 20),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 200, 190),
+        Green = Color3.fromRGB(0, 255, 127),
+        Red = Color3.fromRGB(255, 0, 127),
+        Yellow = Color3.fromRGB(255, 255, 0),
+        Blue = Color3.fromRGB(0, 191, 255)
+    },
+    
+    Ice = {
+        BG = Color3.fromRGB(12, 18, 22),
+        BG2 = Color3.fromRGB(18, 25, 30),
+        BG3 = Color3.fromRGB(24, 32, 38),
+        Accent = Color3.fromRGB(135, 206, 250),
+        Accent2 = Color3.fromRGB(70, 130, 180),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 200, 210),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(135, 206, 250)
+    },
+    
+    Void = {
+        BG = Color3.fromRGB(5, 5, 8),
+        BG2 = Color3.fromRGB(10, 10, 15),
+        BG3 = Color3.fromRGB(15, 15, 22),
+        Accent = Color3.fromRGB(75, 0, 130),
+        Accent2 = Color3.fromRGB(138, 43, 226),
+        Text = Color3.fromRGB(200, 200, 220),
+        Text2 = Color3.fromRGB(150, 150, 170),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    }
 }
 
--- ═══════════════════════════════════════════════════════════════
--- ☀️ LIGHT MODE
--- ═══════════════════════════════════════════════════════════════
-Themes.Light = {
-    Name = "Light Mode",
-    BG = Color3.fromRGB(248, 248, 252),
-    Top = Color3.fromRGB(255, 255, 255),
-    Sur = Color3.fromRGB(245, 245, 250),
-    Ele = Color3.fromRGB(238, 238, 245),
-    Hov = Color3.fromRGB(230, 230, 240),
-    Pri = Color3.fromRGB(147, 51, 234),
-    Txt = Color3.fromRGB(20, 20, 30),
-    Sub = Color3.fromRGB(100, 100, 120),
-}
+-- Custom Themes Storage
+local CustomThemes = {}
 
--- ═══════════════════════════════════════════════════════════════
--- 🌊 OCEAN BLUE
--- ═══════════════════════════════════════════════════════════════
-Themes.Ocean = {
-    Name = "Ocean Blue",
-    BG = Color3.fromRGB(15, 20, 28),
-    Top = Color3.fromRGB(18, 25, 35),
-    Sur = Color3.fromRGB(22, 30, 42),
-    Ele = Color3.fromRGB(28, 38, 52),
-    Hov = Color3.fromRGB(35, 48, 65),
-    Pri = Color3.fromRGB(59, 130, 246),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(156, 163, 175),
-}
+-- Current Theme
+local Current = Themes.Default
 
--- ═══════════════════════════════════════════════════════════════
--- 🌅 SUNSET ORANGE
--- ═══════════════════════════════════════════════════════════════
-Themes.Sunset = {
-    Name = "Sunset Orange",
-    BG = Color3.fromRGB(20, 16, 18),
-    Top = Color3.fromRGB(26, 20, 22),
-    Sur = Color3.fromRGB(32, 24, 28),
-    Ele = Color3.fromRGB(40, 30, 35),
-    Hov = Color3.fromRGB(50, 38, 42),
-    Pri = Color3.fromRGB(251, 146, 60),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(180, 160, 170),
-}
+-- Callbacks
+local Callbacks = {}
 
--- ═══════════════════════════════════════════════════════════════
--- 🌲 FOREST GREEN
--- ═══════════════════════════════════════════════════════════════
-Themes.Forest = {
-    Name = "Forest Green",
-    BG = Color3.fromRGB(16, 20, 18),
-    Top = Color3.fromRGB(20, 26, 22),
-    Sur = Color3.fromRGB(24, 32, 28),
-    Ele = Color3.fromRGB(30, 40, 35),
-    Hov = Color3.fromRGB(38, 50, 42),
-    Pri = Color3.fromRGB(34, 197, 94),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(160, 180, 170),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 🌃 MIDNIGHT BLUE
--- ═══════════════════════════════════════════════════════════════
-Themes.Midnight = {
-    Name = "Midnight Blue",
-    BG = Color3.fromRGB(10, 15, 25),
-    Top = Color3.fromRGB(15, 20, 32),
-    Sur = Color3.fromRGB(18, 25, 40),
-    Ele = Color3.fromRGB(25, 32, 50),
-    Hov = Color3.fromRGB(32, 42, 62),
-    Pri = Color3.fromRGB(99, 102, 241),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(148, 163, 184),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 🍒 CHERRY RED
--- ═══════════════════════════════════════════════════════════════
-Themes.Cherry = {
-    Name = "Cherry Red",
-    BG = Color3.fromRGB(20, 15, 16),
-    Top = Color3.fromRGB(26, 18, 20),
-    Sur = Color3.fromRGB(32, 22, 25),
-    Ele = Color3.fromRGB(40, 28, 32),
-    Hov = Color3.fromRGB(50, 35, 40),
-    Pri = Color3.fromRGB(239, 68, 68),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(180, 160, 165),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 🔥 MONOKAI
--- ═══════════════════════════════════════════════════════════════
-Themes.Monokai = {
-    Name = "Monokai",
-    BG = Color3.fromRGB(39, 40, 34),
-    Top = Color3.fromRGB(46, 47, 40),
-    Sur = Color3.fromRGB(52, 54, 46),
-    Ele = Color3.fromRGB(60, 62, 52),
-    Hov = Color3.fromRGB(70, 72, 60),
-    Pri = Color3.fromRGB(249, 38, 114),
-    Txt = Color3.fromRGB(248, 248, 242),
-    Sub = Color3.fromRGB(117, 113, 94),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 💜 DISCORD
--- ═══════════════════════════════════════════════════════════════
-Themes.Discord = {
-    Name = "Discord",
-    BG = Color3.fromRGB(32, 34, 37),
-    Top = Color3.fromRGB(47, 49, 54),
-    Sur = Color3.fromRGB(54, 57, 63),
-    Ele = Color3.fromRGB(64, 68, 75),
-    Hov = Color3.fromRGB(79, 84, 92),
-    Pri = Color3.fromRGB(88, 101, 242),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(185, 187, 190),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 🎃 HALLOWEEN
--- ═══════════════════════════════════════════════════════════════
-Themes.Halloween = {
-    Name = "Halloween",
-    BG = Color3.fromRGB(18, 12, 8),
-    Top = Color3.fromRGB(25, 16, 10),
-    Sur = Color3.fromRGB(32, 20, 12),
-    Ele = Color3.fromRGB(40, 25, 15),
-    Hov = Color3.fromRGB(50, 32, 20),
-    Pri = Color3.fromRGB(255, 140, 0),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(180, 150, 120),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 🎄 CHRISTMAS
--- ═══════════════════════════════════════════════════════════════
-Themes.Christmas = {
-    Name = "Christmas",
-    BG = Color3.fromRGB(15, 18, 15),
-    Top = Color3.fromRGB(20, 24, 20),
-    Sur = Color3.fromRGB(25, 30, 25),
-    Ele = Color3.fromRGB(32, 38, 32),
-    Hov = Color3.fromRGB(40, 48, 40),
-    Pri = Color3.fromRGB(220, 38, 38),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(165, 180, 165),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 🌸 SAKURA PINK
--- ═══════════════════════════════════════════════════════════════
-Themes.Sakura = {
-    Name = "Sakura Pink",
-    BG = Color3.fromRGB(20, 16, 18),
-    Top = Color3.fromRGB(26, 20, 24),
-    Sur = Color3.fromRGB(32, 25, 30),
-    Ele = Color3.fromRGB(40, 32, 38),
-    Hov = Color3.fromRGB(50, 40, 46),
-    Pri = Color3.fromRGB(236, 72, 153),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(180, 160, 170),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 💎 CYBERPUNK
--- ═══════════════════════════════════════════════════════════════
-Themes.Cyberpunk = {
-    Name = "Cyberpunk",
-    BG = Color3.fromRGB(10, 12, 20),
-    Top = Color3.fromRGB(15, 18, 28),
-    Sur = Color3.fromRGB(20, 24, 36),
-    Ele = Color3.fromRGB(28, 32, 46),
-    Hov = Color3.fromRGB(36, 42, 58),
-    Pri = Color3.fromRGB(0, 255, 255),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(156, 220, 254),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 🌙 NORD
--- ═══════════════════════════════════════════════════════════════
-Themes.Nord = {
-    Name = "Nord",
-    BG = Color3.fromRGB(46, 52, 64),
-    Top = Color3.fromRGB(59, 66, 82),
-    Sur = Color3.fromRGB(67, 76, 94),
-    Ele = Color3.fromRGB(76, 86, 106),
-    Hov = Color3.fromRGB(94, 105, 130),
-    Pri = Color3.fromRGB(136, 192, 208),
-    Txt = Color3.fromRGB(236, 239, 244),
-    Sub = Color3.fromRGB(216, 222, 233),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 🌟 GOLDEN
--- ═══════════════════════════════════════════════════════════════
-Themes.Golden = {
-    Name = "Golden",
-    BG = Color3.fromRGB(20, 18, 14),
-    Top = Color3.fromRGB(26, 24, 18),
-    Sur = Color3.fromRGB(32, 30, 22),
-    Ele = Color3.fromRGB(40, 38, 28),
-    Hov = Color3.fromRGB(50, 46, 35),
-    Pri = Color3.fromRGB(234, 179, 8),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(180, 170, 150),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 🎮 RETROWAVE
--- ═══════════════════════════════════════════════════════════════
-Themes.Retrowave = {
-    Name = "Retrowave",
-    BG = Color3.fromRGB(18, 12, 28),
-    Top = Color3.fromRGB(24, 16, 36),
-    Sur = Color3.fromRGB(30, 20, 45),
-    Ele = Color3.fromRGB(38, 26, 56),
-    Hov = Color3.fromRGB(48, 34, 68),
-    Pri = Color3.fromRGB(255, 0, 128),
-    Txt = Color3.fromRGB(255, 255, 255),
-    Sub = Color3.fromRGB(200, 160, 255),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- 🏴 DRACULA
--- ═══════════════════════════════════════════════════════════════
-Themes.Dracula = {
-    Name = "Dracula",
-    BG = Color3.fromRGB(40, 42, 54),
-    Top = Color3.fromRGB(68, 71, 90),
-    Sur = Color3.fromRGB(68, 71, 90),
-    Ele = Color3.fromRGB(98, 114, 164),
-    Hov = Color3.fromRGB(128, 144, 194),
-    Pri = Color3.fromRGB(189, 147, 249),
-    Txt = Color3.fromRGB(248, 248, 242),
-    Sub = Color3.fromRGB(139, 233, 253),
-}
-
--- ═══════════════════════════════════════════════════════════════
--- Get Theme Function
--- ═══════════════════════════════════════════════════════════════
-function Themes:Get(themeName)
-    return self[themeName] or self.DarkPurple
+-- Set Theme
+function ThemeSystem.Set(name)
+    local theme = Themes[name] or CustomThemes[name]
+    if not theme then
+        warn("[Theme] Not found: " .. tostring(name))
+        return false
+    end
+    
+    Current = theme
+    
+    for _, callback in ipairs(Callbacks) do
+        task.spawn(callback, theme)
+    end
+    
+    return true
 end
 
--- ═══════════════════════════════════════════════════════════════
--- List All Themes
--- ═══════════════════════════════════════════════════════════════
-function Themes:List()
+-- Get Current Theme
+function ThemeSystem.Get()
+    return Current
+end
+
+-- Get Color
+function ThemeSystem.Color(name)
+    return Current[name] or Color3.new(1, 1, 1)
+end
+
+-- List Theme Names
+function ThemeSystem.List()
     local list = {}
-    for name, theme in pairs(self) do
-        if type(theme) == "table" and theme.Name then
-            table.insert(list, name)
-        end
+    for name in pairs(Themes) do
+        table.insert(list, name)
+    end
+    for name in pairs(CustomThemes) do
+        table.insert(list, name)
     end
     return list
 end
 
--- ═══════════════════════════════════════════════════════════════
--- Preview Theme Colors
--- ═══════════════════════════════════════════════════════════════
-function Themes:Preview(themeName)
-    local theme = self:Get(themeName)
-    print("═══════════════════════════════════════")
-    print("Theme: " .. theme.Name)
-    print("═══════════════════════════════════════")
-    for key, value in pairs(theme) do
-        if type(value) ~= "string" then
-            print(key .. ": RGB(" .. math.floor(value.R*255) .. ", " .. math.floor(value.G*255) .. ", " .. math.floor(value.B*255) .. ")")
+-- Add Custom Theme
+function ThemeSystem.Add(name, theme)
+    if type(theme) ~= "table" then return false end
+    
+    -- Validate colors
+    local required = {"BG", "BG2", "BG3", "Accent", "Accent2", "Text", "Text2", "Green", "Red", "Yellow", "Blue"}
+    for _, key in ipairs(required) do
+        if not theme[key] then
+            warn("[Theme] Missing color: " .. key)
+            return false
         end
     end
-    print("═══════════════════════════════════════")
+    
+    CustomThemes[name] = theme
+    return true
 end
 
-return Themes
+-- Remove Custom Theme
+function ThemeSystem.Remove(name)
+    if CustomThemes[name] then
+        CustomThemes[name] = nil
+        return true
+    end
+    return false
+end
+
+-- Random Theme
+function ThemeSystem.Random()
+    local list = ThemeSystem.List()
+    local random = list[math.random(#list)]
+    ThemeSystem.Set(random)
+    return random
+end
+
+-- On Theme Change Callback
+function ThemeSystem.OnChange(callback)
+    if type(callback) == "function" then
+        table.insert(Callbacks, callback)
+    end
+end
+
+-- Create Gradient
+function ThemeSystem.Gradient(reverse)
+    local gradient = Instance.new("UIGradient")
+    if reverse then
+        gradient.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Current.Accent2),
+            ColorSequenceKeypoint.new(1, Current.Accent)
+        }
+    else
+        gradient.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Current.Accent),
+            ColorSequenceKeypoint.new(1, Current.Accent2)
+        }
+    end
+    return gradient
+end
+
+-- Quick Color Access
+ThemeSystem.BG = function() return Current.BG end
+ThemeSystem.BG2 = function() return Current.BG2 end
+ThemeSystem.BG3 = function() return Current.BG3 end
+ThemeSystem.Accent = function() return Current.Accent end
+ThemeSystem.Accent2 = function() return Current.Accent2 end
+ThemeSystem.Text = function() return Current.Text end
+ThemeSystem.Text2 = function() return Current.Text2 end
+ThemeSystem.Green = function() return Current.Green end
+ThemeSystem.Red = function() return Current.Red end
+ThemeSystem.Yellow = function() return Current.Yellow end
+ThemeSystem.Blue = function() return Current.Blue end
+
+-- Export
+ThemeSystem.Themes = Themes
+ThemeSystem.Custom = CustomThemes
+ThemeSystem.Current = Current
+
+return ThemeSystem
