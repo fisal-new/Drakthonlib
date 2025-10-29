@@ -54,6 +54,7 @@ if not themeLoaded or not Theme then
         Set = function() end,
         Get = function() return {} end,
         List = function() return {"Default"} end,
+        Random = function() return "Default" end,
         Gradient = function() 
             local g = Instance.new("UIGradient")
             g.Color = ColorSequence.new{
@@ -80,6 +81,7 @@ local RESPONSIVE = {
 
 -- Utility Functions
 local function Tween(obj, props, dur, style, dir)
+    if not obj or not obj.Parent then return end
     local tweenInfo = TweenInfo.new(
         dur or 0.3,
         style or Enum.EasingStyle.Quad,
@@ -171,7 +173,7 @@ local function MakeDraggable(frame, handle)
         end
     end)
     
-    handle.InputChanged:Connect(function(input)
+    UserInputService.InputChanged:Connect(function(input)
         if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or 
                         input.UserInputType == Enum.UserInputType.Touch) then
             local delta = input.Position - dragStart
@@ -367,15 +369,14 @@ function Drakthon:CreateWindow(config)
     
     -- Get Parent
     local function getParent()
-        if gethui then
-            return gethui()
-        elseif syn and syn.protect_gui then
-            local sg = Instance.new("ScreenGui")
-            syn.protect_gui(sg)
-            sg.Parent = CoreGui
-            return CoreGui
+        local success, result = pcall(function()
+            return (gethui and gethui()) or game:GetService("CoreGui")
+        end)
+        
+        if success then
+            return result
         else
-            return RunService:IsStudio() and Players.LocalPlayer.PlayerGui or CoreGui
+            return game.Players.LocalPlayer:WaitForChild("PlayerGui")
         end
     end
     
@@ -761,7 +762,7 @@ function Drakthon:CreateWindow(config)
             BackgroundTransparency = 1,
             Position = UDim2.new(0, 0, 0, 0),
             Size = UDim2.new(0, 100, 0, 100),
-            Image = "rbxassetid://94120590558360",
+            Image = WindowConfig.Icon,
             ScaleType = Enum.ScaleType.Fit,
             ZIndex = 203
         })
@@ -1092,7 +1093,7 @@ function Drakthon:CreateWindow(config)
             }
         end
         
-        -- Create Slider (Enhanced with TextBox)
+        -- Create Slider
         function Tab:CreateSlider(config)
             config = config or {}
             local Name = config.Name or "Slider"
@@ -1195,13 +1196,10 @@ function Drakthon:CreateWindow(config)
                    input.UserInputType == Enum.UserInputType.Touch then
                     dragging = true
                     Tween(Dot, {Size = UDim2.new(0, 18, 0, 18)}, 0.1)
-                    
-                    local percent = math.clamp((input.Position.X - Track.AbsolutePosition.X) / Track.AbsoluteSize.X, 0, 1)
-                    Update(Min + (percent * (Max - Min)))
                 end
             end)
             
-            Track.InputEnded:Connect(function(input)
+            UserInputService.InputEnded:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or 
                    input.UserInputType == Enum.UserInputType.Touch then
                     dragging = false
@@ -1209,7 +1207,7 @@ function Drakthon:CreateWindow(config)
                 end
             end)
             
-            Track.InputChanged:Connect(function(input)
+            UserInputService.InputChanged:Connect(function(input)
                 if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or 
                                 input.UserInputType == Enum.UserInputType.Touch) then
                     local percent = math.clamp((input.Position.X - Track.AbsolutePosition.X) / Track.AbsoluteSize.X, 0, 1)
@@ -1369,7 +1367,7 @@ function Drakthon:CreateWindow(config)
                 if opened then
                     Tween(Arrow, {Rotation = 180}, 0.2)
                     task.wait()
-                    local contentHeight = OptionsContainer.AbsoluteSize.Y
+                    local contentHeight = #Options * 30
                     Tween(Frame, {Size = UDim2.new(1, 0, 0, 38 + contentHeight + 5)}, 0.3)
                 else
                     Tween(Arrow, {Rotation = 0}, 0.2)
@@ -1451,6 +1449,9 @@ function Drakthon:CreateWindow(config)
             return {
                 Set = function(self, txt)
                     Input.Text = txt
+                end,
+                Get = function(self)
+                    return Input.Text
                 end
             }
         end
@@ -1476,6 +1477,9 @@ function Drakthon:CreateWindow(config)
             return {
                 Set = function(self, txt)
                     Label.Text = txt
+                end,
+                Get = function(self)
+                    return Label.Text
                 end
             }
         end
@@ -1523,6 +1527,12 @@ function Drakthon:CreateWindow(config)
             AddCorner(Frame, 8)
             AddPadding(Frame, 10, 15, 15, 10)
             
+            local layout = Create("UIListLayout", {
+                Parent = Frame,
+                SortOrder = Enum.SortOrder.LayoutOrder,
+                Padding = UDim.new(0, 5)
+            })
+            
             local Title = Create("TextLabel", {
                 Name = "Title",
                 Parent = Frame,
@@ -1541,7 +1551,6 @@ function Drakthon:CreateWindow(config)
                 Name = "Content",
                 Parent = Frame,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, 0, 0, 25),
                 Size = UDim2.new(1, 0, 0, 0),
                 AutomaticSize = Enum.AutomaticSize.Y,
                 Font = Enum.Font.Gotham,
@@ -1618,6 +1627,9 @@ function Drakthon:CreateWindow(config)
                     currentColor = col
                     ColorBox.BackgroundColor3 = col
                     task.spawn(Callback, col)
+                end,
+                Get = function(self)
+                    return currentColor
                 end
             }
         end
@@ -1684,7 +1696,7 @@ function Drakthon:CreateWindow(config)
                 end
                 
                 bindConnection = UserInputService.InputBegan:Connect(function(input, gpe)
-                    if binding then
+                    if binding and not gpe then
                         currentKey = input.KeyCode
                         KeyBtn.Text = input.KeyCode.Name
                         KeyBtn.BackgroundColor3 = Theme.BG3()
@@ -1713,6 +1725,9 @@ function Drakthon:CreateWindow(config)
                 Set = function(self, key)
                     currentKey = key
                     KeyBtn.Text = key.Name
+                end,
+                Get = function(self)
+                    return currentKey
                 end
             }
         end
