@@ -1,13 +1,25 @@
 --[[
-    🎨 Drakthon Theme System V2
-    Simple, Clean, Powerful
+    ════════════════════════════════════════════════════════════════════════════
+    🎨 Drakthon Theme System V2.1
+    GitHub: https://github.com/fisal-new/Drakthonlib/blob/main/Theme.lua
+    ════════════════════════════════════════════════════════════════════════════
 ]]
 
-local ThemeSystem = {}
+local ThemeManager = {
+    CurrentTheme = "Ocean",
+    Elements = {},
+    Themes = {}
+}
 
--- 🎨 Built-in Themes
-local Themes = {
+--[[
+    ════════════════════════════════════════════════════════════════════════════
+    📦 ALL THEMES
+    ════════════════════════════════════════════════════════════════════════════
+]]
+
+ThemeManager.Themes = {
     Default = {
+        Name = "Default",
         BG = Color3.fromRGB(15, 15, 20),
         BG2 = Color3.fromRGB(20, 20, 28),
         BG3 = Color3.fromRGB(25, 25, 35),
@@ -22,13 +34,14 @@ local Themes = {
     },
     
     Ocean = {
-        BG = Color3.fromRGB(10, 15, 25),
-        BG2 = Color3.fromRGB(15, 20, 30),
-        BG3 = Color3.fromRGB(20, 25, 35),
+        Name = "Ocean",
+        BG = Color3.fromRGB(12, 18, 28),
+        BG2 = Color3.fromRGB(16, 23, 36),
+        BG3 = Color3.fromRGB(20, 28, 44),
         Accent = Color3.fromRGB(0, 149, 255),
-        Accent2 = Color3.fromRGB(0, 100, 200),
+        Accent2 = Color3.fromRGB(0, 119, 204),
         Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(180, 190, 200),
+        Text2 = Color3.fromRGB(160, 180, 200),
         Green = Color3.fromRGB(46, 204, 113),
         Red = Color3.fromRGB(231, 76, 60),
         Yellow = Color3.fromRGB(241, 196, 15),
@@ -36,13 +49,14 @@ local Themes = {
     },
     
     Crimson = {
-        BG = Color3.fromRGB(20, 10, 10),
-        BG2 = Color3.fromRGB(28, 15, 15),
-        BG3 = Color3.fromRGB(35, 20, 20),
+        Name = "Crimson",
+        BG = Color3.fromRGB(18, 12, 15),
+        BG2 = Color3.fromRGB(25, 16, 20),
+        BG3 = Color3.fromRGB(32, 20, 26),
         Accent = Color3.fromRGB(220, 20, 60),
-        Accent2 = Color3.fromRGB(150, 10, 40),
+        Accent2 = Color3.fromRGB(178, 16, 48),
         Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(200, 180, 180),
+        Text2 = Color3.fromRGB(200, 180, 190),
         Green = Color3.fromRGB(46, 204, 113),
         Red = Color3.fromRGB(231, 76, 60),
         Yellow = Color3.fromRGB(241, 196, 15),
@@ -50,11 +64,12 @@ local Themes = {
     },
     
     Emerald = {
-        BG = Color3.fromRGB(10, 20, 15),
-        BG2 = Color3.fromRGB(15, 25, 20),
-        BG3 = Color3.fromRGB(20, 30, 25),
+        Name = "Emerald",
+        BG = Color3.fromRGB(12, 20, 15),
+        BG2 = Color3.fromRGB(16, 26, 20),
+        BG3 = Color3.fromRGB(20, 32, 25),
         Accent = Color3.fromRGB(46, 204, 113),
-        Accent2 = Color3.fromRGB(30, 150, 80),
+        Accent2 = Color3.fromRGB(39, 174, 96),
         Text = Color3.fromRGB(255, 255, 255),
         Text2 = Color3.fromRGB(180, 200, 190),
         Green = Color3.fromRGB(46, 204, 113),
@@ -64,13 +79,14 @@ local Themes = {
     },
     
     Dark = {
+        Name = "Dark",
         BG = Color3.fromRGB(10, 10, 10),
-        BG2 = Color3.fromRGB(18, 18, 18),
-        BG3 = Color3.fromRGB(25, 25, 25),
-        Accent = Color3.fromRGB(255, 255, 255),
-        Accent2 = Color3.fromRGB(200, 200, 200),
+        BG2 = Color3.fromRGB(15, 15, 15),
+        BG3 = Color3.fromRGB(20, 20, 20),
+        Accent = Color3.fromRGB(100, 100, 100),
+        Accent2 = Color3.fromRGB(80, 80, 80),
         Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(150, 150, 150),
+        Text2 = Color3.fromRGB(180, 180, 180),
         Green = Color3.fromRGB(46, 204, 113),
         Red = Color3.fromRGB(231, 76, 60),
         Yellow = Color3.fromRGB(241, 196, 15),
@@ -78,25 +94,27 @@ local Themes = {
     },
     
     Light = {
-        BG = Color3.fromRGB(245, 245, 250),
-        BG2 = Color3.fromRGB(235, 235, 240),
-        BG3 = Color3.fromRGB(225, 225, 230),
-        Accent = Color3.fromRGB(138, 43, 226),
-        Accent2 = Color3.fromRGB(75, 0, 130),
-        Text = Color3.fromRGB(30, 30, 35),
-        Text2 = Color3.fromRGB(100, 100, 110),
+        Name = "Light",
+        BG = Color3.fromRGB(240, 242, 245),
+        BG2 = Color3.fromRGB(255, 255, 255),
+        BG3 = Color3.fromRGB(230, 235, 240),
+        Accent = Color3.fromRGB(88, 101, 242),
+        Accent2 = Color3.fromRGB(71, 82, 196),
+        Text = Color3.fromRGB(30, 30, 30),
+        Text2 = Color3.fromRGB(80, 80, 80),
         Green = Color3.fromRGB(46, 204, 113),
         Red = Color3.fromRGB(231, 76, 60),
         Yellow = Color3.fromRGB(241, 196, 15),
         Blue = Color3.fromRGB(52, 152, 219)
     },
     
-    Cherry = {
-        BG = Color3.fromRGB(25, 15, 20),
-        BG2 = Color3.fromRGB(30, 20, 25),
+    Sunset = {
+        Name = "Sunset",
+        BG = Color3.fromRGB(20, 15, 18),
+        BG2 = Color3.fromRGB(28, 20, 25),
         BG3 = Color3.fromRGB(35, 25, 30),
-        Accent = Color3.fromRGB(255, 105, 180),
-        Accent2 = Color3.fromRGB(219, 39, 119),
+        Accent = Color3.fromRGB(255, 94, 77),
+        Accent2 = Color3.fromRGB(255, 121, 63),
         Text = Color3.fromRGB(255, 255, 255),
         Text2 = Color3.fromRGB(200, 180, 190),
         Green = Color3.fromRGB(46, 204, 113),
@@ -105,26 +123,13 @@ local Themes = {
         Blue = Color3.fromRGB(52, 152, 219)
     },
     
-    Sunset = {
-        BG = Color3.fromRGB(20, 15, 10),
-        BG2 = Color3.fromRGB(25, 20, 15),
-        BG3 = Color3.fromRGB(30, 25, 20),
-        Accent = Color3.fromRGB(255, 140, 0),
-        Accent2 = Color3.fromRGB(255, 69, 0),
-        Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(200, 190, 180),
-        Green = Color3.fromRGB(46, 204, 113),
-        Red = Color3.fromRGB(231, 76, 60),
-        Yellow = Color3.fromRGB(241, 196, 15),
-        Blue = Color3.fromRGB(52, 152, 219)
-    },
-    
     Aqua = {
-        BG = Color3.fromRGB(10, 20, 20),
-        BG2 = Color3.fromRGB(15, 25, 25),
-        BG3 = Color3.fromRGB(20, 30, 30),
-        Accent = Color3.fromRGB(0, 255, 255),
-        Accent2 = Color3.fromRGB(0, 150, 150),
+        Name = "Aqua",
+        BG = Color3.fromRGB(12, 20, 20),
+        BG2 = Color3.fromRGB(16, 26, 26),
+        BG3 = Color3.fromRGB(20, 32, 32),
+        Accent = Color3.fromRGB(26, 188, 156),
+        Accent2 = Color3.fromRGB(22, 160, 133),
         Text = Color3.fromRGB(255, 255, 255),
         Text2 = Color3.fromRGB(180, 200, 200),
         Green = Color3.fromRGB(46, 204, 113),
@@ -133,110 +138,28 @@ local Themes = {
         Blue = Color3.fromRGB(52, 152, 219)
     },
     
-    Midnight = {
-        BG = Color3.fromRGB(12, 8, 20),
-        BG2 = Color3.fromRGB(18, 12, 28),
-        BG3 = Color3.fromRGB(24, 16, 35),
-        Accent = Color3.fromRGB(147, 51, 234),
-        Accent2 = Color3.fromRGB(88, 28, 135),
+    Purple = {
+        Name = "Purple",
+        BG = Color3.fromRGB(18, 12, 25),
+        BG2 = Color3.fromRGB(24, 16, 33),
+        BG3 = Color3.fromRGB(30, 20, 41),
+        Accent = Color3.fromRGB(155, 89, 182),
+        Accent2 = Color3.fromRGB(142, 68, 173),
         Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(190, 180, 200),
+        Text2 = Color3.fromRGB(200, 180, 210),
         Green = Color3.fromRGB(46, 204, 113),
         Red = Color3.fromRGB(231, 76, 60),
         Yellow = Color3.fromRGB(241, 196, 15),
         Blue = Color3.fromRGB(52, 152, 219)
     },
     
-    Fire = {
-        BG = Color3.fromRGB(20, 10, 5),
-        BG2 = Color3.fromRGB(28, 15, 10),
-        BG3 = Color3.fromRGB(35, 20, 15),
-        Accent = Color3.fromRGB(255, 69, 0),
-        Accent2 = Color3.fromRGB(220, 20, 60),
-        Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(200, 180, 170),
-        Green = Color3.fromRGB(46, 204, 113),
-        Red = Color3.fromRGB(231, 76, 60),
-        Yellow = Color3.fromRGB(241, 196, 15),
-        Blue = Color3.fromRGB(52, 152, 219)
-    },
-    
-    Matrix = {
-        BG = Color3.fromRGB(5, 10, 5),
-        BG2 = Color3.fromRGB(10, 15, 10),
-        BG3 = Color3.fromRGB(15, 20, 15),
-        Accent = Color3.fromRGB(0, 255, 65),
-        Accent2 = Color3.fromRGB(0, 180, 45),
-        Text = Color3.fromRGB(0, 255, 65),
-        Text2 = Color3.fromRGB(0, 180, 45),
-        Green = Color3.fromRGB(46, 204, 113),
-        Red = Color3.fromRGB(231, 76, 60),
-        Yellow = Color3.fromRGB(241, 196, 15),
-        Blue = Color3.fromRGB(52, 152, 219)
-    },
-    
-    Rainbow = {
-        BG = Color3.fromRGB(15, 15, 20),
-        BG2 = Color3.fromRGB(20, 20, 28),
-        BG3 = Color3.fromRGB(25, 25, 35),
-        Accent = Color3.fromRGB(255, 0, 255),
-        Accent2 = Color3.fromRGB(0, 255, 255),
-        Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(180, 180, 190),
-        Green = Color3.fromRGB(46, 204, 113),
-        Red = Color3.fromRGB(231, 76, 60),
-        Yellow = Color3.fromRGB(241, 196, 15),
-        Blue = Color3.fromRGB(52, 152, 219)
-    },
-    
-    Galaxy = {
-        BG = Color3.fromRGB(8, 5, 15),
-        BG2 = Color3.fromRGB(15, 10, 25),
-        BG3 = Color3.fromRGB(20, 15, 30),
-        Accent = Color3.fromRGB(138, 43, 226),
-        Accent2 = Color3.fromRGB(75, 0, 130),
-        Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(180, 180, 200),
-        Green = Color3.fromRGB(46, 204, 113),
-        Red = Color3.fromRGB(231, 76, 60),
-        Yellow = Color3.fromRGB(241, 196, 15),
-        Blue = Color3.fromRGB(138, 43, 226)
-    },
-    
-    Grape = {
-        BG = Color3.fromRGB(18, 10, 25),
-        BG2 = Color3.fromRGB(25, 15, 35),
-        BG3 = Color3.fromRGB(30, 20, 40),
-        Accent = Color3.fromRGB(147, 51, 234),
-        Accent2 = Color3.fromRGB(109, 40, 217),
-        Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(190, 180, 200),
-        Green = Color3.fromRGB(46, 204, 113),
-        Red = Color3.fromRGB(231, 76, 60),
-        Yellow = Color3.fromRGB(241, 196, 15),
-        Blue = Color3.fromRGB(147, 51, 234)
-    },
-    
-    Gold = {
-        BG = Color3.fromRGB(20, 18, 10),
-        BG2 = Color3.fromRGB(28, 25, 15),
-        BG3 = Color3.fromRGB(35, 30, 20),
-        Accent = Color3.fromRGB(255, 215, 0),
-        Accent2 = Color3.fromRGB(218, 165, 32),
-        Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(200, 190, 180),
-        Green = Color3.fromRGB(46, 204, 113),
-        Red = Color3.fromRGB(231, 76, 60),
-        Yellow = Color3.fromRGB(241, 196, 15),
-        Blue = Color3.fromRGB(52, 152, 219)
-    },
-    
-    Rose = {
-        BG = Color3.fromRGB(22, 12, 15),
-        BG2 = Color3.fromRGB(30, 18, 22),
-        BG3 = Color3.fromRGB(38, 24, 28),
-        Accent = Color3.fromRGB(255, 20, 147),
-        Accent2 = Color3.fromRGB(199, 21, 133),
+    Cherry = {
+        Name = "Cherry",
+        BG = Color3.fromRGB(20, 12, 15),
+        BG2 = Color3.fromRGB(28, 16, 21),
+        BG3 = Color3.fromRGB(35, 20, 27),
+        Accent = Color3.fromRGB(255, 82, 82),
+        Accent2 = Color3.fromRGB(255, 56, 56),
         Text = Color3.fromRGB(255, 255, 255),
         Text2 = Color3.fromRGB(200, 180, 190),
         Green = Color3.fromRGB(46, 204, 113),
@@ -245,42 +168,30 @@ local Themes = {
         Blue = Color3.fromRGB(52, 152, 219)
     },
     
-    Neon = {
+    Midnight = {
+        Name = "Midnight",
         BG = Color3.fromRGB(8, 8, 12),
-        BG2 = Color3.fromRGB(15, 15, 20),
-        BG3 = Color3.fromRGB(22, 22, 28),
-        Accent = Color3.fromRGB(0, 255, 127),
-        Accent2 = Color3.fromRGB(57, 255, 20),
+        BG2 = Color3.fromRGB(12, 12, 18),
+        BG3 = Color3.fromRGB(16, 16, 24),
+        Accent = Color3.fromRGB(56, 103, 214),
+        Accent2 = Color3.fromRGB(38, 70, 146),
         Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(180, 200, 190),
-        Green = Color3.fromRGB(0, 255, 127),
-        Red = Color3.fromRGB(255, 0, 127),
-        Yellow = Color3.fromRGB(255, 255, 0),
-        Blue = Color3.fromRGB(0, 191, 255)
-    },
-    
-    Ice = {
-        BG = Color3.fromRGB(12, 18, 22),
-        BG2 = Color3.fromRGB(18, 25, 30),
-        BG3 = Color3.fromRGB(24, 32, 38),
-        Accent = Color3.fromRGB(135, 206, 250),
-        Accent2 = Color3.fromRGB(70, 130, 180),
-        Text = Color3.fromRGB(255, 255, 255),
-        Text2 = Color3.fromRGB(180, 200, 210),
+        Text2 = Color3.fromRGB(160, 170, 190),
         Green = Color3.fromRGB(46, 204, 113),
         Red = Color3.fromRGB(231, 76, 60),
         Yellow = Color3.fromRGB(241, 196, 15),
-        Blue = Color3.fromRGB(135, 206, 250)
+        Blue = Color3.fromRGB(52, 152, 219)
     },
     
-    Void = {
-        BG = Color3.fromRGB(5, 5, 8),
-        BG2 = Color3.fromRGB(10, 10, 15),
-        BG3 = Color3.fromRGB(15, 15, 22),
-        Accent = Color3.fromRGB(75, 0, 130),
-        Accent2 = Color3.fromRGB(138, 43, 226),
-        Text = Color3.fromRGB(200, 200, 220),
-        Text2 = Color3.fromRGB(150, 150, 170),
+    Forest = {
+        Name = "Forest",
+        BG = Color3.fromRGB(10, 15, 10),
+        BG2 = Color3.fromRGB(15, 22, 15),
+        BG3 = Color3.fromRGB(20, 28, 20),
+        Accent = Color3.fromRGB(34, 139, 34),
+        Accent2 = Color3.fromRGB(0, 100, 0),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 200, 180),
         Green = Color3.fromRGB(46, 204, 113),
         Red = Color3.fromRGB(231, 76, 60),
         Yellow = Color3.fromRGB(241, 196, 15),
@@ -288,128 +199,115 @@ local Themes = {
     }
 }
 
--- Custom Themes Storage
-local CustomThemes = {}
+--[[
+    ════════════════════════════════════════════════════════════════════════════
+    🔧 THEME FUNCTIONS
+    ════════════════════════════════════════════════════════════════════════════
+]]
 
--- Current Theme
-local Current = Themes.Default
+function ThemeManager:GetColor(colorName)
+    local theme = self.Themes[self.CurrentTheme]
+    return theme and theme[colorName] or Color3.fromRGB(255, 255, 255)
+end
 
--- Callbacks
-local Callbacks = {}
-
--- Set Theme
-function ThemeSystem.Set(name)
-    local theme = Themes[name] or CustomThemes[name]
-    if not theme then
-        warn("[Theme] Not found: " .. tostring(name))
-        return false
+function ThemeManager:Set(themeName)
+    if not self.Themes[themeName] then 
+        warn("❌ Theme '" .. themeName .. "' not found!")
+        return false 
     end
     
-    Current = theme
-    
-    for _, callback in ipairs(Callbacks) do
-        task.spawn(callback, theme)
-    end
-    
+    self.CurrentTheme = themeName
+    self:UpdateAllElements()
+    print("✅ Theme changed to: " .. themeName)
     return true
 end
 
--- Get Current Theme
-function ThemeSystem.Get()
-    return Current
+function ThemeManager:Get()
+    return self.CurrentTheme
 end
 
--- Get Color
-function ThemeSystem.Color(name)
-    return Current[name] or Color3.new(1, 1, 1)
-end
-
--- List Theme Names
-function ThemeSystem.List()
+function ThemeManager:List()
     local list = {}
-    for name in pairs(Themes) do
+    for name, _ in pairs(self.Themes) do
         table.insert(list, name)
     end
-    for name in pairs(CustomThemes) do
-        table.insert(list, name)
-    end
+    table.sort(list)
     return list
 end
 
--- Add Custom Theme
-function ThemeSystem.Add(name, theme)
-    if type(theme) ~= "table" then return false end
+function ThemeManager:Random()
+    local themes = self:List()
+    local randomTheme = themes[math.random(1, #themes)]
+    self:Set(randomTheme)
+    return randomTheme
+end
+
+function ThemeManager:Register(element, colorType, colorName)
+    if not element then return end
     
-    -- Validate colors
-    local required = {"BG", "BG2", "BG3", "Accent", "Accent2", "Text", "Text2", "Green", "Red", "Yellow", "Blue"}
-    for _, key in ipairs(required) do
-        if not theme[key] then
-            warn("[Theme] Missing color: " .. key)
-            return false
+    table.insert(self.Elements, {
+        Element = element,
+        Type = colorType,
+        ColorName = colorName
+    })
+    
+    -- Apply color immediately
+    self:UpdateElement(element, colorType, colorName)
+end
+
+function ThemeManager:UpdateElement(element, colorType, colorName)
+    if not element or not element.Parent then return end
+    
+    pcall(function()
+        local color = self:GetColor(colorName)
+        
+        if colorType == "Color" or colorType == "BackgroundColor3" then
+            element.BackgroundColor3 = color
+        elseif colorType == "TextColor" or colorType == "TextColor3" then
+            element.TextColor3 = color
+        elseif colorType == "ImageColor" or colorType == "ImageColor3" then
+            element.ImageColor3 = color
+        elseif colorType == "Gradient" then
+            element.Color = ColorSequence.new{
+                ColorSequenceKeypoint.new(0, self:GetColor("Accent")),
+                ColorSequenceKeypoint.new(1, self:GetColor("Accent2"))
+            }
+        end
+    end)
+end
+
+function ThemeManager:UpdateAllElements()
+    for i, data in ipairs(self.Elements) do
+        if data.Element and data.Element.Parent then
+            self:UpdateElement(data.Element, data.Type, data.ColorName)
+        else
+            -- Remove dead elements
+            table.remove(self.Elements, i)
         end
     end
-    
-    CustomThemes[name] = theme
-    return true
 end
 
--- Remove Custom Theme
-function ThemeSystem.Remove(name)
-    if CustomThemes[name] then
-        CustomThemes[name] = nil
-        return true
-    end
-    return false
-end
-
--- Random Theme
-function ThemeSystem.Random()
-    local list = ThemeSystem.List()
-    local random = list[math.random(#list)]
-    ThemeSystem.Set(random)
-    return random
-end
-
--- On Theme Change Callback
-function ThemeSystem.OnChange(callback)
-    if type(callback) == "function" then
-        table.insert(Callbacks, callback)
-    end
-end
-
--- Create Gradient
-function ThemeSystem.Gradient(reverse)
+function ThemeManager:Gradient()
     local gradient = Instance.new("UIGradient")
-    if reverse then
-        gradient.Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Current.Accent2),
-            ColorSequenceKeypoint.new(1, Current.Accent)
-        }
-    else
-        gradient.Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Current.Accent),
-            ColorSequenceKeypoint.new(1, Current.Accent2)
-        }
-    end
+    gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, self:GetColor("Accent")),
+        ColorSequenceKeypoint.new(1, self:GetColor("Accent2"))
+    }
+    self:Register(gradient, "Gradient", "Accent")
     return gradient
 end
 
--- Quick Color Access
-ThemeSystem.BG = function() return Current.BG end
-ThemeSystem.BG2 = function() return Current.BG2 end
-ThemeSystem.BG3 = function() return Current.BG3 end
-ThemeSystem.Accent = function() return Current.Accent end
-ThemeSystem.Accent2 = function() return Current.Accent2 end
-ThemeSystem.Text = function() return Current.Text end
-ThemeSystem.Text2 = function() return Current.Text2 end
-ThemeSystem.Green = function() return Current.Green end
-ThemeSystem.Red = function() return Current.Red end
-ThemeSystem.Yellow = function() return Current.Yellow end
-ThemeSystem.Blue = function() return Current.Blue end
+-- Shorthand Functions
+function ThemeManager.BG() return ThemeManager:GetColor("BG") end
+function ThemeManager.BG2() return ThemeManager:GetColor("BG2") end
+function ThemeManager.BG3() return ThemeManager:GetColor("BG3") end
+function ThemeManager.Accent() return ThemeManager:GetColor("Accent") end
+function ThemeManager.Accent2() return ThemeManager:GetColor("Accent2") end
+function ThemeManager.Text() return ThemeManager:GetColor("Text") end
+function ThemeManager.Text2() return ThemeManager:GetColor("Text2") end
+function ThemeManager.Green() return ThemeManager:GetColor("Green") end
+function ThemeManager.Red() return ThemeManager:GetColor("Red") end
+function ThemeManager.Yellow() return ThemeManager:GetColor("Yellow") end
+function ThemeManager.Blue() return ThemeManager:GetColor("Blue") end
 
--- Export
-ThemeSystem.Themes = Themes
-ThemeSystem.Custom = CustomThemes
-ThemeSystem.Current = Current
-
-return ThemeSystem
+return ThemeManager
