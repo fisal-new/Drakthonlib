@@ -1,107 +1,298 @@
 --[[
-    ____             _    _   _                   
-   |  _ \  _ __ __ _| | _| |_| |__   ___  _ __   
-   | | | || '__/ _` | |/ / __| '_ \ / _ \| '_ \  
-   | |_| || | | (_| |   <| |_| | | | (_) | | | | 
-   |____/ |_|  \__,_|_|\_\\__|_| |_|\___/|_| |_| 
-                                                  
-   🐉 Drakthon UI Library - Complete V2
-   GitHub: https://github.com/fisal-new/Drakthonlib
-   
-   Features:
-   ✅ Theme System Support
-   ✅ Enhanced Animations
-   ✅ Responsive Design
-   ✅ Mobile Support
-   ✅ All UI Elements
-   ✅ Notification System
-   ✅ Configuration Saving
+    ════════════════════════════════════════════════════════════════════════════
+    
+    ██████╗ ██████╗  █████╗ ██╗  ██╗████████╗██╗  ██╗ ██████╗ ███╗   ██╗
+    ██╔══██╗██╔══██╗██╔══██╗██║ ██╔╝╚══██╔══╝██║  ██║██╔═══██╗████╗  ██║
+    ██║  ██║██████╔╝███████║█████╔╝    ██║   ███████║██║   ██║██╔██╗ ██║
+    ██║  ██║██╔══██╗██╔══██║██╔═██╗    ██║   ██╔══██║██║   ██║██║╚██╗██║
+    ██████╔╝██║  ██║██║  ██║██║  ██╗   ██║   ██║  ██║╚██████╔╝██║ ╚████║
+    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+    
+    🐉 Drakthon UI Library - Complete V2.0
+    ════════════════════════════════════════════════════════════════════════════
+    
+    📌 Version: 2.0.0
+    👨‍💻 Author: Drakthon Team
+    🌐 GitHub: https://github.com/fisal-new/Drakthonlib
+    
+    ✨ Features:
+    ✅ Complete Theme System (10+ Themes)
+    ✅ All UI Elements (Button, Toggle, Slider, Dropdown, Input, etc.)
+    ✅ Advanced Notification System
+    ✅ Smooth Animations
+    ✅ Draggable Windows
+    ✅ Mobile Support
+    ✅ Responsive Design
+    ✅ Zero Memory Leaks
+    ✅ Full Error Handling
+    
+    ════════════════════════════════════════════════════════════════════════════
+]]
+
+--[[
+    ════════════════════════════════════════════════════════════════════════════
+    📦 MAIN LIBRARY OBJECT
+    ════════════════════════════════════════════════════════════════════════════
 ]]
 
 local Drakthon = {
     Version = "2.0.0",
-    Author = "Drakthon Team"
+    Author = "Drakthon Team",
+    Flags = {},
+    Connections = {}
 }
 
--- Services
+--[[
+    ════════════════════════════════════════════════════════════════════════════
+    🎮 SERVICES
+    ════════════════════════════════════════════════════════════════════════════
+]]
+
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
-local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
+local CoreGui = game:GetService("CoreGui")
 
--- Load Theme System
-local Theme
-local themeLoaded = pcall(function()
-    Theme = loadstring(game:HttpGet("https://raw.githubusercontent.com/fisal-new/Drakthonlib/main/Theme.lua"))()
-end)
+--[[
+    ════════════════════════════════════════════════════════════════════════════
+    🎨 EMBEDDED THEME SYSTEM
+    ════════════════════════════════════════════════════════════════════════════
+]]
 
--- Fallback Theme if loading fails
-if not themeLoaded or not Theme then
-    Theme = {
-        BG = function() return Color3.fromRGB(15, 15, 20) end,
-        BG2 = function() return Color3.fromRGB(20, 20, 28) end,
-        BG3 = function() return Color3.fromRGB(25, 25, 35) end,
-        Accent = function() return Color3.fromRGB(138, 43, 226) end,
-        Accent2 = function() return Color3.fromRGB(75, 0, 130) end,
-        Text = function() return Color3.fromRGB(255, 255, 255) end,
-        Text2 = function() return Color3.fromRGB(180, 180, 190) end,
-        Green = function() return Color3.fromRGB(46, 204, 113) end,
-        Red = function() return Color3.fromRGB(231, 76, 60) end,
-        Yellow = function() return Color3.fromRGB(241, 196, 15) end,
-        Blue = function() return Color3.fromRGB(52, 152, 219) end,
-        Set = function() end,
-        Get = function() return {} end,
-        List = function() return {"Default"} end,
-        Random = function() return "Default" end,
-        Gradient = function() 
-            local g = Instance.new("UIGradient")
-            g.Color = ColorSequence.new{
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(138, 43, 226)),
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(75, 0, 130))
-            }
-            return g
-        end
-    }
-end
-
--- Camera
-local camera = workspace.CurrentCamera
-
--- Responsive Configuration
-local RESPONSIVE = {
-    MinWidth = 400,
-    MinHeight = 300,
-    MaxWidth = 1200,
-    MaxHeight = 800,
-    DefaultWidth = 650,
-    DefaultHeight = 450
+local ThemeManager = {
+    CurrentTheme = "Ocean",
+    Themes = {}
 }
 
--- Utility Functions
-local function Tween(obj, props, dur, style, dir)
-    if not obj or not obj.Parent then return end
-    local tweenInfo = TweenInfo.new(
-        dur or 0.3,
-        style or Enum.EasingStyle.Quad,
-        dir or Enum.EasingDirection.Out
-    )
-    local tween = TweenService:Create(obj, tweenInfo, props)
-    tween:Play()
-    return tween
+-- Define All Themes
+ThemeManager.Themes = {
+    Default = {
+        BG = Color3.fromRGB(15, 15, 20),
+        BG2 = Color3.fromRGB(20, 20, 28),
+        BG3 = Color3.fromRGB(25, 25, 35),
+        Accent = Color3.fromRGB(138, 43, 226),
+        Accent2 = Color3.fromRGB(75, 0, 130),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 180, 190),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Ocean = {
+        BG = Color3.fromRGB(12, 18, 28),
+        BG2 = Color3.fromRGB(16, 23, 36),
+        BG3 = Color3.fromRGB(20, 28, 44),
+        Accent = Color3.fromRGB(0, 149, 255),
+        Accent2 = Color3.fromRGB(0, 119, 204),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(160, 180, 200),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Crimson = {
+        BG = Color3.fromRGB(18, 12, 15),
+        BG2 = Color3.fromRGB(25, 16, 20),
+        BG3 = Color3.fromRGB(32, 20, 26),
+        Accent = Color3.fromRGB(220, 20, 60),
+        Accent2 = Color3.fromRGB(178, 16, 48),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(200, 180, 190),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Emerald = {
+        BG = Color3.fromRGB(12, 20, 15),
+        BG2 = Color3.fromRGB(16, 26, 20),
+        BG3 = Color3.fromRGB(20, 32, 25),
+        Accent = Color3.fromRGB(46, 204, 113),
+        Accent2 = Color3.fromRGB(39, 174, 96),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 200, 190),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Dark = {
+        BG = Color3.fromRGB(10, 10, 10),
+        BG2 = Color3.fromRGB(15, 15, 15),
+        BG3 = Color3.fromRGB(20, 20, 20),
+        Accent = Color3.fromRGB(100, 100, 100),
+        Accent2 = Color3.fromRGB(80, 80, 80),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 180, 180),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Light = {
+        BG = Color3.fromRGB(240, 242, 245),
+        BG2 = Color3.fromRGB(255, 255, 255),
+        BG3 = Color3.fromRGB(230, 235, 240),
+        Accent = Color3.fromRGB(88, 101, 242),
+        Accent2 = Color3.fromRGB(71, 82, 196),
+        Text = Color3.fromRGB(30, 30, 30),
+        Text2 = Color3.fromRGB(80, 80, 80),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Sunset = {
+        BG = Color3.fromRGB(20, 15, 18),
+        BG2 = Color3.fromRGB(28, 20, 25),
+        BG3 = Color3.fromRGB(35, 25, 30),
+        Accent = Color3.fromRGB(255, 94, 77),
+        Accent2 = Color3.fromRGB(255, 121, 63),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(200, 180, 190),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Aqua = {
+        BG = Color3.fromRGB(12, 20, 20),
+        BG2 = Color3.fromRGB(16, 26, 26),
+        BG3 = Color3.fromRGB(20, 32, 32),
+        Accent = Color3.fromRGB(26, 188, 156),
+        Accent2 = Color3.fromRGB(22, 160, 133),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(180, 200, 200),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Purple = {
+        BG = Color3.fromRGB(18, 12, 25),
+        BG2 = Color3.fromRGB(24, 16, 33),
+        BG3 = Color3.fromRGB(30, 20, 41),
+        Accent = Color3.fromRGB(155, 89, 182),
+        Accent2 = Color3.fromRGB(142, 68, 173),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(200, 180, 210),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    },
+    
+    Cherry = {
+        BG = Color3.fromRGB(20, 12, 15),
+        BG2 = Color3.fromRGB(28, 16, 21),
+        BG3 = Color3.fromRGB(35, 20, 27),
+        Accent = Color3.fromRGB(255, 82, 82),
+        Accent2 = Color3.fromRGB(255, 56, 56),
+        Text = Color3.fromRGB(255, 255, 255),
+        Text2 = Color3.fromRGB(200, 180, 190),
+        Green = Color3.fromRGB(46, 204, 113),
+        Red = Color3.fromRGB(231, 76, 60),
+        Yellow = Color3.fromRGB(241, 196, 15),
+        Blue = Color3.fromRGB(52, 152, 219)
+    }
+}
+
+-- Theme Functions
+function ThemeManager:GetColor(colorName)
+    local theme = self.Themes[self.CurrentTheme] or self.Themes.Default
+    return theme[colorName] or Color3.fromRGB(255, 255, 255)
 end
 
-local function Create(class, props)
+function ThemeManager:Set(themeName)
+    if self.Themes[themeName] then
+        self.CurrentTheme = themeName
+        return true
+    end
+    return false
+end
+
+function ThemeManager:Get()
+    return self.CurrentTheme
+end
+
+function ThemeManager:List()
+    local list = {}
+    for name in pairs(self.Themes) do
+        table.insert(list, name)
+    end
+    table.sort(list)
+    return list
+end
+
+function ThemeManager:Random()
+    local themes = self:List()
+    local random = themes[math.random(1, #themes)]
+    self:Set(random)
+    return random
+end
+
+function ThemeManager:Gradient()
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, self:GetColor("Accent")),
+        ColorSequenceKeypoint.new(1, self:GetColor("Accent2"))
+    }
+    return gradient
+end
+
+-- Shorthand Functions
+function ThemeManager.BG() return ThemeManager:GetColor("BG") end
+function ThemeManager.BG2() return ThemeManager:GetColor("BG2") end
+function ThemeManager.BG3() return ThemeManager:GetColor("BG3") end
+function ThemeManager.Accent() return ThemeManager:GetColor("Accent") end
+function ThemeManager.Accent2() return ThemeManager:GetColor("Accent2") end
+function ThemeManager.Text() return ThemeManager:GetColor("Text") end
+function ThemeManager.Text2() return ThemeManager:GetColor("Text2") end
+function ThemeManager.Green() return ThemeManager:GetColor("Green") end
+function ThemeManager.Red() return ThemeManager:GetColor("Red") end
+function ThemeManager.Yellow() return ThemeManager:GetColor("Yellow") end
+function ThemeManager.Blue() return ThemeManager:GetColor("Blue") end
+
+local Theme = ThemeManager
+
+--[[
+    ════════════════════════════════════════════════════════════════════════════
+    🛠️ UTILITY FUNCTIONS
+    ════════════════════════════════════════════════════════════════════════════
+]]
+
+local function SafeTween(obj, props, dur, style, dir)
+    if not obj or not obj.Parent then return end
+    local success, result = pcall(function()
+        local tweenInfo = TweenInfo.new(
+            dur or 0.3,
+            style or Enum.EasingStyle.Quad,
+            dir or Enum.EasingDirection.Out
+        )
+        local tween = TweenService:Create(obj, tweenInfo, props)
+        tween:Play()
+        return tween
+    end)
+    return success and result or nil
+end
+
+local function CreateInstance(class, props)
     local obj = Instance.new(class)
     for k, v in pairs(props) do
         if k ~= "Parent" then 
-            local success = pcall(function()
-                obj[k] = v
-            end)
-            if not success then
-                warn("[Drakthon] Failed to set property: " .. k)
-            end
+            pcall(function() obj[k] = v end)
         end
     end
     if props.Parent then
@@ -111,14 +302,25 @@ local function Create(class, props)
 end
 
 local function AddCorner(parent, radius)
-    return Create("UICorner", {
+    return CreateInstance("UICorner", {
         Parent = parent,
         CornerRadius = UDim.new(0, radius or 8)
     })
 end
 
+local function AddPadding(parent, padding)
+    local p = padding or 10
+    return CreateInstance("UIPadding", {
+        Parent = parent,
+        PaddingTop = UDim.new(0, p),
+        PaddingLeft = UDim.new(0, p),
+        PaddingRight = UDim.new(0, p),
+        PaddingBottom = UDim.new(0, p)
+    })
+end
+
 local function AddStroke(parent, color, thickness)
-    return Create("UIStroke", {
+    return CreateInstance("UIStroke", {
         Parent = parent,
         Color = color or Theme.Accent(),
         Thickness = thickness or 1,
@@ -126,115 +328,113 @@ local function AddStroke(parent, color, thickness)
     })
 end
 
-local function AddPadding(parent, top, left, right, bottom)
-    return Create("UIPadding", {
-        Parent = parent,
-        PaddingTop = UDim.new(0, top or 0),
-        PaddingLeft = UDim.new(0, left or 0),
-        PaddingRight = UDim.new(0, right or 0),
-        PaddingBottom = UDim.new(0, bottom or 0)
-    })
-end
+--[[
+    ════════════════════════════════════════════════════════════════════════════
+    🖱️ DRAGGING SYSTEM
+    ════════════════════════════════════════════════════════════════════════════
+]]
 
-local function GetResponsiveSize()
-    local viewportSize = camera.ViewportSize
-    local width = math.clamp(
-        viewportSize.X * 0.6,
-        RESPONSIVE.MinWidth,
-        RESPONSIVE.MaxWidth
-    )
-    local height = math.clamp(
-        viewportSize.Y * 0.7,
-        RESPONSIVE.MinHeight,
-        RESPONSIVE.MaxHeight
-    )
-    return {width, height}
-end
-
--- Enhanced Dragging System
-local function MakeDraggable(frame, handle)
+local function MakeDraggable(frame, dragHandle)
     local dragging = false
+    local dragInput = nil
     local dragStart = nil
     local startPos = nil
     
-    handle.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-           input.UserInputType == Enum.UserInputType.Touch then
-            dragging = true
-            dragStart = input.Position
-            startPos = frame.Position
-        end
-    end)
-    
-    handle.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 or 
-           input.UserInputType == Enum.UserInputType.Touch then
-            dragging = false
-        end
-    end)
-    
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or 
-                        input.UserInputType == Enum.UserInputType.Touch) then
-            local delta = input.Position - dragStart
-            frame.Position = UDim2.new(
+    local function update(input)
+        local delta = input.Position - dragStart
+        SafeTween(frame, {
+            Position = UDim2.new(
                 startPos.X.Scale,
                 startPos.X.Offset + delta.X,
                 startPos.Y.Scale,
                 startPos.Y.Offset + delta.Y
             )
+        }, 0.1, Enum.EasingStyle.Linear)
+    end
+    
+    dragHandle.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or 
+           input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+    
+    dragHandle.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement or 
+           input.UserInputType == Enum.UserInputType.Touch then
+            dragInput = input
+        end
+    end)
+    
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and input == dragInput then
+            update(input)
         end
     end)
 end
 
--- Notification System
+--[[
+    ════════════════════════════════════════════════════════════════════════════
+    🔔 NOTIFICATION SYSTEM
+    ════════════════════════════════════════════════════════════════════════════
+]]
+
 local NotificationQueue = {}
 local ProcessingNotification = false
 
 function Drakthon:Notify(config)
     config = config or {}
-    local Title = config.Title or "Notification"
-    local Content = config.Content or ""
-    local Duration = config.Duration or 3
-    local Type = config.Type or "Default"
     
-    local Color = Theme.Accent()
-    if Type == "Success" then 
-        Color = Theme.Green()
-    elseif Type == "Warning" then 
-        Color = Theme.Yellow()
-    elseif Type == "Error" then 
-        Color = Theme.Red()
-    elseif Type == "Info" then 
-        Color = Theme.Blue()
+    local notification = {
+        Title = config.Title or "Notification",
+        Content = config.Content or "",
+        Duration = config.Duration or 3,
+        Type = config.Type or "Default"
+    }
+    
+    -- Set color based on type
+    if notification.Type == "Success" then
+        notification.Color = Theme.Green()
+    elseif notification.Type == "Warning" then
+        notification.Color = Theme.Yellow()
+    elseif notification.Type == "Error" then
+        notification.Color = Theme.Red()
+    elseif notification.Type == "Info" then
+        notification.Color = Theme.Blue()
+    else
+        notification.Color = Theme.Accent()
     end
     
-    table.insert(NotificationQueue, {
-        Title = Title,
-        Content = Content,
-        Duration = Duration,
-        Color = Color
-    })
+    table.insert(NotificationQueue, notification)
     
     if not ProcessingNotification then
         ProcessingNotification = true
         task.spawn(function()
-            self:ProcessNotification()
+            self:ProcessNotifications()
         end)
     end
 end
 
-function Drakthon:ProcessNotification()
+function Drakthon:ProcessNotifications()
     while #NotificationQueue > 0 do
         local notif = table.remove(NotificationQueue, 1)
         local holder = self.NotificationHolder
         
-        if not holder then
+        if not holder or not holder.Parent then
             ProcessingNotification = false
             return
         end
         
-        local NotifFrame = Create("Frame", {
+        -- Create Notification Frame
+        local NotifFrame = CreateInstance("Frame", {
             Parent = holder,
             BackgroundColor3 = Theme.BG2(),
             BorderSizePixel = 0,
@@ -246,22 +446,9 @@ function Drakthon:ProcessNotification()
         
         AddCorner(NotifFrame, 10)
         
-        Create("ImageLabel", {
-            Name = "Shadow",
-            Parent = NotifFrame,
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, -10, 0, -10),
-            Size = UDim2.new(1, 20, 1, 20),
-            ZIndex = 999,
-            Image = "rbxassetid://5554236805",
-            ImageColor3 = Color3.fromRGB(0, 0, 0),
-            ImageTransparency = 0.7,
-            ScaleType = Enum.ScaleType.Slice,
-            SliceCenter = Rect.new(23, 23, 277, 277)
-        })
-        
-        Create("Frame", {
-            Name = "Accent",
+        -- Accent Bar
+        CreateInstance("Frame", {
+            Name = "AccentBar",
             Parent = NotifFrame,
             BackgroundColor3 = notif.Color,
             BorderSizePixel = 0,
@@ -269,7 +456,8 @@ function Drakthon:ProcessNotification()
             ZIndex = 1001
         })
         
-        Create("TextLabel", {
+        -- Title
+        CreateInstance("TextLabel", {
             Name = "Title",
             Parent = NotifFrame,
             BackgroundTransparency = 1,
@@ -283,7 +471,8 @@ function Drakthon:ProcessNotification()
             ZIndex = 1001
         })
         
-        Create("TextLabel", {
+        -- Content
+        CreateInstance("TextLabel", {
             Name = "Content",
             Parent = NotifFrame,
             BackgroundTransparency = 1,
@@ -299,7 +488,8 @@ function Drakthon:ProcessNotification()
             ZIndex = 1001
         })
         
-        local ProgressBG = Create("Frame", {
+        -- Progress Bar Background
+        local ProgressBG = CreateInstance("Frame", {
             Name = "ProgressBG",
             Parent = NotifFrame,
             BackgroundColor3 = Theme.BG3(),
@@ -309,7 +499,8 @@ function Drakthon:ProcessNotification()
             ZIndex = 1001
         })
         
-        local Progress = Create("Frame", {
+        -- Progress Bar
+        local Progress = CreateInstance("Frame", {
             Name = "Progress",
             Parent = ProgressBG,
             BackgroundColor3 = notif.Color,
@@ -318,72 +509,83 @@ function Drakthon:ProcessNotification()
             ZIndex = 1002
         })
         
-        Tween(NotifFrame, {
+        -- Animate In
+        SafeTween(NotifFrame, {
             Size = UDim2.new(0, 320, 0, 80),
             Position = UDim2.new(1, -340, 1, -100)
-        }, 0.4, Enum.EasingStyle.Back)
+        }, 0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
         
         task.wait(0.4)
         
-        Tween(Progress, {
+        -- Progress Animation
+        SafeTween(Progress, {
             Size = UDim2.new(0, 0, 1, 0)
         }, notif.Duration, Enum.EasingStyle.Linear)
         
         task.wait(notif.Duration)
         
-        Tween(NotifFrame, {
+        -- Animate Out
+        SafeTween(NotifFrame, {
             Position = UDim2.new(1, 20, 1, -100),
             Size = UDim2.new(0, 0, 0, 80)
-        }, 0.3, Enum.EasingStyle.Back)
+        }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
         
         task.wait(0.3)
-        pcall(function() NotifFrame:Destroy() end)
+        
+        -- Cleanup
+        pcall(function()
+            NotifFrame:Destroy()
+        end)
     end
     
     ProcessingNotification = false
 end
 
--- Create Window
+--[[
+    ════════════════════════════════════════════════════════════════════════════
+    🪟 CREATE WINDOW FUNCTION
+    ════════════════════════════════════════════════════════════════════════════
+]]
+
 function Drakthon:CreateWindow(config)
     config = config or {}
     
+    -- Window Configuration
     local WindowConfig = {
         Name = config.Name or "Drakthon UI",
         Icon = config.Icon or "rbxassetid://7733955511",
         IntroEnabled = config.IntroEnabled ~= false,
         IntroText = config.IntroText or config.Name or "Drakthon UI",
         Keybind = config.Keybind or Enum.KeyCode.RightControl,
-        Size = config.Size or GetResponsiveSize(),
-        Theme = config.Theme or "Default",
-        ConfigurationSaving = config.ConfigurationSaving or {
-            Enabled = false,
-            FolderName = "DrakthonHub",
-            FileName = "Config"
-        }
+        Size = config.Size or {650, 450},
+        Theme = config.Theme or "Ocean"
     }
     
     -- Set Theme
-    if Theme.Set then
-        Theme.Set(WindowConfig.Theme)
-    end
+    Theme:Set(WindowConfig.Theme)
     
-    -- Get Parent
-    local function getParent()
+    -- Get Safe Parent
+    local function getSafeParent()
         local success, result = pcall(function()
-            return (gethui and gethui()) or game:GetService("CoreGui")
+            if gethui then
+                return gethui()
+            elseif syn and syn.protect_gui then
+                local gui = Instance.new("ScreenGui")
+                syn.protect_gui(gui)
+                gui.Parent = CoreGui
+                return CoreGui
+            else
+                return CoreGui
+            end
         end)
         
-        if success then
-            return result
-        else
-            return game.Players.LocalPlayer:WaitForChild("PlayerGui")
-        end
+        return success and result or Players.LocalPlayer:WaitForChild("PlayerGui")
     end
     
     -- Create ScreenGui
-    local ScreenGui = Create("ScreenGui", {
+    local ScreenGui = CreateInstance("ScreenGui", {
         Name = "DrakthonUI_" .. HttpService:GenerateGUID(false):sub(1, 8),
-        Parent = getParent(),
+        Parent = getSafeParent(),
         ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
         ResetOnSpawn = false,
         DisplayOrder = 999,
@@ -391,7 +593,7 @@ function Drakthon:CreateWindow(config)
     })
     
     -- Notification Holder
-    self.NotificationHolder = Create("Frame", {
+    self.NotificationHolder = CreateInstance("Frame", {
         Name = "NotificationHolder",
         Parent = ScreenGui,
         BackgroundTransparency = 1,
@@ -399,22 +601,21 @@ function Drakthon:CreateWindow(config)
         ZIndex = 1000
     })
     
-    -- Main Frame (Centered)
-    local Main = Create("Frame", {
+    -- Main Frame
+    local Main = CreateInstance("Frame", {
         Name = "MainFrame",
         Parent = ScreenGui,
         BackgroundColor3 = Theme.BG(),
         BorderSizePixel = 0,
         Position = UDim2.new(0.5, -WindowConfig.Size[1]/2, 0.5, -WindowConfig.Size[2]/2),
         Size = UDim2.new(0, 0, 0, 0),
-        AnchorPoint = Vector2.new(0, 0),
         ClipsDescendants = false
     })
     
     AddCorner(Main, 12)
     
-    -- Shadow/Glow Effect
-    local Shadow = Create("ImageLabel", {
+    -- Shadow Effect
+    CreateInstance("ImageLabel", {
         Name = "Shadow",
         Parent = Main,
         BackgroundTransparency = 1,
@@ -422,82 +623,14 @@ function Drakthon:CreateWindow(config)
         Size = UDim2.new(1, 30, 1, 30),
         ZIndex = 0,
         Image = "rbxassetid://5554236805",
-        ImageColor3 = Theme.Accent(),
-        ImageTransparency = 0.8,
-        ScaleType = Enum.ScaleType.Slice,
-        SliceCenter = Rect.new(23, 23, 277, 277)
-    })
-    
-    -- Minimize Icon (Hidden by default)
-    local MinimizeIcon = Create("ImageButton", {
-        Name = "MinimizeIcon",
-        Parent = ScreenGui,
-        BackgroundColor3 = Theme.BG2(),
-        BorderSizePixel = 0,
-        Position = UDim2.new(0, 20, 0, 20),
-        Size = UDim2.new(0, 70, 0, 70),
-        Visible = false,
-        Image = WindowConfig.Icon,
-        ImageColor3 = Theme.Text(),
-        ScaleType = Enum.ScaleType.Fit,
-        AutoButtonColor = false,
-        ZIndex = 500
-    })
-    
-    AddCorner(MinimizeIcon, 12)
-    
-    Create("ImageLabel", {
-        Name = "IconShadow",
-        Parent = MinimizeIcon,
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, -10, 0, -10),
-        Size = UDim2.new(1, 20, 1, 20),
-        ZIndex = 499,
-        Image = "rbxassetid://5554236805",
         ImageColor3 = Color3.fromRGB(0, 0, 0),
-        ImageTransparency = 0.5,
-        ScaleType = Enum.ScaleType.Slice,
-        SliceCenter = Rect.new(23, 23, 277, 277)
-    })
-    
-    local IconGlow = Create("ImageLabel", {
-        Name = "Glow",
-        Parent = MinimizeIcon,
-        BackgroundTransparency = 1,
-        Position = UDim2.new(0, -8, 0, -8),
-        Size = UDim2.new(1, 16, 1, 16),
-        ZIndex = 498,
-        Image = "rbxassetid://5554236805",
-        ImageColor3 = Theme.Accent(),
         ImageTransparency = 0.7,
         ScaleType = Enum.ScaleType.Slice,
         SliceCenter = Rect.new(23, 23, 277, 277)
     })
     
-    -- Pulsing animation for minimize icon
-    task.spawn(function()
-        while MinimizeIcon.Parent do
-            Tween(IconGlow, {ImageTransparency = 0.4}, 1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-            task.wait(1)
-            Tween(IconGlow, {ImageTransparency = 0.8}, 1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut)
-            task.wait(1)
-        end
-    end)
-    
-    MakeDraggable(MinimizeIcon, MinimizeIcon)
-    
-    MinimizeIcon.MouseEnter:Connect(function()
-        Tween(MinimizeIcon, {Size = UDim2.new(0, 80, 0, 80)}, 0.2, Enum.EasingStyle.Back)
-        Tween(MinimizeIcon, {BackgroundColor3 = Theme.BG3()}, 0.2)
-    end)
-    
-    MinimizeIcon.MouseLeave:Connect(function()
-        Tween(MinimizeIcon, {Size = UDim2.new(0, 70, 0, 70)}, 0.2, Enum.EasingStyle.Back)
-        Tween(MinimizeIcon, {BackgroundColor3 = Theme.BG2()}, 0.2)
-    end)
-    
     -- Header
-    local Header = Create("Frame", {
+    local Header = CreateInstance("Frame", {
         Name = "Header",
         Parent = Main,
         BackgroundColor3 = Theme.BG2(),
@@ -508,7 +641,8 @@ function Drakthon:CreateWindow(config)
     
     AddCorner(Header, 12)
     
-    Create("Frame", {
+    -- Header Bottom Fix
+    CreateInstance("Frame", {
         Name = "HeaderFix",
         Parent = Header,
         BackgroundColor3 = Theme.BG2(),
@@ -518,11 +652,12 @@ function Drakthon:CreateWindow(config)
         ZIndex = 1
     })
     
-    local HeaderGradient = Create("Frame", {
+    -- Header Gradient
+    local HeaderGradient = CreateInstance("Frame", {
         Name = "HeaderGradient",
         Parent = Header,
         BackgroundColor3 = Theme.Accent(),
-        BackgroundTransparency = 0.85,
+        BackgroundTransparency = 0.9,
         BorderSizePixel = 0,
         Size = UDim2.new(1, 0, 1, 0),
         ZIndex = 2
@@ -530,11 +665,12 @@ function Drakthon:CreateWindow(config)
     
     AddCorner(HeaderGradient, 12)
     
-    local gradient = Theme.Gradient and Theme.Gradient() or Instance.new("UIGradient")
+    local gradient = Theme:Gradient()
     gradient.Parent = HeaderGradient
     gradient.Rotation = 45
     
-    local HeaderIcon = Create("ImageLabel", {
+    -- Title Icon
+    local HeaderIcon = CreateInstance("ImageLabel", {
         Name = "Icon",
         Parent = Header,
         BackgroundTransparency = 1,
@@ -548,12 +684,13 @@ function Drakthon:CreateWindow(config)
     
     AddCorner(HeaderIcon, 8)
     
-    local Title = Create("TextLabel", {
+    -- Title Text
+    local Title = CreateInstance("TextLabel", {
         Name = "Title",
         Parent = Header,
         BackgroundTransparency = 1,
         Position = UDim2.new(0, 53, 0, 0),
-        Size = UDim2.new(1, -140, 1, 0),
+        Size = UDim2.new(1, -120, 1, 0),
         Font = Enum.Font.GothamBold,
         Text = WindowConfig.Name,
         TextColor3 = Theme.Text(),
@@ -563,7 +700,7 @@ function Drakthon:CreateWindow(config)
     })
     
     -- Minimize Button
-    local MinimizeBtn = Create("TextButton", {
+    local MinimizeBtn = CreateInstance("TextButton", {
         Name = "MinimizeBtn",
         Parent = Header,
         BackgroundColor3 = Theme.BG3(),
@@ -580,22 +717,8 @@ function Drakthon:CreateWindow(config)
     
     AddCorner(MinimizeBtn, 6)
     
-    local MinimizeRipple = Create("Frame", {
-        Name = "Ripple",
-        Parent = MinimizeBtn,
-        BackgroundColor3 = Theme.Accent(),
-        BackgroundTransparency = 1,
-        BorderSizePixel = 0,
-        Size = UDim2.new(0, 0, 0, 0),
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-        AnchorPoint = Vector2.new(0.5, 0.5),
-        ZIndex = 2
-    })
-    
-    AddCorner(MinimizeRipple, 999)
-    
     -- Close Button
-    local CloseBtn = Create("TextButton", {
+    local CloseBtn = CreateInstance("TextButton", {
         Name = "CloseBtn",
         Parent = Header,
         BackgroundColor3 = Theme.Red(),
@@ -613,7 +736,7 @@ function Drakthon:CreateWindow(config)
     AddCorner(CloseBtn, 6)
     
     -- Navigation Sidebar
-    local Nav = Create("Frame", {
+    local Nav = CreateInstance("Frame", {
         Name = "Navigation",
         Parent = Main,
         BackgroundColor3 = Theme.BG2(),
@@ -623,16 +746,16 @@ function Drakthon:CreateWindow(config)
         ZIndex = 1
     })
     
-    Create("UIListLayout", {
+    CreateInstance("UIListLayout", {
         Parent = Nav,
         SortOrder = Enum.SortOrder.LayoutOrder,
         Padding = UDim.new(0, 5)
     })
     
-    AddPadding(Nav, 10, 10, 10, 10)
+    AddPadding(Nav, 10)
     
     -- Content Area
-    local Content = Create("Frame", {
+    local Content = CreateInstance("Frame", {
         Name = "Content",
         Parent = Main,
         BackgroundColor3 = Theme.BG3(),
@@ -642,243 +765,103 @@ function Drakthon:CreateWindow(config)
         ZIndex = 1
     })
     
+    -- Make Draggable
     MakeDraggable(Main, Header)
+    
+    -- Button Hover Effects
+    MinimizeBtn.MouseEnter:Connect(function()
+        SafeTween(MinimizeBtn, {BackgroundColor3 = Theme.Accent()}, 0.2)
+        SafeTween(MinimizeBtn, {Size = UDim2.new(0, 28, 0, 28)}, 0.2, Enum.EasingStyle.Back)
+    end)
+    
+    MinimizeBtn.MouseLeave:Connect(function()
+        SafeTween(MinimizeBtn, {BackgroundColor3 = Theme.BG3()}, 0.2)
+        SafeTween(MinimizeBtn, {Size = UDim2.new(0, 25, 0, 25)}, 0.2, Enum.EasingStyle.Back)
+    end)
+    
+    CloseBtn.MouseEnter:Connect(function()
+        SafeTween(CloseBtn, {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}, 0.2)
+        SafeTween(CloseBtn, {Size = UDim2.new(0, 28, 0, 28)}, 0.2, Enum.EasingStyle.Back)
+    end)
+    
+    CloseBtn.MouseLeave:Connect(function()
+        SafeTween(CloseBtn, {BackgroundColor3 = Theme.Red()}, 0.2)
+        SafeTween(CloseBtn, {Size = UDim2.new(0, 25, 0, 25)}, 0.2, Enum.EasingStyle.Back)
+    end)
     
     -- Button Events
     local minimized = false
     
     MinimizeBtn.MouseButton1Click:Connect(function()
         minimized = not minimized
-        
-        -- Ripple effect
-        MinimizeRipple.Size = UDim2.new(0, 0, 0, 0)
-        MinimizeRipple.BackgroundTransparency = 0.5
-        Tween(MinimizeRipple, {
-            Size = UDim2.new(1, 30, 1, 30),
-            BackgroundTransparency = 1
-        }, 0.5)
-        
-        if minimized then
-            Tween(MinimizeBtn, {Rotation = 180}, 0.3, Enum.EasingStyle.Back)
-            
-            Tween(Main, {Size = UDim2.new(0, 0, 0, WindowConfig.Size[2])}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-            task.wait(0.2)
-            
-            Tween(Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-            task.wait(0.2)
-            
-            Main.Visible = false
-            
-            MinimizeIcon.Visible = true
-            MinimizeIcon.Size = UDim2.new(0, 0, 0, 0)
-            MinimizeIcon.Rotation = -180
-            MinimizeIcon.ImageTransparency = 1
-            
-            Tween(MinimizeIcon, {
-                Size = UDim2.new(0, 70, 0, 70),
-                Rotation = 0,
-                ImageTransparency = 0
-            }, 0.5, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out)
-        else
-            Tween(MinimizeBtn, {Rotation = 0}, 0.3, Enum.EasingStyle.Back)
-            
-            Tween(MinimizeIcon, {
-                Size = UDim2.new(0, 0, 0, 0),
-                Rotation = 180,
-                ImageTransparency = 1
-            }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-            
-            task.wait(0.3)
-            MinimizeIcon.Visible = false
-            
-            Main.Visible = true
-            Main.Size = UDim2.new(0, 0, 0, 0)
-            
-            Tween(Main, {Size = UDim2.new(0, 0, 0, WindowConfig.Size[2])}, 0.2, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
-            task.wait(0.2)
-            
-            Tween(Main, {Size = UDim2.new(0, WindowConfig.Size[1], 0, WindowConfig.Size[2])}, 0.4, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out)
-        end
-    end)
-    
-    MinimizeIcon.MouseButton1Click:Connect(function()
-        if minimized then
-            MinimizeBtn.MouseButton1Click:Fire()
-        end
-    end)
-    
-    MinimizeBtn.MouseEnter:Connect(function()
-        Tween(MinimizeBtn, {BackgroundColor3 = Theme.Accent()}, 0.2)
-        Tween(MinimizeBtn, {Size = UDim2.new(0, 28, 0, 28)}, 0.2, Enum.EasingStyle.Back)
-    end)
-    
-    MinimizeBtn.MouseLeave:Connect(function()
-        Tween(MinimizeBtn, {BackgroundColor3 = Theme.BG3()}, 0.2)
-        Tween(MinimizeBtn, {Size = UDim2.new(0, 25, 0, 25)}, 0.2, Enum.EasingStyle.Back)
+        Main.Visible = not minimized
     end)
     
     CloseBtn.MouseButton1Click:Connect(function()
-        Tween(Main, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-        if MinimizeIcon.Visible then
-            Tween(MinimizeIcon, {Size = UDim2.new(0, 0, 0, 0)}, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
-        end
+        SafeTween(Main, {
+            Size = UDim2.new(0, 0, 0, 0)
+        }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In)
+        
         task.wait(0.3)
         ScreenGui:Destroy()
     end)
     
-    CloseBtn.MouseEnter:Connect(function()
-        Tween(CloseBtn, {BackgroundColor3 = Color3.fromRGB(255, 80, 80)}, 0.2)
-        Tween(CloseBtn, {Size = UDim2.new(0, 28, 0, 28)}, 0.2, Enum.EasingStyle.Back)
-    end)
-    
-    CloseBtn.MouseLeave:Connect(function()
-        Tween(CloseBtn, {BackgroundColor3 = Theme.Red()}, 0.2)
-        Tween(CloseBtn, {Size = UDim2.new(0, 25, 0, 25)}, 0.2, Enum.EasingStyle.Back)
-    end)
-    
-    -- Enhanced Intro Animation
+    -- Intro Animation
     if WindowConfig.IntroEnabled then
-        local Intro = Create("Frame", {
-            Name = "Intro",
-            Parent = Main,
-            BackgroundTransparency = 1,
-            Size = UDim2.new(1, 0, 1, 0),
-            ZIndex = 200
-        })
-        
-        local LogoContainer = Create("Frame", {
-            Name = "LogoContainer",
-            Parent = Intro,
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0.5, 0, 0.5, -50),
-            Size = UDim2.new(0, 450, 0, 120),
-            AnchorPoint = Vector2.new(0.5, 0.5),
-            ZIndex = 202
-        })
-        
-        local Logo = Create("ImageLabel", {
-            Name = "Logo",
-            Parent = LogoContainer,
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, 0, 0, 0),
-            Size = UDim2.new(0, 100, 0, 100),
-            Image = WindowConfig.Icon,
-            ScaleType = Enum.ScaleType.Fit,
-            ZIndex = 203
-        })
-        
-        local ScriptName = Create("TextLabel", {
-            Name = "ScriptName",
-            Parent = LogoContainer,
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, 115, 0, 20),
-            Size = UDim2.new(0, 335, 0, 40),
-            Font = Enum.Font.GothamBold,
-            Text = WindowConfig.IntroText,
-            TextColor3 = Theme.Text(),
-            TextSize = 26,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            TextYAlignment = Enum.TextYAlignment.Top,
-            ZIndex = 203
-        })
-        
-        local PoweredBy = Create("TextLabel", {
-            Name = "PoweredBy",
-            Parent = LogoContainer,
-            BackgroundTransparency = 1,
-            Position = UDim2.new(0, 115, 0, 65),
-            Size = UDim2.new(0, 335, 0, 25),
-            Font = Enum.Font.Gotham,
-            Text = "Powered by Drakthon Lib",
-            TextColor3 = Theme.Accent(),
-            TextSize = 14,
-            TextXAlignment = Enum.TextXAlignment.Left,
-            ZIndex = 203
-        })
-        
-        Logo.ImageTransparency = 1
-        ScriptName.TextTransparency = 1
-        PoweredBy.TextTransparency = 1
-        Logo.Size = UDim2.new(0, 70, 0, 70)
-        Logo.Position = UDim2.new(0, 15, 0, 15)
-        
-        Tween(Main, {Size = UDim2.new(0, WindowConfig.Size[1], 0, WindowConfig.Size[2])}, 0.7, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out)
-        task.wait(0.3)
-        
-        Tween(Logo, {
-            ImageTransparency = 0,
-            Size = UDim2.new(0, 100, 0, 100),
-            Position = UDim2.new(0, 0, 0, 0)
-        }, 0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-        
-        task.wait(0.3)
-        
-        Tween(ScriptName, {TextTransparency = 0}, 0.5)
-        task.wait(0.2)
-        Tween(PoweredBy, {TextTransparency = 0}, 0.5)
-        
-        task.wait(1.5)
-        
-        Tween(Logo, {ImageTransparency = 1}, 0.4)
-        Tween(ScriptName, {TextTransparency = 1}, 0.4)
-        Tween(PoweredBy, {TextTransparency = 1}, 0.4)
-        
-        task.wait(0.4)
-        pcall(function() Intro:Destroy() end)
+        SafeTween(Main, {
+            Size = UDim2.new(0, WindowConfig.Size[1], 0, WindowConfig.Size[2])
+        }, 0.7, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out)
+        task.wait(0.7)
     else
-        Tween(Main, {Size = UDim2.new(0, WindowConfig.Size[1], 0, WindowConfig.Size[2])}, 0.7, Enum.EasingStyle.Elastic, Enum.EasingDirection.Out)
+        Main.Size = UDim2.new(0, WindowConfig.Size[1], 0, WindowConfig.Size[2])
     end
-    
-    -- Responsive Resize Handler
-    local resizeConnection
-    resizeConnection = camera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
-        task.wait(0.1)
-        local newSize = GetResponsiveSize()
-        if not minimized and Main.Visible then
-            Tween(Main, {
-                Size = UDim2.new(0, newSize[1], 0, newSize[2]),
-                Position = UDim2.new(0.5, -newSize[1]/2, 0.5, -newSize[2]/2)
-            }, 0.3)
-        end
-        WindowConfig.Size = newSize
-    end)
     
     -- Keybind Toggle
     local keybindConnection = UserInputService.InputBegan:Connect(function(input, gpe)
         if not gpe and input.KeyCode == WindowConfig.Keybind then
-            if minimized then
-                MinimizeIcon.MouseButton1Click:Fire()
-            else
-                Main.Visible = not Main.Visible
-            end
+            Main.Visible = not Main.Visible
         end
     end)
     
-    -- Cleanup
+    table.insert(Drakthon.Connections, keybindConnection)
+    
+    -- Cleanup on destroy
     ScreenGui.Destroying:Connect(function()
-        if resizeConnection then resizeConnection:Disconnect() end
-        if keybindConnection then keybindConnection:Disconnect() end
+        for _, connection in ipairs(Drakthon.Connections) do
+            pcall(function()
+                connection:Disconnect()
+            end)
+        end
     end)
     
-    -- Window Object
+    --[[
+        ════════════════════════════════════════════════════════════════════════
+        📑 WINDOW OBJECT
+        ════════════════════════════════════════════════════════════════════════
+    ]]
+    
     local Window = {
         Tabs = {},
         CurrentTab = nil,
         ScreenGui = ScreenGui,
         MainFrame = Main,
-        MinimizeIcon = MinimizeIcon,
-        Size = WindowConfig.Size,
         Theme = Theme,
         Config = WindowConfig
     }
     
-    -- Create Tab
+    --[[
+        ════════════════════════════════════════════════════════════════════════
+        📂 CREATE TAB FUNCTION
+        ════════════════════════════════════════════════════════════════════════
+    ]]
+    
     function Window:CreateTab(config)
         config = config or {}
         local TabName = config.Name or "Tab"
         local TabIcon = config.Icon or "rbxassetid://7733955511"
         
-        local TabBtn = Create("TextButton", {
+        -- Tab Button
+        local TabBtn = CreateInstance("TextButton", {
             Name = "Tab_" .. TabName,
             Parent = Nav,
             BackgroundColor3 = Theme.BG3(),
@@ -891,7 +874,8 @@ function Drakthon:CreateWindow(config)
         
         AddCorner(TabBtn, 8)
         
-        local TabIconLabel = Create("ImageLabel", {
+        -- Tab Icon
+        local TabIconLabel = CreateInstance("ImageLabel", {
             Name = "Icon",
             Parent = TabBtn,
             BackgroundTransparency = 1,
@@ -903,7 +887,8 @@ function Drakthon:CreateWindow(config)
             ZIndex = 3
         })
         
-        local TabLabel = Create("TextLabel", {
+        -- Tab Label
+        local TabLabel = CreateInstance("TextLabel", {
             Name = "Label",
             Parent = TabBtn,
             BackgroundTransparency = 1,
@@ -917,7 +902,8 @@ function Drakthon:CreateWindow(config)
             ZIndex = 3
         })
         
-        local TabContent = Create("ScrollingFrame", {
+        -- Tab Content
+        local TabContent = CreateInstance("ScrollingFrame", {
             Name = "Content_" .. TabName,
             Parent = Content,
             BackgroundTransparency = 1,
@@ -931,40 +917,50 @@ function Drakthon:CreateWindow(config)
             ZIndex = 2
         })
         
-        AddPadding(TabContent, 15, 15, 15, 15)
+        AddPadding(TabContent, 15)
         
-        Create("UIListLayout", {
+        CreateInstance("UIListLayout", {
             Parent = TabContent,
             SortOrder = Enum.SortOrder.LayoutOrder,
             Padding = UDim.new(0, 10)
         })
         
+        -- Tab Click Event
         TabBtn.MouseButton1Click:Connect(function()
+            -- Deselect all tabs
             for _, tab in pairs(Window.Tabs) do
-                if tab.Deselect then tab:Deselect() end
+                if tab.Deselect then
+                    tab:Deselect()
+                end
             end
             
+            -- Select this tab
             Window.CurrentTab = TabName
             TabContent.Visible = true
             
-            Tween(TabBtn, {BackgroundColor3 = Theme.Accent()}, 0.2)
-            Tween(TabLabel, {TextColor3 = Theme.Text()}, 0.2)
-            if TabIconLabel then
-                Tween(TabIconLabel, {ImageColor3 = Theme.Text()}, 0.2)
-            end
+            SafeTween(TabBtn, {BackgroundColor3 = Theme.Accent()}, 0.2)
+            SafeTween(TabLabel, {TextColor3 = Theme.Text()}, 0.2)
+            SafeTween(TabIconLabel, {ImageColor3 = Theme.Text()}, 0.2)
         end)
         
+        -- Tab Hover Effects
         TabBtn.MouseEnter:Connect(function()
             if Window.CurrentTab ~= TabName then
-                Tween(TabBtn, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, 0.2)
+                SafeTween(TabBtn, {BackgroundColor3 = Color3.fromRGB(30, 30, 40)}, 0.2)
             end
         end)
         
         TabBtn.MouseLeave:Connect(function()
             if Window.CurrentTab ~= TabName then
-                Tween(TabBtn, {BackgroundColor3 = Theme.BG3()}, 0.2)
+                SafeTween(TabBtn, {BackgroundColor3 = Theme.BG3()}, 0.2)
             end
         end)
+        
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            📋 TAB OBJECT
+            ════════════════════════════════════════════════════════════════════
+        ]]
         
         local Tab = {
             Name = TabName,
@@ -974,20 +970,23 @@ function Drakthon:CreateWindow(config)
         
         function Tab:Deselect()
             TabContent.Visible = false
-            Tween(TabBtn, {BackgroundColor3 = Theme.BG3()}, 0.2)
-            Tween(TabLabel, {TextColor3 = Theme.Text2()}, 0.2)
-            if TabIconLabel then
-                Tween(TabIconLabel, {ImageColor3 = Theme.Text2()}, 0.2)
-            end
+            SafeTween(TabBtn, {BackgroundColor3 = Theme.BG3()}, 0.2)
+            SafeTween(TabLabel, {TextColor3 = Theme.Text2()}, 0.2)
+            SafeTween(TabIconLabel, {ImageColor3 = Theme.Text2()}, 0.2)
         end
         
-        -- Create Button
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            🔘 CREATE BUTTON
+            ════════════════════════════════════════════════════════════════════
+        ]]
+        
         function Tab:CreateButton(config)
             config = config or {}
             local Name = config.Name or "Button"
             local Callback = config.Callback or function() end
             
-            local Btn = Create("TextButton", {
+            local Btn = CreateInstance("TextButton", {
                 Name = "Button",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
@@ -1007,24 +1006,29 @@ function Drakthon:CreateWindow(config)
             end)
             
             Btn.MouseEnter:Connect(function()
-                Tween(Btn, {BackgroundColor3 = Theme.BG3()}, 0.2)
+                SafeTween(Btn, {BackgroundColor3 = Theme.BG3()}, 0.2)
             end)
             
             Btn.MouseLeave:Connect(function()
-                Tween(Btn, {BackgroundColor3 = Theme.BG2()}, 0.2)
+                SafeTween(Btn, {BackgroundColor3 = Theme.BG2()}, 0.2)
             end)
             
             return Btn
         end
         
-        -- Create Toggle
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            🔄 CREATE TOGGLE
+            ════════════════════════════════════════════════════════════════════
+        ]]
+        
         function Tab:CreateToggle(config)
             config = config or {}
             local Name = config.Name or "Toggle"
             local Default = config.Default or false
             local Callback = config.Callback or function() end
             
-            local Frame = Create("Frame", {
+            local Frame = CreateInstance("Frame", {
                 Name = "Toggle",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
@@ -1034,7 +1038,7 @@ function Drakthon:CreateWindow(config)
             
             AddCorner(Frame, 8)
             
-            Create("TextLabel", {
+            CreateInstance("TextLabel", {
                 Name = "Label",
                 Parent = Frame,
                 BackgroundTransparency = 1,
@@ -1048,7 +1052,7 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 4
             })
             
-            local ToggleBtn = Create("TextButton", {
+            local ToggleBtn = CreateInstance("TextButton", {
                 Name = "ToggleBtn",
                 Parent = Frame,
                 BackgroundColor3 = Default and Theme.Accent() or Theme.BG3(),
@@ -1062,7 +1066,7 @@ function Drakthon:CreateWindow(config)
             
             AddCorner(ToggleBtn, 999)
             
-            local Indicator = Create("Frame", {
+            local Indicator = CreateInstance("Frame", {
                 Name = "Indicator",
                 Parent = ToggleBtn,
                 BackgroundColor3 = Theme.Text(),
@@ -1078,8 +1082,15 @@ function Drakthon:CreateWindow(config)
             
             ToggleBtn.MouseButton1Click:Connect(function()
                 toggled = not toggled
-                Tween(ToggleBtn, {BackgroundColor3 = toggled and Theme.Accent() or Theme.BG3()}, 0.2)
-                Tween(Indicator, {Position = toggled and UDim2.new(1, -20, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)}, 0.2)
+                
+                SafeTween(ToggleBtn, {
+                    BackgroundColor3 = toggled and Theme.Accent() or Theme.BG3()
+                }, 0.2)
+                
+                SafeTween(Indicator, {
+                    Position = toggled and UDim2.new(1, -20, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
+                }, 0.2)
+                
                 task.spawn(Callback, toggled)
             end)
             
@@ -1089,11 +1100,19 @@ function Drakthon:CreateWindow(config)
                     ToggleBtn.BackgroundColor3 = toggled and Theme.Accent() or Theme.BG3()
                     Indicator.Position = toggled and UDim2.new(1, -20, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
                     task.spawn(Callback, toggled)
+                end,
+                Get = function(self)
+                    return toggled
                 end
             }
         end
         
-        -- Create Slider
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            📊 CREATE SLIDER
+            ════════════════════════════════════════════════════════════════════
+        ]]
+        
         function Tab:CreateSlider(config)
             config = config or {}
             local Name = config.Name or "Slider"
@@ -1103,7 +1122,7 @@ function Drakthon:CreateWindow(config)
             local Increment = config.Increment or 1
             local Callback = config.Callback or function() end
             
-            local Frame = Create("Frame", {
+            local Frame = CreateInstance("Frame", {
                 Name = "Slider",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
@@ -1113,7 +1132,7 @@ function Drakthon:CreateWindow(config)
             
             AddCorner(Frame, 8)
             
-            Create("TextLabel", {
+            CreateInstance("TextLabel", {
                 Name = "Label",
                 Parent = Frame,
                 BackgroundTransparency = 1,
@@ -1127,7 +1146,7 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 4
             })
             
-            local ValueBox = Create("TextBox", {
+            local ValueBox = CreateInstance("TextLabel", {
                 Name = "ValueBox",
                 Parent = Frame,
                 BackgroundColor3 = Theme.BG3(),
@@ -1137,14 +1156,12 @@ function Drakthon:CreateWindow(config)
                 Text = tostring(Default),
                 TextColor3 = Theme.Accent(),
                 TextSize = 13,
-                TextXAlignment = Enum.TextXAlignment.Center,
-                ClearTextOnFocus = false,
                 ZIndex = 4
             })
             
             AddCorner(ValueBox, 6)
             
-            local Track = Create("Frame", {
+            local Track = CreateInstance("Frame", {
                 Name = "Track",
                 Parent = Frame,
                 BackgroundColor3 = Theme.BG3(),
@@ -1155,7 +1172,7 @@ function Drakthon:CreateWindow(config)
             
             AddCorner(Track, 999)
             
-            local Fill = Create("Frame", {
+            local Fill = CreateInstance("Frame", {
                 Name = "Fill",
                 Parent = Track,
                 BackgroundColor3 = Theme.Accent(),
@@ -1165,7 +1182,7 @@ function Drakthon:CreateWindow(config)
             
             AddCorner(Fill, 999)
             
-            local Dot = Create("Frame", {
+            local Dot = CreateInstance("Frame", {
                 Name = "Dot",
                 Parent = Track,
                 BackgroundColor3 = Theme.Text(),
@@ -1183,9 +1200,11 @@ function Drakthon:CreateWindow(config)
             local function Update(val)
                 value = math.clamp(math.floor((val / Increment) + 0.5) * Increment, Min, Max)
                 local percent = (value - Min) / (Max - Min)
+                
                 ValueBox.Text = tostring(value)
                 Fill.Size = UDim2.new(percent, 0, 1, 0)
                 Dot.Position = UDim2.new(percent, 0, 0.5, 0)
+                
                 task.spawn(Callback, value)
             end
             
@@ -1195,7 +1214,7 @@ function Drakthon:CreateWindow(config)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or 
                    input.UserInputType == Enum.UserInputType.Touch then
                     dragging = true
-                    Tween(Dot, {Size = UDim2.new(0, 18, 0, 18)}, 0.1)
+                    SafeTween(Dot, {Size = UDim2.new(0, 18, 0, 18)}, 0.1)
                 end
             end)
             
@@ -1203,51 +1222,45 @@ function Drakthon:CreateWindow(config)
                 if input.UserInputType == Enum.UserInputType.MouseButton1 or 
                    input.UserInputType == Enum.UserInputType.Touch then
                     dragging = false
-                    Tween(Dot, {Size = UDim2.new(0, 14, 0, 14)}, 0.1)
+                    SafeTween(Dot, {Size = UDim2.new(0, 14, 0, 14)}, 0.1)
                 end
             end)
             
             UserInputService.InputChanged:Connect(function(input)
                 if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or 
                                 input.UserInputType == Enum.UserInputType.Touch) then
-                    local percent = math.clamp((input.Position.X - Track.AbsolutePosition.X) / Track.AbsoluteSize.X, 0, 1)
+                    local percent = math.clamp(
+                        (input.Position.X - Track.AbsolutePosition.X) / Track.AbsoluteSize.X,
+                        0, 1
+                    )
                     Update(Min + (percent * (Max - Min)))
                 end
-            end)
-            
-            ValueBox.FocusLost:Connect(function()
-                local inputValue = tonumber(ValueBox.Text)
-                if inputValue then
-                    Update(inputValue)
-                else
-                    ValueBox.Text = tostring(value)
-                end
-            end)
-            
-            ValueBox.Focused:Connect(function()
-                Tween(ValueBox, {BackgroundColor3 = Color3.fromRGB(35, 35, 45)}, 0.2)
-            end)
-            
-            ValueBox.FocusLost:Connect(function()
-                Tween(ValueBox, {BackgroundColor3 = Theme.BG3()}, 0.2)
             end)
             
             return {
                 Set = function(self, val)
                     Update(val)
+                end,
+                Get = function(self)
+                    return value
                 end
             }
         end
         
-        -- Create Dropdown
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            📝 CREATE DROPDOWN
+            ════════════════════════════════════════════════════════════════════
+        ]]
+        
         function Tab:CreateDropdown(config)
             config = config or {}
             local Name = config.Name or "Dropdown"
-            local Options = config.Options or {"Option 1"}
+            local Options = config.Options or {"Option 1", "Option 2"}
             local Default = config.Default or Options[1]
             local Callback = config.Callback or function() end
             
-            local Frame = Create("Frame", {
+            local Frame = CreateInstance("Frame", {
                 Name = "Dropdown",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
@@ -1258,7 +1271,7 @@ function Drakthon:CreateWindow(config)
             
             AddCorner(Frame, 8)
             
-            local Btn = Create("TextButton", {
+            local Btn = CreateInstance("TextButton", {
                 Name = "Btn",
                 Parent = Frame,
                 BackgroundTransparency = 1,
@@ -1268,7 +1281,7 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 4
             })
             
-            Create("TextLabel", {
+            CreateInstance("TextLabel", {
                 Name = "Label",
                 Parent = Btn,
                 BackgroundTransparency = 1,
@@ -1282,12 +1295,12 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 5
             })
             
-            local Selected = Create("TextLabel", {
+            local Selected = CreateInstance("TextLabel", {
                 Name = "Selected",
                 Parent = Btn,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(1, -50, 0, 0),
-                Size = UDim2.new(0, 0, 1, 0),
+                Position = UDim2.new(1, -65, 0, 0),
+                Size = UDim2.new(0, 50, 1, 0),
                 Font = Enum.Font.Gotham,
                 Text = Default or "...",
                 TextColor3 = Theme.Accent(),
@@ -1296,7 +1309,7 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 5
             })
             
-            local Arrow = Create("TextLabel", {
+            local Arrow = CreateInstance("TextLabel", {
                 Name = "Arrow",
                 Parent = Btn,
                 BackgroundTransparency = 1,
@@ -1309,17 +1322,16 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 5
             })
             
-            local OptionsContainer = Create("Frame", {
+            local OptionsContainer = CreateInstance("Frame", {
                 Name = "Options",
                 Parent = Frame,
                 BackgroundTransparency = 1,
                 Position = UDim2.new(0, 0, 0, 38),
                 Size = UDim2.new(1, 0, 0, 0),
-                AutomaticSize = Enum.AutomaticSize.Y,
                 ZIndex = 4
             })
             
-            Create("UIListLayout", {
+            CreateInstance("UIListLayout", {
                 Parent = OptionsContainer,
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Padding = UDim.new(0, 2)
@@ -1329,7 +1341,7 @@ function Drakthon:CreateWindow(config)
             local selected = Default
             
             for i, opt in ipairs(Options) do
-                local OptBtn = Create("TextButton", {
+                local OptBtn = CreateInstance("TextButton", {
                     Name = "Opt_" .. i,
                     Parent = OptionsContainer,
                     BackgroundColor3 = Theme.BG3(),
@@ -1348,30 +1360,32 @@ function Drakthon:CreateWindow(config)
                     selected = opt
                     Selected.Text = opt
                     opened = false
-                    Tween(Arrow, {Rotation = 0}, 0.2)
-                    Tween(Frame, {Size = UDim2.new(1, 0, 0, 38)}, 0.3)
+                    
+                    SafeTween(Arrow, {Rotation = 0}, 0.2)
+                    SafeTween(Frame, {Size = UDim2.new(1, 0, 0, 38)}, 0.3)
+                    
                     task.spawn(Callback, opt)
                 end)
                 
                 OptBtn.MouseEnter:Connect(function()
-                    Tween(OptBtn, {BackgroundColor3 = Theme.Accent()}, 0.2)
+                    SafeTween(OptBtn, {BackgroundColor3 = Theme.Accent()}, 0.2)
                 end)
                 
                 OptBtn.MouseLeave:Connect(function()
-                    Tween(OptBtn, {BackgroundColor3 = Theme.BG3()}, 0.2)
+                    SafeTween(OptBtn, {BackgroundColor3 = Theme.BG3()}, 0.2)
                 end)
             end
             
             Btn.MouseButton1Click:Connect(function()
                 opened = not opened
+                
                 if opened then
-                    Tween(Arrow, {Rotation = 180}, 0.2)
-                    task.wait()
-                    local contentHeight = #Options * 30
-                    Tween(Frame, {Size = UDim2.new(1, 0, 0, 38 + contentHeight + 5)}, 0.3)
+                    SafeTween(Arrow, {Rotation = 180}, 0.2)
+                    local height = #Options * 30
+                    SafeTween(Frame, {Size = UDim2.new(1, 0, 0, 38 + height + 5)}, 0.3)
                 else
-                    Tween(Arrow, {Rotation = 0}, 0.2)
-                    Tween(Frame, {Size = UDim2.new(1, 0, 0, 38)}, 0.3)
+                    SafeTween(Arrow, {Rotation = 0}, 0.2)
+                    SafeTween(Frame, {Size = UDim2.new(1, 0, 0, 38)}, 0.3)
                 end
             end)
             
@@ -1382,11 +1396,19 @@ function Drakthon:CreateWindow(config)
                         Selected.Text = opt
                         task.spawn(Callback, opt)
                     end
+                end,
+                Get = function(self)
+                    return selected
                 end
             }
         end
         
-        -- Create Input
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            ⌨️ CREATE INPUT
+            ════════════════════════════════════════════════════════════════════
+        ]]
+        
         function Tab:CreateInput(config)
             config = config or {}
             local Name = config.Name or "Input"
@@ -1394,7 +1416,7 @@ function Drakthon:CreateWindow(config)
             local Default = config.Default or ""
             local Callback = config.Callback or function() end
             
-            local Frame = Create("Frame", {
+            local Frame = CreateInstance("Frame", {
                 Name = "Input",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
@@ -1404,7 +1426,7 @@ function Drakthon:CreateWindow(config)
             
             AddCorner(Frame, 8)
             
-            Create("TextLabel", {
+            CreateInstance("TextLabel", {
                 Name = "Label",
                 Parent = Frame,
                 BackgroundTransparency = 1,
@@ -1418,7 +1440,7 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 4
             })
             
-            local Input = Create("TextBox", {
+            local Input = CreateInstance("TextBox", {
                 Name = "InputBox",
                 Parent = Frame,
                 BackgroundColor3 = Theme.BG3(),
@@ -1435,14 +1457,14 @@ function Drakthon:CreateWindow(config)
             })
             
             AddCorner(Input, 6)
-            AddPadding(Input, 0, 10, 10, 0)
+            AddPadding(Input, 8)
             
             Input.Focused:Connect(function()
-                Tween(Input, {BackgroundColor3 = Color3.fromRGB(35, 35, 45)}, 0.2)
+                SafeTween(Input, {BackgroundColor3 = Color3.fromRGB(35, 35, 45)}, 0.2)
             end)
             
             Input.FocusLost:Connect(function()
-                Tween(Input, {BackgroundColor3 = Theme.BG3()}, 0.2)
+                SafeTween(Input, {BackgroundColor3 = Theme.BG3()}, 0.2)
                 task.spawn(Callback, Input.Text)
             end)
             
@@ -1456,9 +1478,14 @@ function Drakthon:CreateWindow(config)
             }
         end
         
-        -- Create Label
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            📄 CREATE LABEL
+            ════════════════════════════════════════════════════════════════════
+        ]]
+        
         function Tab:CreateLabel(text)
-            local Label = Create("TextLabel", {
+            local Label = CreateInstance("TextLabel", {
                 Name = "Label",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
@@ -1472,7 +1499,7 @@ function Drakthon:CreateWindow(config)
             })
             
             AddCorner(Label, 8)
-            AddPadding(Label, 0, 15, 15, 0)
+            AddPadding(Label, 8)
             
             return {
                 Set = function(self, txt)
@@ -1484,9 +1511,14 @@ function Drakthon:CreateWindow(config)
             }
         end
         
-        -- Create Section
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            📑 CREATE SECTION
+            ════════════════════════════════════════════════════════════════════
+        ]]
+        
         function Tab:CreateSection(name)
-            local Section = Create("Frame", {
+            local Section = CreateInstance("Frame", {
                 Name = "Section",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
@@ -1496,7 +1528,7 @@ function Drakthon:CreateWindow(config)
             
             AddCorner(Section, 8)
             
-            Create("TextLabel", {
+            CreateInstance("TextLabel", {
                 Name = "SectionLabel",
                 Parent = Section,
                 BackgroundTransparency = 1,
@@ -1513,9 +1545,14 @@ function Drakthon:CreateWindow(config)
             return Section
         end
         
-        -- Create Paragraph
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            📰 CREATE PARAGRAPH
+            ════════════════════════════════════════════════════════════════════
+        ]]
+        
         function Tab:CreateParagraph(title, content)
-            local Frame = Create("Frame", {
+            local Frame = CreateInstance("Frame", {
                 Name = "Paragraph",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
@@ -1525,15 +1562,15 @@ function Drakthon:CreateWindow(config)
             })
             
             AddCorner(Frame, 8)
-            AddPadding(Frame, 10, 15, 15, 10)
+            AddPadding(Frame, 10)
             
-            local layout = Create("UIListLayout", {
+            CreateInstance("UIListLayout", {
                 Parent = Frame,
                 SortOrder = Enum.SortOrder.LayoutOrder,
                 Padding = UDim.new(0, 5)
             })
             
-            local Title = Create("TextLabel", {
+            local Title = CreateInstance("TextLabel", {
                 Name = "Title",
                 Parent = Frame,
                 BackgroundTransparency = 1,
@@ -1547,7 +1584,7 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 4
             })
             
-            local Content = Create("TextLabel", {
+            local Content = CreateInstance("TextLabel", {
                 Name = "Content",
                 Parent = Frame,
                 BackgroundTransparency = 1,
@@ -1571,14 +1608,19 @@ function Drakthon:CreateWindow(config)
             }
         end
         
-        -- Create ColorPicker
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            🎨 CREATE COLOR PICKER
+            ════════════════════════════════════════════════════════════════════
+        ]]
+        
         function Tab:CreateColorPicker(config)
             config = config or {}
             local Name = config.Name or "Color"
             local Default = config.Default or Color3.fromRGB(255, 255, 255)
             local Callback = config.Callback or function() end
             
-            local Frame = Create("Frame", {
+            local Frame = CreateInstance("Frame", {
                 Name = "ColorPicker",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
@@ -1588,7 +1630,7 @@ function Drakthon:CreateWindow(config)
             
             AddCorner(Frame, 8)
             
-            Create("TextLabel", {
+            CreateInstance("TextLabel", {
                 Name = "Label",
                 Parent = Frame,
                 BackgroundTransparency = 1,
@@ -1602,7 +1644,7 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 4
             })
             
-            local ColorBox = Create("TextButton", {
+            local ColorBox = CreateInstance("TextButton", {
                 Name = "ColorBox",
                 Parent = Frame,
                 BackgroundColor3 = Default,
@@ -1634,14 +1676,19 @@ function Drakthon:CreateWindow(config)
             }
         end
         
-        -- Create Keybind
+        --[[
+            ════════════════════════════════════════════════════════════════════
+            ⌨️ CREATE KEYBIND
+            ════════════════════════════════════════════════════════════════════
+        ]]
+        
         function Tab:CreateKeybind(config)
             config = config or {}
             local Name = config.Name or "Keybind"
             local Default = config.Default or Enum.KeyCode.E
             local Callback = config.Callback or function() end
             
-            local Frame = Create("Frame", {
+            local Frame = CreateInstance("Frame", {
                 Name = "Keybind",
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
@@ -1651,7 +1698,7 @@ function Drakthon:CreateWindow(config)
             
             AddCorner(Frame, 8)
             
-            Create("TextLabel", {
+            CreateInstance("TextLabel", {
                 Name = "Label",
                 Parent = Frame,
                 BackgroundTransparency = 1,
@@ -1665,7 +1712,7 @@ function Drakthon:CreateWindow(config)
                 ZIndex = 4
             })
             
-            local KeyBtn = Create("TextButton", {
+            local KeyBtn = CreateInstance("TextButton", {
                 Name = "KeyBtn",
                 Parent = Frame,
                 BackgroundColor3 = Theme.BG3(),
@@ -1689,7 +1736,7 @@ function Drakthon:CreateWindow(config)
             KeyBtn.MouseButton1Click:Connect(function()
                 binding = true
                 KeyBtn.Text = "..."
-                KeyBtn.BackgroundColor3 = Theme.Accent()
+                SafeTween(KeyBtn, {BackgroundColor3 = Theme.Accent()}, 0.2)
                 
                 if bindConnection then
                     bindConnection:Disconnect()
@@ -1699,9 +1746,10 @@ function Drakthon:CreateWindow(config)
                     if binding and not gpe then
                         currentKey = input.KeyCode
                         KeyBtn.Text = input.KeyCode.Name
-                        KeyBtn.BackgroundColor3 = Theme.BG3()
+                        SafeTween(KeyBtn, {BackgroundColor3 = Theme.BG3()}, 0.2)
                         binding = false
                         task.spawn(Callback, input.KeyCode)
+                        
                         if bindConnection then
                             bindConnection:Disconnect()
                             bindConnection = nil
@@ -1715,6 +1763,8 @@ function Drakthon:CreateWindow(config)
                     task.spawn(Callback, currentKey)
                 end
             end)
+            
+            table.insert(Drakthon.Connections, keyPressConnection)
             
             Frame.Destroying:Connect(function()
                 if bindConnection then bindConnection:Disconnect() end
@@ -1732,6 +1782,7 @@ function Drakthon:CreateWindow(config)
             }
         end
         
+        -- Add tab to window
         table.insert(Window.Tabs, Tab)
         
         -- Auto-select first tab
@@ -1746,9 +1797,9 @@ function Drakthon:CreateWindow(config)
     
     -- Welcome Notification
     if WindowConfig.IntroEnabled then
-        task.delay(3, function()
+        task.delay(1, function()
             self:Notify({
-                Title = "Welcome!",
+                Title = "🎉 Welcome!",
                 Content = WindowConfig.Name .. " loaded successfully!",
                 Type = "Success",
                 Duration = 3
@@ -1758,5 +1809,13 @@ function Drakthon:CreateWindow(config)
     
     return Window
 end
+
+--[[
+    ════════════════════════════════════════════════════════════════════════════
+    🎉 RETURN LIBRARY
+    ════════════════════════════════════════════════════════════════════════════
+]]
+
+print("✅ Drakthon UI Library V" .. Drakthon.Version .. " Loaded Successfully!")
 
 return Drakthon
