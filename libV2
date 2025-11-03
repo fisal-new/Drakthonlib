@@ -8,36 +8,28 @@
     ██████╔╝██║  ██║██║  ██║██║  ██╗   ██║   ██║  ██║╚██████╔╝██║ ╚████║
     ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
     
-    🐉 Drakthon UI Library V2.2 - Perfect Edition
+    🐉 Drakthon UI Library V2.3 - Perfect Enhanced Edition
     ════════════════════════════════════════════════════════════════════════════
     
-    📌 Version: 2.2.1 Final
+    📌 Version: 2.3.0 Final
     👨‍💻 Author: Drakthon Team
     🌐 GitHub: https://github.com/fisal-new/Drakthonlib
     
-    ✅ PERFECT FEATURES:
-    • 12+ Themes from GitHub
-    • Real Drag & Drop System
-    • Auto Resize (All Devices)
-    • Mobile Optimized
-    • Config Save/Load
+    ✅ ENHANCED FEATURES:
+    • Fixed Dropdown (Player Selection & More)
+    • Smart Auto-Resize (Screen Detection)
+    • Auto Text Scaling
+    • Perfect Mobile Support
+    • All Devices Compatible
+    • Config System
     • Enhanced Notifications
-    • All UI Elements
     • Zero Errors
-    • Smooth Animations
-    • Memory Optimized
     
-    ════════════════════════════════════════════════════════════════════════════
-]]
-
---[[
-    ════════════════════════════════════════════════════════════════════════════
-    📦 MAIN LIBRARY
     ════════════════════════════════════════════════════════════════════════════
 ]]
 
 local Drakthon = {
-    Version = "2.2.1",
+    Version = "2.3.0",
     Author = "Drakthon Team",
     Flags = {},
     Elements = {},
@@ -97,65 +89,125 @@ print("🎨 Available Themes: " .. table.concat(Theme:List(), ", "))
 
 --[[
     ════════════════════════════════════════════════════════════════════════════
-    📐 RESPONSIVE CONFIG
+    📐 ENHANCED RESPONSIVE SYSTEM
     ════════════════════════════════════════════════════════════════════════════
 ]]
 
-local RESPONSIVE = {
-    MinWidth = 400,
-    MinHeight = 300,
-    MaxWidth = 1400,
-    MaxHeight = 900,
-    DefaultWidth = 650,
-    DefaultHeight = 450,
-    MobileWidth = 380,
-    MobileHeight = 600,
-    TabletWidth = 500,
-    TabletHeight = 650
+local DeviceInfo = {
+    Type = "Desktop",
+    ScreenSize = Vector2.new(0, 0),
+    Scale = 1,
+    IsMobile = false,
+    IsTablet = false,
+    IsDesktop = true
 }
 
-local DEFAULTS = {
-    AnimationSpeed = 0.3,
-    CornerRadius = 8,
-    Padding = 10,
-    MaxNotifications = 5,
-    NotificationDelay = 0.15,
-    AutoSaveInterval = 30
-}
-
-local function GetResponsiveSize()
+local function UpdateDeviceInfo()
     local viewportSize = Camera.ViewportSize
+    DeviceInfo.ScreenSize = viewportSize
+    
     local aspectRatio = viewportSize.X / viewportSize.Y
+    local screenWidth = viewportSize.X
     
-    -- Mobile Detection
-    if viewportSize.X < 600 or aspectRatio < 1 then
-        return {RESPONSIVE.MobileWidth, RESPONSIVE.MobileHeight}
-    end
-    
+    -- Mobile Detection (Phones)
+    if screenWidth < 600 or aspectRatio < 0.6 then
+        DeviceInfo.Type = "Mobile"
+        DeviceInfo.IsMobile = true
+        DeviceInfo.IsTablet = false
+        DeviceInfo.IsDesktop = false
+        DeviceInfo.Scale = 0.8
     -- Tablet Detection
-    if viewportSize.X < 900 then
-        return {RESPONSIVE.TabletWidth, RESPONSIVE.TabletHeight}
-    end
-    
+    elseif screenWidth < 1024 then
+        DeviceInfo.Type = "Tablet"
+        DeviceInfo.IsMobile = false
+        DeviceInfo.IsTablet = true
+        DeviceInfo.IsDesktop = false
+        DeviceInfo.Scale = 0.9
     -- Desktop
+    else
+        DeviceInfo.Type = "Desktop"
+        DeviceInfo.IsMobile = false
+        DeviceInfo.IsTablet = false
+        DeviceInfo.IsDesktop = true
+        DeviceInfo.Scale = 1
+    end
+end
+
+UpdateDeviceInfo()
+
+local SIZES = {
+    -- Window Sizes
+    Window = {
+        Mobile = {Width = 340, Height = 520},
+        Tablet = {Width = 480, Height = 600},
+        Desktop = {Width = 600, Height = 420}
+    },
+    
+    -- Navigation Sidebar
+    Nav = {
+        Mobile = 100,
+        Tablet = 140,
+        Desktop = 160
+    },
+    
+    -- Element Heights
+    Element = {
+        Mobile = 32,
+        Tablet = 36,
+        Desktop = 38
+    },
+    
+    -- Text Sizes
+    Text = {
+        Title = {Mobile = 14, Tablet = 15, Desktop = 16},
+        Label = {Mobile = 11, Tablet = 12, Desktop = 13},
+        Small = {Mobile = 10, Tablet = 11, Desktop = 12}
+    },
+    
+    -- Padding
+    Padding = {
+        Mobile = 8,
+        Tablet = 10,
+        Desktop = 12
+    },
+    
+    -- Gap between elements
+    Gap = {
+        Mobile = 6,
+        Tablet = 8,
+        Desktop = 10
+    }
+}
+
+local function GetSize(category, subcategory)
+    local device = DeviceInfo.Type
+    if subcategory then
+        return SIZES[category][subcategory][device]
+    else
+        return SIZES[category][device]
+    end
+end
+
+local function GetWindowSize()
+    local device = DeviceInfo.Type
+    local config = SIZES.Window[device]
+    
+    local viewportSize = Camera.ViewportSize
+    
+    -- Calculate based on screen size
     local width = math.clamp(
-        viewportSize.X * 0.5,
-        RESPONSIVE.MinWidth,
-        RESPONSIVE.MaxWidth
+        math.floor(viewportSize.X * (device == "Mobile" and 0.9 or device == "Tablet" and 0.75 or 0.5)),
+        config.Width * 0.8,
+        math.min(config.Width * 1.2, viewportSize.X - 40)
     )
     
     local height = math.clamp(
-        viewportSize.Y * 0.65,
-        RESPONSIVE.MinHeight,
-        RESPONSIVE.MaxHeight
+        math.floor(viewportSize.Y * (device == "Mobile" and 0.85 or device == "Tablet" and 0.8 or 0.65)),
+        config.Height * 0.8,
+        math.min(config.Height * 1.2, viewportSize.Y - 40)
     )
     
     return {width, height}
-end
-
-local function IsMobile()
-    local viewportSize = Camera.ViewportSize
-    return viewportSize.X < 600 or (viewportSize.X / viewportSize.Y) < 1
 end
 
 --[[
@@ -171,7 +223,7 @@ local function Tween(obj, props, dur, style, dir)
         return TweenService:Create(
             obj, 
             TweenInfo.new(
-                dur or DEFAULTS.AnimationSpeed, 
+                dur or 0.3, 
                 style or Enum.EasingStyle.Quad, 
                 dir or Enum.EasingDirection.Out
             ), 
@@ -203,12 +255,12 @@ end
 local function AddCorner(parent, radius)
     return Create("UICorner", {
         Parent = parent,
-        CornerRadius = UDim.new(0, radius or DEFAULTS.CornerRadius)
+        CornerRadius = UDim.new(0, radius or 8)
     })
 end
 
 local function AddPadding(parent, p)
-    local padding = p or DEFAULTS.Padding
+    local padding = p or GetSize("Padding")
     return Create("UIPadding", {
         Parent = parent,
         PaddingTop = UDim.new(0, padding),
@@ -229,7 +281,7 @@ end
 
 --[[
     ════════════════════════════════════════════════════════════════════════════
-    🖱️ ENHANCED DRAG SYSTEM (Real & Smooth)
+    🖱️ ENHANCED DRAG SYSTEM
     ════════════════════════════════════════════════════════════════════════════
 ]]
 
@@ -251,12 +303,11 @@ local function MakeDraggable(frame, handle)
             startPos.Y.Offset + delta.Y
         )
         
-        -- Boundary check to keep window on screen
         local viewportSize = Camera.ViewportSize
         local frameSize = frame.AbsoluteSize
         
-        local minX = -frameSize.X * 0.8
-        local maxX = viewportSize.X - frameSize.X * 0.2
+        local minX = -frameSize.X * 0.75
+        local maxX = viewportSize.X - frameSize.X * 0.25
         local minY = 0
         local maxY = viewportSize.Y - 50
         
@@ -325,7 +376,7 @@ function Drakthon:SaveConfig(name)
     if success then
         self:Notify({
             Title = "Config Saved",
-            Content = "Configuration saved as: " .. name,
+            Content = "Configuration saved: " .. name,
             Type = "Success",
             Duration = 2
         })
@@ -432,7 +483,7 @@ function Drakthon:ListConfigs()
 end
 
 function Drakthon:EnableAutoSave(interval)
-    interval = interval or DEFAULTS.AutoSaveInterval
+    interval = interval or 30
     
     task.spawn(function()
         while true do
@@ -454,7 +505,7 @@ end
 
 local NotificationQueue = {}
 local IsProcessing = false
-local MaxNotifications = DEFAULTS.MaxNotifications
+local MaxNotifications = 5
 local ActiveNotifications = {}
 
 function Drakthon:Notify(config)
@@ -514,7 +565,7 @@ function Drakthon:ProcessQueue()
             self:ShowNotification(notif)
         end)
         
-        task.wait(DEFAULTS.NotificationDelay)
+        task.wait(0.15)
     end
     
     IsProcessing = false
@@ -715,14 +766,14 @@ end
 function Drakthon:CreateWindow(config)
     config = config or {}
     
-    local responsiveSize = GetResponsiveSize()
+    local windowSize = GetWindowSize()
     
     local WindowConfig = {
         Name = config.Name or "Drakthon UI",
         Icon = config.Icon or "rbxassetid://7733955511",
         IntroEnabled = config.IntroEnabled ~= false,
         Keybind = config.Keybind or Enum.KeyCode.RightControl,
-        Size = config.Size or responsiveSize,
+        Size = config.Size or windowSize,
         Theme = config.Theme or "Ocean",
         ShowLoadNotification = config.ShowLoadNotification or false,
         ConfigFolder = config.ConfigFolder or self.ConfigFolder,
@@ -852,8 +903,9 @@ function Drakthon:CreateWindow(config)
         Font = Enum.Font.GothamBold,
         Text = WindowConfig.Name,
         TextColor3 = Theme.Text(),
-        TextSize = 16,
+        TextSize = GetSize("Text", "Title"),
         TextXAlignment = Enum.TextXAlignment.Left,
+        TextScaled = false,
         ZIndex = 3
     })
     
@@ -953,12 +1005,14 @@ function Drakthon:CreateWindow(config)
     Theme:Register(CloseBtn, "TextColor", "Text")
     AddCorner(CloseBtn, 6)
     
+    local navWidth = GetSize("Nav")
+    
     local Nav = Create("Frame", {
         Parent = Main,
         BackgroundColor3 = Theme.BG2(),
         BorderSizePixel = 0,
         Position = UDim2.new(0, 0, 0, 50),
-        Size = UDim2.new(0, IsMobile() and 120 or 160, 1, -50),
+        Size = UDim2.new(0, navWidth, 1, -50),
         ZIndex = 1
     })
     
@@ -967,17 +1021,17 @@ function Drakthon:CreateWindow(config)
     Create("UIListLayout", {
         Parent = Nav, 
         SortOrder = Enum.SortOrder.LayoutOrder, 
-        Padding = UDim.new(0, 5)
+        Padding = UDim.new(0, GetSize("Gap"))
     })
     
-    AddPadding(Nav, IsMobile() and 5 or 10)
+    AddPadding(Nav, GetSize("Padding"))
     
     local Content = Create("Frame", {
         Parent = Main,
         BackgroundColor3 = Theme.BG3(),
         BorderSizePixel = 0,
-        Position = UDim2.new(0, IsMobile() and 120 or 160, 0, 50),
-        Size = UDim2.new(1, IsMobile() and -120 or -160, 1, -50),
+        Position = UDim2.new(0, navWidth, 0, 50),
+        Size = UDim2.new(1, -navWidth, 1, -50),
         ZIndex = 1
     })
     
@@ -1104,14 +1158,18 @@ function Drakthon:CreateWindow(config)
             return
         end
         
+        UpdateDeviceInfo()
+        
         if not minimized and Main.Visible then
-            local newSize = GetResponsiveSize()
+            local newSize = GetWindowSize()
             WindowConfig.Size = newSize
             
-            -- Update Nav size for mobile
-            Nav.Size = UDim2.new(0, IsMobile() and 120 or 160, 1, -50)
-            Content.Position = UDim2.new(0, IsMobile() and 120 or 160, 0, 50)
-            Content.Size = UDim2.new(1, IsMobile() and -120 or -160, 1, -50)
+            local newNavWidth = GetSize("Nav")
+            Nav.Size = UDim2.new(0, newNavWidth, 1, -50)
+            Content.Position = UDim2.new(0, newNavWidth, 0, 50)
+            Content.Size = UDim2.new(1, -newNavWidth, 1, -50)
+            
+            Title.TextSize = GetSize("Text", "Title")
             
             Tween(Main, {
                 Size = UDim2.new(0, newSize[1], 0, newSize[2]),
@@ -1143,10 +1201,12 @@ function Drakthon:CreateWindow(config)
         local TabName = config.Name or "Tab"
         local TabIcon = config.Icon
         
+        local elementHeight = GetSize("Element")
+        
         local TabBtn = Create("TextButton", {
             Parent = Nav,
             BackgroundColor3 = Theme.BG3(),
-            Size = UDim2.new(1, 0, 0, IsMobile() and 35 or 38),
+            Size = UDim2.new(1, 0, 0, elementHeight),
             Font = Enum.Font.GothamSemibold,
             Text = "",
             AutoButtonColor = false,
@@ -1160,7 +1220,7 @@ function Drakthon:CreateWindow(config)
             local Icon = Create("ImageLabel", {
                 Parent = TabBtn,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, IsMobile() and 5 or 10, 0.5, 0),
+                Position = UDim2.new(0, GetSize("Padding") - 2, 0.5, 0),
                 Size = UDim2.new(0, 20, 0, 20),
                 AnchorPoint = Vector2.new(0, 0.5),
                 Image = TabIcon,
@@ -1174,12 +1234,12 @@ function Drakthon:CreateWindow(config)
         local Label = Create("TextLabel", {
             Parent = TabBtn,
             BackgroundTransparency = 1,
-            Position = UDim2.new(0, TabIcon and (IsMobile() and 30 or 38) or (IsMobile() and 10 or 15), 0, 0),
-            Size = UDim2.new(1, TabIcon and (IsMobile() and -35 or -45) or (IsMobile() and -15 or -20), 1, 0),
+            Position = UDim2.new(0, TabIcon and (GetSize("Padding") + 24) or GetSize("Padding"), 0, 0),
+            Size = UDim2.new(1, TabIcon and -(GetSize("Padding") + 28) or -(GetSize("Padding") * 2), 1, 0),
             Font = Enum.Font.GothamSemibold,
             Text = TabName,
             TextColor3 = Theme.Text2(),
-            TextSize = IsMobile() and 11 or 13,
+            TextSize = GetSize("Text", "Label"),
             TextXAlignment = Enum.TextXAlignment.Left,
             TextTruncate = Enum.TextTruncate.AtEnd,
             ZIndex = 3
@@ -1200,12 +1260,12 @@ function Drakthon:CreateWindow(config)
             ZIndex = 2
         })
         
-        AddPadding(TabContent, IsMobile() and 10 or 15)
+        AddPadding(TabContent, GetSize("Padding"))
         
         Create("UIListLayout", {
             Parent = TabContent, 
             SortOrder = Enum.SortOrder.LayoutOrder, 
-            Padding = UDim.new(0, IsMobile() and 8 or 10)
+            Padding = UDim.new(0, GetSize("Gap"))
         })
         
         TabBtn.MouseButton1Click:Connect(function()
@@ -1275,14 +1335,16 @@ function Drakthon:CreateWindow(config)
         function Tab:CreateButton(config)
             config = config or {}
             
+            local elementHeight = GetSize("Element")
+            
             local Btn = Create("TextButton", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
-                Size = UDim2.new(1, 0, 0, IsMobile() and 35 or 38),
+                Size = UDim2.new(1, 0, 0, elementHeight),
                 Font = Enum.Font.GothamSemibold,
                 Text = config.Name or "Button",
                 TextColor3 = Theme.Text(),
-                TextSize = IsMobile() and 12 or 13,
+                TextSize = GetSize("Text", "Label"),
                 AutoButtonColor = false,
                 ZIndex = 3
             })
@@ -1315,10 +1377,12 @@ function Drakthon:CreateWindow(config)
         function Tab:CreateToggle(config)
             config = config or {}
             
+            local elementHeight = GetSize("Element")
+            
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
-                Size = UDim2.new(1, 0, 0, IsMobile() and 35 or 38),
+                Size = UDim2.new(1, 0, 0, elementHeight),
                 ZIndex = 3
             })
             
@@ -1328,12 +1392,12 @@ function Drakthon:CreateWindow(config)
             local Label = Create("TextLabel", {
                 Parent = Frame,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, IsMobile() and 10 or 15, 0, 0),
-                Size = UDim2.new(1, IsMobile() and -60 or -70, 1, 0),
+                Position = UDim2.new(0, GetSize("Padding"), 0, 0),
+                Size = UDim2.new(1, -(GetSize("Padding") * 2 + 50), 1, 0),
                 Font = Enum.Font.GothamSemibold,
                 Text = config.Name or "Toggle",
                 TextColor3 = Theme.Text(),
-                TextSize = IsMobile() and 12 or 13,
+                TextSize = GetSize("Text", "Label"),
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextTruncate = Enum.TextTruncate.AtEnd,
                 ZIndex = 4
@@ -1343,11 +1407,14 @@ function Drakthon:CreateWindow(config)
             
             local toggled = config.Default or false
             
+            local toggleSize = DeviceInfo.IsMobile and 36 or 42
+            local indicatorSize = DeviceInfo.IsMobile and 16 or 18
+            
             local ToggleBtn = Create("TextButton", {
                 Parent = Frame,
                 BackgroundColor3 = toggled and Theme.Accent() or Theme.BG3(),
-                Position = UDim2.new(1, IsMobile() and -45 or -50, 0.5, 0),
-                Size = UDim2.new(0, IsMobile() and 38 or 42, 0, IsMobile() and 20 or 22),
+                Position = UDim2.new(1, -(GetSize("Padding") + toggleSize), 0.5, 0),
+                Size = UDim2.new(0, toggleSize, 0, 22),
                 AnchorPoint = Vector2.new(0, 0.5),
                 Text = "",
                 AutoButtonColor = false,
@@ -1360,8 +1427,8 @@ function Drakthon:CreateWindow(config)
             local Indicator = Create("Frame", {
                 Parent = ToggleBtn,
                 BackgroundColor3 = Theme.Text(),
-                Position = toggled and UDim2.new(1, IsMobile() and -18 or -20, 0.5, 0) or UDim2.new(0, 2, 0.5, 0),
-                Size = UDim2.new(0, IsMobile() and 16 or 18, 0, IsMobile() and 16 or 18),
+                Position = toggled and UDim2.new(1, -(indicatorSize + 2), 0.5, 0) or UDim2.new(0, 2, 0.5, 0),
+                Size = UDim2.new(0, indicatorSize, 0, indicatorSize),
                 AnchorPoint = Vector2.new(0, 0.5),
                 ZIndex = 5
             })
@@ -1375,7 +1442,7 @@ function Drakthon:CreateWindow(config)
                 ToggleBtn.BackgroundColor3 = toggled and Theme.Accent() or Theme.BG3()
                 
                 Tween(Indicator, {
-                    Position = toggled and UDim2.new(1, IsMobile() and -18 or -20, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
+                    Position = toggled and UDim2.new(1, -(indicatorSize + 2), 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
                 }, 0.2)
                 
                 pcall(config.Callback or function() end, toggled)
@@ -1389,7 +1456,7 @@ function Drakthon:CreateWindow(config)
                 Set = function(self, val)
                     toggled = val
                     ToggleBtn.BackgroundColor3 = toggled and Theme.Accent() or Theme.BG3()
-                    Indicator.Position = toggled and UDim2.new(1, IsMobile() and -18 or -20, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
+                    Indicator.Position = toggled and UDim2.new(1, -(indicatorSize + 2), 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
                     pcall(config.Callback or function() end, toggled)
                     if config.Flag then
                         Drakthon.Flags[config.Flag] = toggled
@@ -1420,10 +1487,12 @@ function Drakthon:CreateWindow(config)
         function Tab:CreateSlider(config)
             config = config or {}
             
+            local sliderHeight = DeviceInfo.IsMobile and 55 or 60
+            
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
-                Size = UDim2.new(1, 0, 0, IsMobile() and 55 or 60),
+                Size = UDim2.new(1, 0, 0, sliderHeight),
                 ZIndex = 3
             })
             
@@ -1433,12 +1502,12 @@ function Drakthon:CreateWindow(config)
             local Label = Create("TextLabel", {
                 Parent = Frame,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, IsMobile() and 10 or 15, 0, 5),
-                Size = UDim2.new(1, IsMobile() and -70 or -80, 0, 20),
+                Position = UDim2.new(0, GetSize("Padding"), 0, 5),
+                Size = UDim2.new(1, -(GetSize("Padding") * 2 + 60), 0, 20),
                 Font = Enum.Font.GothamSemibold,
                 Text = config.Name or "Slider",
                 TextColor3 = Theme.Text(),
-                TextSize = IsMobile() and 12 or 13,
+                TextSize = GetSize("Text", "Label"),
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextTruncate = Enum.TextTruncate.AtEnd,
                 ZIndex = 4
@@ -1454,12 +1523,12 @@ function Drakthon:CreateWindow(config)
             local ValueBox = Create("TextLabel", {
                 Parent = Frame,
                 BackgroundColor3 = Theme.BG3(),
-                Position = UDim2.new(1, IsMobile() and -55 or -65, 0, 5),
-                Size = UDim2.new(0, IsMobile() and 45 or 50, 0, 22),
+                Position = UDim2.new(1, -(GetSize("Padding") + 50), 0, 5),
+                Size = UDim2.new(0, 50, 0, 22),
                 Font = Enum.Font.GothamBold,
                 Text = tostring(value),
                 TextColor3 = Theme.Accent(),
-                TextSize = IsMobile() and 12 or 13,
+                TextSize = GetSize("Text", "Label"),
                 ZIndex = 4
             })
             
@@ -1470,8 +1539,8 @@ function Drakthon:CreateWindow(config)
             local Track = Create("Frame", {
                 Parent = Frame,
                 BackgroundColor3 = Theme.BG3(),
-                Position = UDim2.new(0, IsMobile() and 10 or 15, 1, IsMobile() and -18 or -20),
-                Size = UDim2.new(1, IsMobile() and -20 or -30, 0, 5),
+                Position = UDim2.new(0, GetSize("Padding"), 1, -18),
+                Size = UDim2.new(1, -(GetSize("Padding") * 2), 0, 5),
                 ZIndex = 4
             })
             
@@ -1581,7 +1650,7 @@ function Drakthon:CreateWindow(config)
         
         --[[
             ════════════════════════════════════════════════════════════════════
-            📝 CREATE DROPDOWN
+            📝 CREATE DROPDOWN - FIXED & ENHANCED
             ════════════════════════════════════════════════════════════════════
         ]]
         
@@ -1595,38 +1664,48 @@ function Drakthon:CreateWindow(config)
                 table.insert(CurrentOptions, v)
             end
             
+            local elementHeight = GetSize("Element")
+            
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
-                Size = UDim2.new(1, 0, 0, IsMobile() and 35 or 38),
-                ClipsDescendants = true,
+                Size = UDim2.new(1, 0, 0, elementHeight),
+                ClipsDescendants = false,
                 ZIndex = 3
             })
             
             Theme:Register(Frame, "Color", "BG2")
             AddCorner(Frame, 8)
             
-            local Btn = Create("TextButton", {
+            local MainBtn = Create("Frame", {
                 Parent = Frame,
                 BackgroundTransparency = 1,
-                Size = UDim2.new(1, 0, 0, IsMobile() and 35 or 38),
+                Size = UDim2.new(1, 0, 0, elementHeight),
+                ClipsDescendants = false,
+                ZIndex = 4
+            })
+            
+            local Btn = Create("TextButton", {
+                Parent = MainBtn,
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, 0, 1, 0),
                 Text = "",
                 AutoButtonColor = false,
-                ZIndex = 4
+                ZIndex = 5
             })
             
             local Label = Create("TextLabel", {
                 Parent = Btn,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, IsMobile() and 10 or 15, 0, 0),
-                Size = UDim2.new(1, IsMobile() and -100 or -120, 1, 0),
+                Position = UDim2.new(0, GetSize("Padding"), 0, 0),
+                Size = UDim2.new(1, -(GetSize("Padding") * 2 + 100), 1, 0),
                 Font = Enum.Font.GothamSemibold,
                 Text = config.Name or "Dropdown",
                 TextColor3 = Theme.Text(),
-                TextSize = IsMobile() and 12 or 13,
+                TextSize = GetSize("Text", "Label"),
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextTruncate = Enum.TextTruncate.AtEnd,
-                ZIndex = 5
+                ZIndex = 6
             })
             
             Theme:Register(Label, "TextColor", "Text")
@@ -1634,15 +1713,15 @@ function Drakthon:CreateWindow(config)
             local Selected = Create("TextLabel", {
                 Parent = Btn,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(1, IsMobile() and -60 or -65, 0, 0),
-                Size = UDim2.new(0, IsMobile() and 45 or 50, 1, 0),
+                Position = UDim2.new(1, -(GetSize("Padding") + 70), 0, 0),
+                Size = UDim2.new(0, 55, 1, 0),
                 Font = Enum.Font.Gotham,
                 Text = config.Default or "...",
                 TextColor3 = Theme.Accent(),
-                TextSize = IsMobile() and 11 or 12,
+                TextSize = GetSize("Text", "Small"),
                 TextXAlignment = Enum.TextXAlignment.Right,
                 TextTruncate = Enum.TextTruncate.AtEnd,
-                ZIndex = 5
+                ZIndex = 6
             })
             
             Theme:Register(Selected, "TextColor", "Accent")
@@ -1650,52 +1729,69 @@ function Drakthon:CreateWindow(config)
             local Arrow = Create("TextLabel", {
                 Parent = Btn,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(1, -18, 0, 0),
+                Position = UDim2.new(1, -(GetSize("Padding") + 8), 0, 0),
                 Size = UDim2.new(0, 18, 1, 0),
                 Font = Enum.Font.GothamBold,
                 Text = "▼",
                 TextColor3 = Theme.Text2(),
                 TextSize = 10,
-                ZIndex = 5
+                ZIndex = 6
             })
             
             Theme:Register(Arrow, "TextColor", "Text2")
             
-            local OptionsContainer = Create("ScrollingFrame", {
+            local DropContainer = Create("Frame", {
                 Parent = Frame,
-                BackgroundTransparency = 1,
-                Position = UDim2.new(0, 0, 0, IsMobile() and 35 or 38),
+                BackgroundColor3 = Theme.BG2(),
+                BorderSizePixel = 0,
+                Position = UDim2.new(0, 0, 1, 4),
                 Size = UDim2.new(1, 0, 0, 0),
-                ScrollBarThickness = 4,
+                Visible = false,
+                ClipsDescendants = true,
+                ZIndex = 10
+            })
+            
+            Theme:Register(DropContainer, "Color", "BG2")
+            AddCorner(DropContainer, 8)
+            AddStroke(DropContainer, Theme.BG3(), 1)
+            
+            local OptionsContainer = Create("ScrollingFrame", {
+                Parent = DropContainer,
+                BackgroundTransparency = 1,
+                Size = UDim2.new(1, 0, 1, 0),
+                ScrollBarThickness = 3,
                 ScrollBarImageColor3 = Theme.Accent(),
                 CanvasSize = UDim2.new(0, 0, 0, 0),
                 AutomaticCanvasSize = Enum.AutomaticSize.Y,
                 BorderSizePixel = 0,
-                Visible = false,
-                ZIndex = 4
+                ZIndex = 11
             })
+            
+            AddPadding(OptionsContainer, 4)
             
             Create("UIListLayout", {
                 Parent = OptionsContainer, 
                 SortOrder = Enum.SortOrder.LayoutOrder, 
-                Padding = UDim.new(0, 2)
+                Padding = UDim.new(0, 3)
             })
             
             local opened = false
             local selected = config.Default
             
+            local optionHeight = DeviceInfo.IsMobile and 26 or 28
+            
             local function CreateOption(opt, index)
                 local OptBtn = Create("TextButton", {
                     Parent = OptionsContainer,
                     BackgroundColor3 = Theme.BG3(),
-                    Size = UDim2.new(1, 0, 0, IsMobile() and 26 or 28),
+                    Size = UDim2.new(1, 0, 0, optionHeight),
                     Font = Enum.Font.Gotham,
                     Text = opt,
                     TextColor3 = Theme.Text(),
-                    TextSize = IsMobile() and 11 or 12,
+                    TextSize = GetSize("Text", "Small"),
                     TextTruncate = Enum.TextTruncate.AtEnd,
                     AutoButtonColor = false,
-                    ZIndex = 5,
+                    ZIndex = 12,
                     LayoutOrder = index or 1
                 })
                 
@@ -1707,12 +1803,16 @@ function Drakthon:CreateWindow(config)
                     selected = opt
                     Selected.Text = opt
                     opened = false
-                    OptionsContainer.Visible = false
+                    DropContainer.Visible = false
                     Arrow.Rotation = 0
+                    Frame.ZIndex = 3
                     
-                    Tween(Frame, {
-                        Size = UDim2.new(1, 0, 0, IsMobile() and 35 or 38)
-                    }, 0.3)
+                    Tween(DropContainer, {
+                        Size = UDim2.new(1, 0, 0, 0)
+                    }, 0.2)
+                    
+                    task.wait(0.2)
+                    DropContainer.Visible = false
                     
                     pcall(config.Callback or function() end, opt)
                     
@@ -1738,19 +1838,27 @@ function Drakthon:CreateWindow(config)
             
             Btn.MouseButton1Click:Connect(function()
                 opened = not opened
-                OptionsContainer.Visible = opened
                 
                 if opened then
+                    Frame.ZIndex = 100
+                    DropContainer.Visible = true
                     Arrow.Rotation = 180
-                    local maxHeight = math.min(#CurrentOptions * (IsMobile() and 28 or 30), 150)
-                    Tween(Frame, {
-                        Size = UDim2.new(1, 0, 0, (IsMobile() and 35 or 38) + maxHeight + 5)
-                    }, 0.3)
+                    
+                    local maxHeight = math.min(#CurrentOptions * (optionHeight + 3) + 8, 150)
+                    
+                    Tween(DropContainer, {
+                        Size = UDim2.new(1, 0, 0, maxHeight)
+                    }, 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
                 else
                     Arrow.Rotation = 0
-                    Tween(Frame, {
-                        Size = UDim2.new(1, 0, 0, IsMobile() and 35 or 38)
-                    }, 0.3)
+                    Frame.ZIndex = 3
+                    
+                    Tween(DropContainer, {
+                        Size = UDim2.new(1, 0, 0, 0)
+                    }, 0.2)
+                    
+                    task.wait(0.2)
+                    DropContainer.Visible = false
                 end
             end)
             
@@ -1822,6 +1930,16 @@ function Drakthon:CreateWindow(config)
                     return CurrentOptions
                 end,
                 
+                Refresh = function(self)
+                    if opened then
+                        opened = false
+                        Arrow.Rotation = 0
+                        Frame.ZIndex = 3
+                        DropContainer.Visible = false
+                        DropContainer.Size = UDim2.new(1, 0, 0, 0)
+                    end
+                end,
+                
                 Flag = config.Flag
             }
             
@@ -1842,10 +1960,12 @@ function Drakthon:CreateWindow(config)
         function Tab:CreateInput(config)
             config = config or {}
             
+            local inputHeight = DeviceInfo.IsMobile and 60 or 65
+            
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
-                Size = UDim2.new(1, 0, 0, IsMobile() and 60 or 65),
+                Size = UDim2.new(1, 0, 0, inputHeight),
                 ZIndex = 3
             })
             
@@ -1855,12 +1975,12 @@ function Drakthon:CreateWindow(config)
             local Label = Create("TextLabel", {
                 Parent = Frame,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, IsMobile() and 10 or 15, 0, 5),
-                Size = UDim2.new(1, IsMobile() and -20 or -30, 0, 20),
+                Position = UDim2.new(0, GetSize("Padding"), 0, 5),
+                Size = UDim2.new(1, -(GetSize("Padding") * 2), 0, 20),
                 Font = Enum.Font.GothamSemibold,
                 Text = config.Name or "Input",
                 TextColor3 = Theme.Text(),
-                TextSize = IsMobile() and 12 or 13,
+                TextSize = GetSize("Text", "Label"),
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextTruncate = Enum.TextTruncate.AtEnd,
                 ZIndex = 4
@@ -1871,14 +1991,14 @@ function Drakthon:CreateWindow(config)
             local Input = Create("TextBox", {
                 Parent = Frame,
                 BackgroundColor3 = Theme.BG3(),
-                Position = UDim2.new(0, IsMobile() and 10 or 15, 0, 30),
-                Size = UDim2.new(1, IsMobile() and -20 or -30, 0, 28),
+                Position = UDim2.new(0, GetSize("Padding"), 0, 30),
+                Size = UDim2.new(1, -(GetSize("Padding") * 2), 0, 28),
                 Font = Enum.Font.Gotham,
                 PlaceholderText = config.Placeholder or "Type here...",
                 PlaceholderColor3 = Theme.Text2(),
                 Text = config.Default or "",
                 TextColor3 = Theme.Text(),
-                TextSize = IsMobile() and 11 or 12,
+                TextSize = GetSize("Text", "Small"),
                 ClearTextOnFocus = false,
                 ZIndex = 4
             })
@@ -1936,14 +2056,16 @@ function Drakthon:CreateWindow(config)
         ]]
         
         function Tab:CreateLabel(text)
+            local elementHeight = GetSize("Element") - 6
+            
             local Label = Create("TextLabel", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
-                Size = UDim2.new(1, 0, 0, IsMobile() and 30 or 32),
+                Size = UDim2.new(1, 0, 0, elementHeight),
                 Font = Enum.Font.Gotham,
                 Text = text or "Label",
                 TextColor3 = Theme.Text2(),
-                TextSize = IsMobile() and 11 or 13,
+                TextSize = GetSize("Text", "Label"),
                 TextWrapped = true,
                 ZIndex = 3
             })
@@ -1971,10 +2093,12 @@ function Drakthon:CreateWindow(config)
         ]]
         
         function Tab:CreateSection(name)
+            local elementHeight = GetSize("Element")
+            
             local Section = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
-                Size = UDim2.new(1, 0, 0, IsMobile() and 32 or 35),
+                Size = UDim2.new(1, 0, 0, elementHeight),
                 ZIndex = 3
             })
             
@@ -1984,12 +2108,12 @@ function Drakthon:CreateWindow(config)
             local SectionLabel = Create("TextLabel", {
                 Parent = Section,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, IsMobile() and 10 or 15, 0, 0),
-                Size = UDim2.new(1, IsMobile() and -20 or -30, 1, 0),
+                Position = UDim2.new(0, GetSize("Padding"), 0, 0),
+                Size = UDim2.new(1, -(GetSize("Padding") * 2), 1, 0),
                 Font = Enum.Font.GothamBold,
                 Text = name or "Section",
                 TextColor3 = Theme.Accent(),
-                TextSize = IsMobile() and 12 or 14,
+                TextSize = GetSize("Text", "Label") + 1,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextTruncate = Enum.TextTruncate.AtEnd,
                 ZIndex = 4
@@ -2017,7 +2141,7 @@ function Drakthon:CreateWindow(config)
             
             Theme:Register(Frame, "Color", "BG2")
             AddCorner(Frame, 8)
-            AddPadding(Frame, IsMobile() and 8 or 10)
+            AddPadding(Frame, GetSize("Padding") - 2)
             
             Create("UIListLayout", {
                 Parent = Frame, 
@@ -2032,7 +2156,7 @@ function Drakthon:CreateWindow(config)
                 Font = Enum.Font.GothamBold,
                 Text = title or "Title",
                 TextColor3 = Theme.Accent(),
-                TextSize = IsMobile() and 12 or 14,
+                TextSize = GetSize("Text", "Label") + 1,
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
                 TextWrapped = true,
@@ -2049,7 +2173,7 @@ function Drakthon:CreateWindow(config)
                 Font = Enum.Font.Gotham,
                 Text = content or "Content",
                 TextColor3 = Theme.Text2(),
-                TextSize = IsMobile() and 11 or 12,
+                TextSize = GetSize("Text", "Small"),
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextYAlignment = Enum.TextYAlignment.Top,
                 TextWrapped = true,
@@ -2075,10 +2199,12 @@ function Drakthon:CreateWindow(config)
         function Tab:CreateColorPicker(config)
             config = config or {}
             
+            local elementHeight = GetSize("Element")
+            
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
-                Size = UDim2.new(1, 0, 0, IsMobile() and 35 or 38),
+                Size = UDim2.new(1, 0, 0, elementHeight),
                 ZIndex = 3
             })
             
@@ -2088,12 +2214,12 @@ function Drakthon:CreateWindow(config)
             local Label = Create("TextLabel", {
                 Parent = Frame,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, IsMobile() and 10 or 15, 0, 0),
-                Size = UDim2.new(1, IsMobile() and -60 or -70, 1, 0),
+                Position = UDim2.new(0, GetSize("Padding"), 0, 0),
+                Size = UDim2.new(1, -(GetSize("Padding") * 2 + 50), 1, 0),
                 Font = Enum.Font.GothamSemibold,
                 Text = config.Name or "Color",
                 TextColor3 = Theme.Text(),
-                TextSize = IsMobile() and 12 or 13,
+                TextSize = GetSize("Text", "Label"),
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextTruncate = Enum.TextTruncate.AtEnd,
                 ZIndex = 4
@@ -2104,8 +2230,8 @@ function Drakthon:CreateWindow(config)
             local ColorBox = Create("TextButton", {
                 Parent = Frame,
                 BackgroundColor3 = config.Default or Color3.fromRGB(255, 255, 255),
-                Position = UDim2.new(1, IsMobile() and -45 or -50, 0.5, 0),
-                Size = UDim2.new(0, IsMobile() and 35 or 40, 0, 24),
+                Position = UDim2.new(1, -(GetSize("Padding") + 40), 0.5, 0),
+                Size = UDim2.new(0, 40, 0, 24),
                 AnchorPoint = Vector2.new(0, 0.5),
                 Text = "",
                 AutoButtonColor = false,
@@ -2159,10 +2285,12 @@ function Drakthon:CreateWindow(config)
         function Tab:CreateKeybind(config)
             config = config or {}
             
+            local elementHeight = GetSize("Element")
+            
             local Frame = Create("Frame", {
                 Parent = TabContent,
                 BackgroundColor3 = Theme.BG2(),
-                Size = UDim2.new(1, 0, 0, IsMobile() and 35 or 38),
+                Size = UDim2.new(1, 0, 0, elementHeight),
                 ZIndex = 3
             })
             
@@ -2172,12 +2300,12 @@ function Drakthon:CreateWindow(config)
             local Label = Create("TextLabel", {
                 Parent = Frame,
                 BackgroundTransparency = 1,
-                Position = UDim2.new(0, IsMobile() and 10 or 15, 0, 0),
-                Size = UDim2.new(1, IsMobile() and -70 or -80, 1, 0),
+                Position = UDim2.new(0, GetSize("Padding"), 0, 0),
+                Size = UDim2.new(1, -(GetSize("Padding") * 2 + 65), 1, 0),
                 Font = Enum.Font.GothamSemibold,
                 Text = config.Name or "Keybind",
                 TextColor3 = Theme.Text(),
-                TextSize = IsMobile() and 12 or 13,
+                TextSize = GetSize("Text", "Label"),
                 TextXAlignment = Enum.TextXAlignment.Left,
                 TextTruncate = Enum.TextTruncate.AtEnd,
                 ZIndex = 4
@@ -2192,13 +2320,13 @@ function Drakthon:CreateWindow(config)
             local KeyBtn = Create("TextButton", {
                 Parent = Frame,
                 BackgroundColor3 = Theme.BG3(),
-                Position = UDim2.new(1, IsMobile() and -60 or -65, 0.5, 0),
-                Size = UDim2.new(0, IsMobile() and 50 or 55, 0, 24),
+                Position = UDim2.new(1, -(GetSize("Padding") + 55), 0.5, 0),
+                Size = UDim2.new(0, 55, 0, 24),
                 AnchorPoint = Vector2.new(0, 0.5),
                 Font = Enum.Font.GothamBold,
                 Text = currentKey.Name,
                 TextColor3 = Theme.Text(),
-                TextSize = IsMobile() and 10 or 11,
+                TextSize = GetSize("Text", "Small"),
                 TextTruncate = Enum.TextTruncate.AtEnd,
                 AutoButtonColor = false,
                 ZIndex = 4
@@ -2316,7 +2444,8 @@ print("📌 Version: " .. Drakthon.Version)
 print("👨‍💻 Author: " .. Drakthon.Author)
 print("🌐 GitHub: https://github.com/fisal-new/Drakthonlib")
 print("🎨 Themes: " .. table.concat(Theme:List(), ", "))
-print("📱 Mobile: " .. (IsMobile() and "Yes" or "No"))
+print("📱 Device: " .. DeviceInfo.Type)
+print("📐 Screen: " .. DeviceInfo.ScreenSize.X .. "x" .. DeviceInfo.ScreenSize.Y)
 print("════════════════════════════════════════════════════════════════")
 
 return Drakthon
